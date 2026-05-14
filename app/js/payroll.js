@@ -214,10 +214,10 @@ async function calculatePayroll() {
       } else if (type === "break_start") {
         activeBreaks[log.employeeId] = time;
 
-      } else if (type === "break_end" && activeBreaks[log.employeeId]) {
-        emp.totalMinutes -= (time - activeBreaks[log.employeeId]) / 60000;
-        delete activeBreaks[log.employeeId];
-      }
+      } else if (!payPeriodConfig.breaksCountAsHours) {
+  emp.totalMinutes -=
+    (time - activeBreaks[log.employeeId]) / 60000;
+}
     });
 
     // 3. Still clocked in — count to end of period
@@ -233,7 +233,8 @@ async function calculatePayroll() {
     });
 
     // 4. OT threshold
-    const otThreshold = { weekly: 40, biweekly: 80, semimonthly: null, monthly: null }[payPeriodConfig.type] ?? 40;
+  const otThreshold =
+  Number(payPeriodConfig.overtimeThreshold || 40);
     const otLabel = $("otThresholdLabel");
     if (otLabel) {
       otLabel.textContent = otThreshold
@@ -307,7 +308,7 @@ if (term) {
 
     const regH  = otThreshold ? Math.min(hours, otThreshold) : hours;
     const otH   = otThreshold ? Math.max(0, hours - otThreshold) : 0;
-    const gross = (regH * emp.hourlyRate) + (otH * emp.hourlyRate * 1.5);
+    const gross = (regH * emp.hourlyRate) + (otH * emp.hourlyRate * (payPeriodConfig.overtimeMultiplier || 1.5));
     const fica  = estimateFICA(gross);
 
     totalH    += hours;
@@ -396,7 +397,7 @@ function renderEmpCards(data, otThreshold) {
     const hours = emp.totalMinutes / 60;
     const regH  = otThreshold ? Math.min(hours, otThreshold) : hours;
     const otH   = otThreshold ? Math.max(0, hours - otThreshold) : 0;
-    const gross = (regH * emp.hourlyRate) + (otH * emp.hourlyRate * 1.5);
+    const gross = (regH * emp.hourlyRate) + (otH * emp.hourlyRate * (payPeriodConfig.overtimeMultiplier || 1.5));
 
     const regPct = (regH / maxHours) * 100;
     const otPct  = (otH  / maxHours) * 100;
@@ -558,7 +559,7 @@ window.openEmpModal = function(empId) {
   const hours = emp.totalMinutes / 60;
   const regH  = otThreshold ? Math.min(hours, otThreshold) : hours;
   const otH   = otThreshold ? Math.max(0, hours - otThreshold) : 0;
-  const gross = (regH * emp.hourlyRate) + (otH * emp.hourlyRate * 1.5);
+  const gross = (regH * emp.hourlyRate) + (otH * emp.hourlyRate * (payPeriodConfig.overtimeMultiplier || 1.5));
   const hasOT = otH > 0;
   const noRate = emp.hourlyRate === 0;
 
