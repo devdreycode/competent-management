@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent:#0891b2;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkForce Manager</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/nav.css">
+  <link rel="stylesheet" href="../css/top-header.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <header class="top-header">
+    <div class="brand-mark" id="brandMark">⚡</div>
+    <div style="display:flex;flex-direction:column;line-height:1.1;">
+      <div class="brand-name" id="companyNameDisplay">Company</div>
+      <div class="brand-tag">Workforce Manager</div>
+    </div>
+    <div style="width:1px;height:22px;background:var(--chrome-border);margin:0 4px;flex-shrink:0;"></div>
+    <span class="header-title" id="headerTitle">App Settings</span>
+    <div id="upgradeBtn">⚡ Upgrade</div>
+    <div class="header-spacer"></div>
+    <div id="welcome-msg">Welcome, User</div>
+
+    <div class="notif-wrapper">
+      <div id="notifBell" onclick="toggleNotifPanel(event)" title="Notifications">
+        <i class="fas fa-bell" style="font-size:.9rem;"></i>
+        <span id="notifCount" style="display:none;">0</span>
+      </div>
+      <div id="notifPanel" style="display:none;">
+        <div class="notif-header">
+          <span class="notif-header-title">Notifications</span>
+          <button id="notifMarkAll" onclick="markAllRead(event)" disabled>All caught up</button>
+        </div>
+        <div id="notifList"></div>
+        <div id="notifEmpty" style="display:block;">You're all caught up! 🎉</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin-left:4px;">
+      <div class="user-avatar" id="sidebarAvatar" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;" title="Account">A</div>
+      <button class="btn-signout" id="logoutBtn" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="main-area">
+    <div class="page-body">
+      <div id="page-settings" class="page active">
+        <div class="sec-header">
+          <div><div class="sec-title">Settings</div><div class="sec-sub">Account, appearance, payroll, time clock, scheduling, and portal</div></div>
+          <button class="btn btn-primary" id="saveSettings">💾 Save All</button>
+        </div>
+        <div class="settings-tabs">
+          <button class="stab" onclick="setStab('account',this)">👤 Account</button>
+          <button class="stab active" onclick="setStab('appearance',this)">🎨 Appearance</button>
+          <button class="stab" onclick="setStab('payroll',this)">💵 Payroll</button>
+          <button class="stab" onclick="setStab('timeclock',this)">🕐 Time Clock</button>
+          <button class="stab" onclick="setStab('scheduling',this)">📅 Scheduling</button>
+          <button class="stab" onclick="setStab('portal',this)">🔗 Portal</button>
+        </div>
+        <div style="grid-template-columns:1fr;">
+
+          <!-- ACCOUNT -->
+          <div class="stab-section" id="stab-account" style="display:none;">
+            <div class="stab-2col">
+              <div class="card">
+                <div class="card-label">👤 Account</div>
+                <div class="field"><label>Manager Name</label><input type="text" id="mgrName" placeholder="Your full name"></div>
+                <div class="field"><label>User ID</label><input type="text" id="displayUID2" readonly></div>
+                <div class="field">
+                  <label>Manager Kiosk PIN</label>
+                  <input type="password" id="mgrKioskPin" maxlength="6" placeholder="4–6 digit override PIN">
+                  <div class="field-hint">Override PIN used to edit punch logs at the time-clock kiosk.</div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-label">🏢 Company</div>
+                <div class="field"><label>Company Name</label><input type="text" id="companyName" placeholder="Your company name"></div>
+                <div class="field">
+                  <label>Industry</label>
+                  <select id="companyIndustry">
+                    <option value="">Select…</option>
+                    <option value="restaurant">Restaurant / Food Service</option>
+                    <option value="retail">Retail</option>
+                    <option value="warehouse">Warehouse / Logistics</option>
+                    <option value="manufacturing">Manufacturing</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="service">Service / Field Work</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Company Logo</label>
+                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <div id="logoPreview" style="width:44px;height:44px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;flex-shrink:0;border:1px solid var(--chrome-border);">⚡</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('logoFileInput').click()">📁 Upload Logo</button>
+                      <button class="btn btn-ghost btn-sm" id="removeLogoBtn" style="display:none;">✕ Remove</button>
+                    </div>
+                    <input type="file" id="logoFileInput" accept="image/*" style="display:none">
+                  </div>
+                  <div style="font-size:.72rem;color:var(--text-muted);margin-top:6px;">PNG, JPG or SVG · Saved locally in browser.</div>
+                </div>
+              </div>
+            </div>
+          </div><!-- closes stab-account -->
+
+          <!-- APPEARANCE -->
+          <div class="stab-section" id="stab-appearance" style="display:block;">
+            <div class="stab-2col">
+              <div class="card">
+                <div class="card-label">🎨 Theme</div>
+                <div class="toggle-row">
+                  <div><div class="toggle-label">Dark Mode</div><div class="toggle-sub">Switch to a dark interface</div></div>
+                  <label class="toggle"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div><div class="toggle-label">Compact View</div><div class="toggle-sub">Reduce spacing for denser data tables</div></div>
+                  <label class="toggle"><input type="checkbox" id="compactViewToggle"><span class="slider"></span></label>
+                </div>
+                <div class="field" style="margin-top:14px;">
+                  <label>Accent Color</label>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+                    <button class="color-swatch" data-color="#2563eb" onclick="setAccent('#2563eb',this)" style="background:#2563eb;" title="Blue"></button>
+                    <button class="color-swatch" data-color="#7c3aed" onclick="setAccent('#7c3aed',this)" style="background:#7c3aed;" title="Purple"></button>
+                    <button class="color-swatch" data-color="#16a34a" onclick="setAccent('#16a34a',this)" style="background:#16a34a;" title="Green"></button>
+                    <button class="color-swatch" data-color="#d97706" onclick="setAccent('#d97706',this)" style="background:#d97706;" title="Amber"></button>
+                    <button class="color-swatch" data-color="#dc2626" onclick="setAccent('#dc2626',this)" style="background:#dc2626;" title="Red"></button>
+                    <button class="color-swatch active" data-color="#0891b2" onclick="setAccent('#0891b2',this)" style="background:#0891b2;" title="Teal"></button>
+                  </div>
+                </div>
+              </div><!-- closes theme card -->
+            </div><!-- closes stab-2col -->
+          </div><!-- closes stab-appearance -->
+
+          <!-- PAYROLL -->
+          <div class="stab-section" id="stab-payroll" style="display:none;">
+            <div class="stab-2col">
+              <div class="card">
+                <div class="card-label">💵 Payroll</div>
+                <div style="color:var(--text-muted);font-size:.84rem;line-height:1.6;margin-bottom:16px;">Configure overtime rules, default pay rates, pay periods, and payroll display options in the dedicated Payroll Settings page.</div>
+                <a href="payroll-settings.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;width:fit-content;">💵 Open Payroll Settings →</a>
+              </div>
+            </div>
+          </div><!-- closes stab-payroll -->
+
+          <!-- TIME CLOCK -->
+          <div class="stab-section" id="stab-timeclock" style="display:none;">
+            <div class="stab-2col">
+              <div class="card">
+                <div class="card-label">🕐 Time Clock</div>
+                <div style="color:var(--text-muted);font-size:.84rem;line-height:1.6;margin-bottom:16px;">Configure clock-in windows, late punch rules, kiosk behavior, and break settings in the dedicated Time Clock Settings page.</div>
+                <a href="timeclock-settings.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;width:fit-content;">🕐 Open Time Clock Settings →</a>
+              </div>
+            </div>
+          </div><!-- closes stab-timeclock -->
+
+          <!-- SCHEDULING -->
+          <div class="stab-section" id="stab-scheduling" style="display:none;">
+            <div class="stab-2col">
+              <div class="card">
+                <div class="card-label">📅 Schedule Preferences</div>
+                <div class="field"><label>Week Starts On</label><select id="settingWeekStart"><option value="0">Sunday</option><option value="1" selected>Monday</option><option value="6">Saturday</option></select></div>
+                <div class="field"><label>Default Schedule View</label><select id="settingDefaultView"><option value="week">Week View</option><option value="day">Day View</option></select></div>
+              </div>
+              <div class="card">
+                <div class="card-label">⚙️ Advanced Scheduling</div>
+                <div style="color:var(--text-muted);font-size:.84rem;line-height:1.6;margin-bottom:16px;">Configure shift times, per-shift position minimums, coverage rules, auto-scheduler behavior, and alert thresholds in the dedicated Scheduling Settings page.</div>
+                <a href="schedule-settings.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;width:fit-content;">⚙️ Open Scheduling Settings →</a>
+              </div>
+            </div>
+          </div><!-- closes stab-scheduling -->
+
+          <!-- PORTAL -->
+          <div class="stab-section" id="stab-portal" style="display:none;">
+            <div class="stab-2col">
+              <div class="card">
+                <div class="card-label">🔗 Portal</div>
+                <div style="color:var(--text-muted);font-size:.84rem;line-height:1.6;margin-bottom:16px;">Manage employee portal access, shift swap and time-off permissions, certifications, and the portal QR code in the dedicated Portal Settings page.</div>
+                <a href="portal-settings.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;width:fit-content;">🔗 Open Portal Settings →</a>
+              </div>
+            </div>
+          </div><!-- closes stab-portal -->
+
+        </div><!-- closes settings grid wrapper -->
+      </div><!-- closes page-settings -->
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
+      <span class="nav-label">Home</span>
+    </a>
+    <a href="employees.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-users"></i></div>
+      <span class="nav-label">Staff</span>
+    </a>
+    <a href="schedule.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
+      <span class="nav-label">Schedule</span>
+    </a>
+    <a href="settings.html" class="nav-item active">
+      <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
+      <span class="nav-label">Settings</span>
+    </a>
+  </nav>
+
+</div>
+
+<script type="module" src="../js/firebase.js"></script>
+<script type="module" src="../js/auth-share.js"></script>
+<script type="module" src="../js/main.js"></script>
+<script type="module" src="../js/settings-app.js"></script>
+
+</body>
+</html>

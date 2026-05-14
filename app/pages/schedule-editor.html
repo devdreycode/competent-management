@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Team Scheduler | Competent Management</title>
+
+  <script>
+    if (localStorage.getItem('dark-mode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+  <link rel="stylesheet" href="../css/schedule.css">
+  
+  </style>
+
+
+</head>
+<body>
+
+<!-- Print-only header (hidden on screen) -->
+<div id="printHeader" style="display:none; margin:0 0 14px;">
+  <h2 style="margin:0;">Weekly Schedule</h2>
+  <div style="margin-top:6px; font-weight:700;">
+    <span id="displayCompanyName">Company</span>
+    <span style="opacity:.6;"> · </span>
+    <span id="printWeekRange">Week</span>
+  </div>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-left">
+    <a href="index.html?page=schedule" class="back-link">
+      <i class="fas fa-arrow-left"></i> Schedule Hub
+    </a>
+    <div class="page-title-block">
+      <h2 class="page-title">Weekly Scheduler</h2>
+      <p id="companyNameDisplay" class="page-subtitle">Loading...</p>
+    </div>
+  </div>
+  <div class="page-header-right">
+    <span id="publishBadge" class="draft">● Draft</span>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar-card">
+  <!-- Row 1: Filters + Week Picker -->
+  <div class="toolbar-row">
+    <div class="toolbar-group">
+      <label class="toolbar-label">Shift</label>
+      <select id="shiftFilter" class="toolbar-select">
+        <option value="all">All Shifts</option>
+        <option value="morning">Morning</option>
+        <option value="evening">Evening</option>
+        <option value="night">Night</option>
+      </select>
+    </div>
+    <div class="toolbar-group">
+      <label class="toolbar-label">Position</label>
+      <select id="positionFilter" class="toolbar-select" title="Show only one position">
+        <option value="">All Positions</option>
+      </select>
+    </div>
+    <div class="toolbar-divider"></div>
+    <div class="toolbar-group">
+      <label class="toolbar-label" for="weekPicker">Week of</label>
+      <input type="date" id="weekPicker" class="toolbar-input">
+      <button id="btnGoWeek" type="button" class="btn-sm">Go</button>
+      <select id="weekSelect" class="toolbar-select"></select>
+      <span id="weekLabel" class="week-label-text"></span>
+    </div>
+  </div>
+
+  <!-- Row 2: Actions -->
+  <div class="toolbar-row toolbar-actions">
+    <div id="coverageStrip" class="coverage-strip"></div>
+    <div class="action-group">
+      <button id="autoGenerateBtn" type="button" class="btn-action"
+              title="Fill the week using normal schedules + approved time off">
+        <i class="fas fa-wand-magic-sparkles"></i> Auto Generate
+      </button>
+      <button id="clearAllBtn" type="button" class="btn-action btn-action-danger">
+        <i class="fas fa-trash-can"></i> Clear All
+      </button>
+      <button id="saveScheduleBtn" type="button" class="btn-action btn-action-primary">
+        <i class="fas fa-floppy-disk"></i> Save
+      </button>
+      <div class="toolbar-divider"></div>
+      <button id="publishScheduleBtn" type="button" class="btn-action btn-publish">
+        <i class="fas fa-paper-plane"></i> Publish
+      </button>
+      <button id="unpublishScheduleBtn" type="button" class="btn-action btn-unpublish" style="display:none;">
+        <i class="fas fa-eye-slash"></i> Unpublish
+      </button>
+      <div class="toolbar-divider"></div>
+      <button class="btn-action" id="printScheduleBtn" type="button">
+        <i class="fas fa-print"></i> Print
+      </button>
+     <a href="./schedule-settings.html" class="btn-action btn-action-link">
+  <i class="fas fa-gear"></i> Settings
+</a>
+    </div>
+  </div>
+
+  <div id="scheduleSettingsWarning" class="schedule-warning hidden">
+    ⚠ Schedule settings are empty. Go to
+    <a href="schedule-settings.html">Schedule Settings</a>
+    and set coverage before auto generating.
+  </div>
+</div>
+
+<!-- Coverage Alerts -->
+<div id="coverageAlerts" style="display:none;"></div>
+
+<!-- Week Summary Panel -->
+<div id="weekSummary" class="summary-card">
+  <div id="weekQuality"></div>
+  <div class="summary-item">
+    <div class="summary-label">Coverage Score</div>
+    <div id="coverageScore" class="summary-value">--</div>
+  </div>
+  <div class="summary-item">
+    <div class="summary-label">Total Scheduled Hours</div>
+    <div id="totalHours" class="summary-value">--</div>
+  </div>
+  <div class="summary-item">
+    <div class="summary-label">Minor Compliance</div>
+    <div id="minorStatus" class="summary-value">--</div>
+  </div>
+  <div class="summary-item">
+    <div class="summary-label">Rest Violations</div>
+    <div id="restStatus" class="summary-value">--</div>
+  </div>
+</div>
+
+<!-- Schedule Table -->
+<div class="table-wrapper">
+  <table id="scheduleTable">
+    <thead>
+      <tr>
+        <th>Staff Member</th>
+        <th>Mon</th><th>Tue</th><th>Wed</th>
+        <th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+      </tr>
+    </thead>
+    <tbody id="scheduleTableBody">
+      <tr>
+        <td colspan="8" style="text-align:center; padding:40px; color:var(--muted); font-size:.85rem;">
+          Initializing...
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    /* Highlight today's column */
+    const _today  = new Date().getDay();
+    const _dayMap = [6,0,1,2,3,4,5];
+    const _col    = _dayMap[_today] + 1;
+    document.querySelectorAll('#scheduleTable tr').forEach(row => {
+      const cell = row.children[_col];
+      if (cell) cell.style.background = 'rgba(30,86,196,.06)';
+    });
+  </script>
+</div>
+
+<!-- Right-click context menu — IDs/data-actions unchanged -->
+<div id="ctxMenu" class="ctx-menu">
+  <div class="ctx-item" data-action="normal">🟢 Normal</div>
+  <div class="ctx-item" data-action="oncall">📞 On Call</div>
+  <div class="ctx-item" data-action="off">⛔ OFF</div>
+  <div class="ctx-item" data-action="clear">✖ Clear</div>
+</div>
+
+<!-- Confirm clear box — IDs unchanged -->
+<div id="confirmClearBox" class="confirm-box hidden">
+  <span>Clear shift?</span>
+  <button id="confirmYes" class="pill danger">Clear</button>
+  <button id="confirmNo"  class="pill neutral">Cancel</button>
+</div>
+
+
+
+<!-- All original JS modules — untouched, exact same src paths -->
+<script type="module" src="../js/schedule-editor.js"></script>
+
+<script type="module" src="../js/auth-share.js"></script>
+
+
+</body>
+</html>

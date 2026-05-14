@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <title>Time Clock</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #f0f4fa;
+      --bg-2:        #e8eef7;
+      --surface:     #ffffff;
+      --border:      #e2e6ed;
+      --border-2:    #d0d6e0;
+      --text:        #0f1923;
+      --text-2:      #4a5568;
+      --text-3:      #8a97a8;
+      --accent:      #2563eb;
+      --accent-light:#eff4ff;
+      --accent-2:    #3b7ffc;
+      --green:       #059669;
+      --green-bg:    #ecfdf5;
+      --green-border:#a7f3d0;
+      --red:         #dc2626;
+      --red-bg:      #fef2f2;
+      --red-border:  #fecaca;
+      --amber:       #d97706;
+      --amber-bg:    #fffbeb;
+      --amber-border:#fde68a;
+      --blue:        #2563eb;
+      --blue-bg:     #eff6ff;
+      --blue-border: #bfdbfe;
+      --radius-sm:   10px;
+      --radius:      16px;
+      --radius-lg:   24px;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Geist', 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── BACKGROUND TEXTURE ─────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 60% at 50% -5%, rgba(37,99,235,0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 95% 95%, rgba(99,102,241,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 0% 80%,  rgba(16,185,129,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* subtle dot grid */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(37,99,235,0.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────── */
+    .kiosk-layout {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 32px 20px;
+      gap: 0;
+    }
+
+    /* ── TOP META ──────────────────────────────── */
+    .kiosk-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .company-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.25);
+    }
+
+    #companyName {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* ── LIVE CLOCK ────────────────────────────── */
+    #kiosk-clock {
+      font-family: 'Geist Mono', monospace;
+      font-size: clamp(3rem, 9vw, 5.5rem);
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .kiosk-date {
+      font-size: 0.82rem;
+      color: var(--text-3);
+      font-weight: 500;
+      margin-bottom: 0;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── OFFLINE BANNER ───────────────────────── */
+    #offlineBanner {
+      display: none;
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-border);
+      color: var(--amber);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+    }
+
+    /* ── CARD ──────────────────────────────────── */
+    .kiosk-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 8px 24px rgba(0,0,0,0.06),
+        0 32px 64px rgba(0,0,0,0.04);
+      margin-top: 28px;
+    }
+
+    /* ── AUTH SECTION ──────────────────────────── */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* PIN DOTS */
+    .pin-display {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 28px;
+      height: 40px;
+      align-items: center;
+    }
+
+    .pin-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border-2);
+      background: transparent;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pin-dot.filled {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: scale(1.15);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.14);
+    }
+
+    /* PIN GRID */
+    .pin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .pin-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Geist Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 500;
+      padding: 17px 0;
+      cursor: pointer;
+      transition: all 0.13s;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: -0.01em;
+    }
+
+    .pin-btn:hover {
+      background: var(--bg-2);
+      border-color: var(--border-2);
+    }
+.employee-shift{
+  margin-top:6px;
+  font-size:.78rem;
+  color:var(--text-3);
+  font-weight:500;
+}
+    .pin-btn:active {
+      transform: scale(0.95);
+      background: #e8ecf2;
+    }
+
+    .pin-btn.clear {
+      font-family: 'Geist', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-2);
+      letter-spacing: 0;
+    }
+
+    .pin-btn.ok {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+      font-family: 'Geist', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+    }
+
+    .pin-btn.ok:hover  { background: #1d4ed8; border-color: #1d4ed8; box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
+    .pin-btn.ok:active { transform: scale(0.95); }
+
+    /* ── ACTION SECTION ────────────────────────── */
+    #action-section {
+      display: block;
+    }
+
+    #action-section.hidden {
+      display: none;
+    }
+
+    .welcome-block {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .welcome-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-light), #dbeafe);
+      border: 2px solid var(--blue-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 0 auto 12px;
+      font-family: 'Geist', sans-serif;
+    }
+
+    #employee-welcome {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    #status-msg {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-3);
+      min-height: 18px;
+      transition: all 0.25s;
+    }
+
+    #status-msg.show {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ACTION BUTTONS */
+    .action-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-main {
+      padding: 16px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-family: 'Geist', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-main .btn-icon { font-size: 1.2rem; line-height: 1; }
+    .btn-main .btn-label { letter-spacing: 0.01em; }
+
+    .btn-main:disabled {
+      opacity: 0.32;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn-main:not(:disabled):active { transform: scale(0.96); }
+
+    .btn-in {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green);
+    }
+    .btn-in:not(:disabled):hover { background: #d1fae5; border-color: #6ee7b7; box-shadow: 0 2px 8px rgba(5,150,105,0.15); }
+
+    .btn-out {
+      background: var(--red-bg);
+      border-color: var(--red-border);
+      color: var(--red);
+    }
+    .btn-out:not(:disabled):hover { background: #fee2e2; border-color: #fca5a5; box-shadow: 0 2px 8px rgba(220,38,38,0.15); }
+
+    .btn-break-start {
+      background: var(--amber-bg);
+      border-color: var(--amber-border);
+      color: var(--amber);
+    }
+    .btn-break-start:not(:disabled):hover { background: #fef3c7; border-color: #fcd34d; box-shadow: 0 2px 8px rgba(217,119,6,0.15); }
+
+    .btn-break-end {
+      background: var(--blue-bg);
+      border-color: var(--blue-border);
+      color: var(--blue);
+    }
+    .btn-break-end:not(:disabled):hover { background: #dbeafe; border-color: #93c5fd; box-shadow: 0 2px 8px rgba(37,99,235,0.15); }
+
+    /* ── GLOW ON ACTION ────────────────────────── */
+    @keyframes cardPulse {
+      0%   {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06), 0 32px 64px rgba(0,0,0,0.04);
+        border-color: var(--border);
+        outline: 3px solid transparent;
+        outline-offset: 2px;
+      }
+      25%  {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06), 0 0 32px var(--pulse-glow), 0 32px 64px rgba(0,0,0,0.04);
+        border-color: var(--pulse-border);
+        outline: 3px solid var(--pulse-border);
+        outline-offset: 3px;
+      }
+      70%  {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06), 0 0 20px var(--pulse-glow), 0 32px 64px rgba(0,0,0,0.04);
+        border-color: var(--pulse-border);
+        outline: 3px solid var(--pulse-border);
+        outline-offset: 3px;
+      }
+      100% {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06), 0 32px 64px rgba(0,0,0,0.04);
+        border-color: var(--border);
+        outline: 3px solid transparent;
+        outline-offset: 2px;
+      }
+    }
+
+    .glow-green {
+      --pulse-border: #6ee7b7;
+      --pulse-glow:   rgba(5,150,105,0.35);
+      animation: cardPulse 1.4s ease-out forwards;
+    }
+    .glow-red {
+      --pulse-border: #fca5a5;
+      --pulse-glow:   rgba(220,38,38,0.35);
+      animation: cardPulse 1.4s ease-out forwards;
+    }
+    .glow-amber {
+      --pulse-border: #fcd34d;
+      --pulse-glow:   rgba(217,119,6,0.35);
+      animation: cardPulse 1.4s ease-out forwards;
+    }
+    .glow-blue {
+      --pulse-border: #93c5fd;
+      --pulse-glow:   rgba(37,99,235,0.35);
+      animation: cardPulse 1.4s ease-out forwards;
+    }
+
+    /* ── SUCCESS FLASH ─────────────────────────── */
+    .btn-success { animation: btnPop 0.35s ease-out; }
+
+    @keyframes btnPop {
+      0%   { transform: scale(1); }
+      45%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    /* ── FOOTER ────────────────────────────────── */
+    .kiosk-footer {
+      margin-top: 24px;
+      font-size: 0.72rem;
+      color: var(--text-3);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── HIDDEN ────────────────────────────────── */
+    .hidden { display: none !important; }
+    .timeclock-notice{
+  margin-bottom:16px;
+  padding:10px 14px;
+  border-radius:12px;
+  font-size:.78rem;
+  font-weight:600;
+  text-align:center;
+  background:var(--blue-bg);
+  border:1px solid var(--blue-border);
+  color:var(--blue);
+}
+
+  </style>
+</head>
+<body>
+
+<div class="kiosk-layout">
+
+  <!-- META: logo + company + clock -->
+  <div class="kiosk-meta">
+    <div class="company-logo">⚡</div>
+    <div id="companyName">Loading…</div>
+    <div id="kiosk-clock">00:00:00</div>
+    <div class="kiosk-date" id="kiosk-date">—</div>
+  </div>
+
+  <div id="offlineBanner">⚠️ Offline — punches saved locally</div>
+<div id="timeclockNotice" class="timeclock-notice hidden"></div>
+  <!-- CARD -->
+  <div class="kiosk-card" id="kioskCard">
+
+    <!-- PIN ENTRY -->
+    <div id="auth-section">
+      <div class="section-label">Enter your PIN</div>
+
+      <div class="pin-display" id="pinDisplay">
+        <div class="pin-dot" id="dot0"></div>
+        <div class="pin-dot" id="dot1"></div>
+        <div class="pin-dot" id="dot2"></div>
+        <div class="pin-dot" id="dot3"></div>
+      </div>
+
+      <div class="pin-grid">
+        <button class="pin-btn" onclick="pressPin('1')">1</button>
+        <button class="pin-btn" onclick="pressPin('2')">2</button>
+        <button class="pin-btn" onclick="pressPin('3')">3</button>
+        <button class="pin-btn" onclick="pressPin('4')">4</button>
+        <button class="pin-btn" onclick="pressPin('5')">5</button>
+        <button class="pin-btn" onclick="pressPin('6')">6</button>
+        <button class="pin-btn" onclick="pressPin('7')">7</button>
+        <button class="pin-btn" onclick="pressPin('8')">8</button>
+        <button class="pin-btn" onclick="pressPin('9')">9</button>
+        <button class="pin-btn clear" onclick="clearPin()">Clear</button>
+        <button class="pin-btn" onclick="pressPin('0')">0</button>
+        <button class="pin-btn ok" id="okBtn" onclick="submitPin()">OK</button>
+      </div>
+    </div>
+
+    <!-- PUNCH ACTIONS -->
+    <div id="action-section" class="hidden">
+      <div class="welcome-block">
+        <div class="welcome-avatar" id="welcomeAvatar">?</div>
+        <div id="employee-welcome">Hello</div>
+        <div id="employeeShift" class="employee-shift hidden"></div>
+        <div id="status-msg" class="status-toast"></div>
+      </div>
+
+      <div class="action-btns" id="controls">
+        <button class="btn-main btn-in" id="punchInBtn">
+          <span class="btn-icon">↗</span>
+          <span class="btn-label">Clock In</span>
+        </button>
+        <button class="btn-main btn-out" id="punchOutBtn">
+          <span class="btn-icon">↙</span>
+          <span class="btn-label">Clock Out</span>
+        </button>
+        <button class="btn-main btn-break-start" id="startBreakBtn">
+          <span class="btn-icon">⏸</span>
+          <span class="btn-label">Start Break</span>
+        </button>
+        <button class="btn-main btn-break-end" id="endBreakBtn">
+          <span class="btn-icon">▶</span>
+          <span class="btn-label">End Break</span>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- kiosk-card -->
+
+  <div class="kiosk-footer" style="display:flex;align-items:center;gap:14px;">
+    <span>Workforce Manager · Kiosk Mode</span>
+    <button
+      title="Manager Settings"
+      style="background:none;border:none;cursor:pointer;color:var(--text-3);font-size:.88rem;padding:4px 6px;border-radius:6px;transition:color .15s,background .15s;line-height:1;"
+      onclick="window.location.href='timeclock-settings.html'"
+    >⚙️</button>
+  </div>
+
+</div><!-- kiosk-layout -->
+
+
+<script type="module" src="../js/firebase.js"></script>
+<script type="module" src="../js/timeclock.js"></script>
+<script type="module">
+  // Apply dot patch after module loads
+  setTimeout(() => window._dotPatch?.(), 100);
+</script>
+
+</body>
+</html>

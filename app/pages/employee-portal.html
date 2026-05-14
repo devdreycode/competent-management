@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1"/>
+  <title>Employee Portal | Competent Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    /* ═══ TOKENS — LIGHT ═══════════════════════════ */
+    :root {
+      --bg:           #f1f5fb;
+      --bg2:          #e8edf7;
+      --surface:      #ffffff;
+      --surface2:     #f8faff;
+      --border:       #e2e8f4;
+      --border2:      #d0d9ee;
+      --text:         #0f172a;
+      --text2:        #374160;
+      --text-muted:   #64748b;
+      --text-light:   #94a3b8;
+      --accent:       #2563eb;
+      --accent-light: #dbeafe;
+      --accent-dark:  #1d4ed8;
+      --green:        #16a34a;
+      --green-bg:     #dcfce7;
+      --red:          #dc2626;
+      --red-bg:       #fee2e2;
+      --amber:        #d97706;
+      --amber-bg:     #fef3c7;
+      --purple:       #7c3aed;
+      --purple-bg:    #ede9fe;
+      --shadow:       0 1px 3px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.05);
+      --shadow-lg:    0 8px 32px rgba(15,23,42,.10), 0 2px 8px rgba(15,23,42,.06);
+      --radius:       14px;
+      --radius-sm:    9px;
+      --header-h:     60px;
+      --sidebar-w:    220px;
+    }
+    /* ═══ TOKENS — DARK ════════════════════════════ */
+    body.dark-mode {
+      --bg:           #0e1117;
+      --bg2:          #161b27;
+      --surface:      #1a2133;
+      --surface2:     #212d42;
+      --border:       #2a3654;
+      --border2:      #334066;
+      --text:         #e8edf8;
+      --text2:        #b8c4de;
+      --text-muted:   #7a8db0;
+      --text-light:   #4d617f;
+      --accent:       #3b82f6;
+      --accent-light: #1e3a6e;
+      --accent-dark:  #60a5fa;
+      --green:        #22c55e;
+      --green-bg:     #14532d;
+      --red:          #f87171;
+      --red-bg:       #7f1d1d;
+      --amber:        #fbbf24;
+      --amber-bg:     #78350f;
+      --purple:       #a78bfa;
+      --purple-bg:    #4c1d95;
+      --shadow:       0 1px 3px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.25);
+    }
+
+    /* ═══ BASE ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      transition: background .25s, color .25s;
+    }
+    button { font-family: inherit; cursor: pointer; }
+    a { text-decoration: none; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 100px; }
+
+    /* ═══ PIN GATE ══════════════════════════════════ */
+    #pinGateWrap {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .pin-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-lg);
+      padding: 40px 36px; width: 100%; max-width: 400px; text-align: center;
+    }
+    .pin-logo {
+      width: 56px; height: 56px; border-radius: 14px; background: var(--accent);
+      color: white; font-size: 1.4rem; display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 20px;
+    }
+    .pin-title { font-size: 1.3rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .pin-sub { font-size: .85rem; color: var(--text-muted); margin-bottom: 28px; }
+    .pin-input-wrap {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px;
+      transition: border-color .15s;
+    }
+    .pin-input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .pin-input-wrap i { color: var(--text-light); font-size: .9rem; }
+    .pin-input-wrap input {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-family: inherit; font-size: 1.2rem; letter-spacing: .25em;
+      text-align: center; color: var(--text);
+    }
+    .pin-input-wrap input::placeholder { letter-spacing: .05em; font-size: .9rem; color: var(--text-light); }
+    .pin-error { font-size: .8rem; color: var(--red); margin-bottom: 12px; min-height: 20px; }
+    .btn-pin {
+      width: 100%; padding: 12px; border-radius: var(--radius-sm); border: none;
+      background: var(--accent); color: white; font-size: .92rem; font-weight: 700;
+      box-shadow: 0 2px 10px rgba(37,99,235,.3); transition: all .15s;
+    }
+    .btn-pin:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .pin-dark-row { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: .78rem; color: var(--text-muted); }
+
+    /* ═══ APP SHELL (after login) ═══════════════════ */
+    #appShell { display: none; height: 100vh; overflow: hidden; flex-direction: column; }
+    #appShell.visible { display: flex; }
+
+    /* Header */
+    .portal-header {
+      height: var(--header-h); display: flex; align-items: center; gap: 12px;
+      padding: 0 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+      flex-shrink: 0; transition: background .25s, border-color .25s;
+    }
+    .portal-brand { display: flex; align-items: center; gap: 9px; }
+    .portal-brand-icon {
+      width: 32px; height: 32px; border-radius: 8px; background: var(--accent);
+      color: white; display: flex; align-items: center; justify-content: center; font-size: .8rem;
+    }
+    .portal-brand-name { font-size: .92rem; font-weight: 800; color: var(--text); }
+    .portal-brand-tag { font-size: .68rem; color: var(--text-muted); }
+
+    .header-spacer { flex: 1; }
+    .emp-header-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 100px;
+      background: var(--bg2); border: 1px solid var(--border);
+      font-size: .8rem; font-weight: 600; color: var(--text2);
+    }
+    .emp-avatar-sm {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--accent);
+      color: white; font-size: .65rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-logout {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 13px; border-radius: var(--radius-sm);
+      background: var(--bg2); border: 1px solid var(--border2);
+      color: var(--text-muted); font-size: .8rem; font-weight: 600; transition: all .15s;
+    }
+    .btn-logout:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+    /* Dark toggle pill */
+    .dark-pill {
+      display: flex; align-items: center; gap: 7px;
+      padding: 6px 12px; border-radius: 100px;
+      background: var(--bg2); border: 1px solid var(--border); cursor: pointer;
+      font-size: .75rem; color: var(--text-muted); transition: all .15s; flex-shrink: 0;
+    }
+    .dark-pill:hover { background: var(--accent-light); color: var(--accent); }
+    .toggle-knob {
+      width: 32px; height: 18px; border-radius: 100px;
+      background: var(--border2); position: relative; transition: background .2s;
+    }
+    .toggle-knob::after {
+      content: ''; position: absolute; width: 13px; height: 13px;
+      border-radius: 50%; background: white; top: 2.5px; left: 2.5px;
+      transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    body.dark-mode .toggle-knob { background: var(--accent); }
+    body.dark-mode .toggle-knob::after { transform: translateX(14px); }
+
+    /* Body layout */
+    .portal-body { flex: 1; display: flex; overflow: hidden; }
+
+    /* ═══ LEFT NAV ══════════════════════════════════ */
+    .portal-nav {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: background .25s, border-color .25s;
+    }
+    .nav-emp-card {
+      padding: 18px 16px; border-bottom: 1px solid var(--border);
+    }
+    .nav-emp-avatar {
+      width: 42px; height: 42px; border-radius: 50%; background: var(--accent);
+      color: white; font-size: 1rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
+    }
+    .nav-emp-name { font-size: .92rem; font-weight: 700; color: var(--text); }
+    .nav-emp-role { font-size: .74rem; color: var(--text-muted); margin-top: 2px; }
+    .nav-emp-shift {
+      display: inline-flex; align-items: center; gap: 5px; margin-top: 8px;
+      font-size: .72rem; font-weight: 700; padding: 3px 10px; border-radius: 100px;
+      background: var(--accent-light); color: var(--accent);
+    }
+
+    .portal-nav-links { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+    .nav-section-lbl { font-size: .63rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-light); padding: 10px 10px 4px; }
+    .nav-link {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 12px; border-radius: var(--radius-sm);
+      font-size: .85rem; font-weight: 500; color: var(--text-muted);
+      cursor: pointer; transition: all .15s; border: none; background: transparent; width: 100%; text-align: left;
+    }
+    .nav-link:hover { background: var(--bg2); color: var(--text); }
+    .nav-link.active { background: var(--accent-light); color: var(--accent); font-weight: 700; }
+    .nav-link .nav-icon { width: 16px; text-align: center; font-size: .85rem; }
+    .nav-badge {
+      margin-left: auto; font-size: .65rem; font-weight: 800;
+      background: var(--accent); color: white; padding: 2px 7px; border-radius: 100px;
+    }
+
+    /* ═══ MAIN CONTENT ══════════════════════════════ */
+    .portal-main { flex: 1; overflow-y: auto; padding: 24px; }
+
+    /* Page sections */
+    .portal-page { display: none; }
+    .portal-page.active { display: block; }
+
+    /* Page header */
+    .page-hd { margin-bottom: 22px; }
+    .page-hd-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .page-hd-sub { font-size: .82rem; color: var(--text-muted); margin-top: 3px; }
+
+    /* ═══ CARDS ════════════════════════════════════ */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      transition: background .25s, border-color .25s;
+    }
+    .card-body { padding: 18px 20px; }
+    .card-hd { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: .88rem; font-weight: 700; color: var(--text); }
+
+    /* Stats row */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow);
+      transition: background .25s;
+    }
+    .stat-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 6px; }
+    .stat-value { font-size: 1.5rem; font-weight: 900; color: var(--text); line-height: 1; }
+    .stat-sub { font-size: .74rem; color: var(--text-muted); margin-top: 5px; }
+
+    /* Schedule pills */
+    .schedule-week { display: flex; flex-direction: column; gap: 8px; }
+    .schedule-day {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-size: .85rem;
+    }
+    .schedule-day.today { border-color: var(--accent); background: var(--accent-light); }
+    .sched-dow { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); width: 32px; flex-shrink: 0; }
+    .schedule-day.today .sched-dow { color: var(--accent); }
+    .sched-shift-pill {
+      font-size: .76rem; font-weight: 700; padding: 3px 10px; border-radius: 100px;
+      flex-shrink: 0;
+    }
+    .pill-morning { background: #dbeafe; color: #1d4ed8; }
+    .pill-evening { background: #ffedd5; color: #c2410c; }
+    .pill-night   { background: #ede9fe; color: #6d28d9; }
+    .pill-off     { background: var(--bg2); color: var(--text-light); }
+    .sched-time { font-size: .82rem; color: var(--text-muted); }
+    .sched-spacer { flex: 1; }
+    .sched-hours { font-size: .78rem; font-weight: 700; color: var(--text2); }
+
+    /* Punch log */
+    .punch-log { display: flex; flex-direction: column; gap: 6px; }
+    .punch-row {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-size: .84rem;
+    }
+    .punch-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .punch-in-dot  { background: var(--green); }
+    .punch-out-dot { background: var(--red); }
+    .punch-label { font-weight: 600; color: var(--text); flex: 1; }
+    .punch-time { color: var(--text-muted); font-size: .8rem; }
+    .punch-hours { font-size: .78rem; font-weight: 700; color: var(--accent); }
+
+    /* ═══ TICKETS ═══════════════════════════════════ */
+    .ticket-list-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .ticket-row {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); cursor: pointer; transition: all .15s;
+    }
+    .ticket-row:hover { border-color: var(--accent); background: var(--accent-light); }
+    .ticket-icon {
+      width: 36px; height: 36px; border-radius: 9px; display: flex;
+      align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0;
+    }
+    .ticket-info { flex: 1; min-width: 0; }
+    .ticket-row-title { font-size: .88rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ticket-row-sub { font-size: .76rem; color: var(--text-muted); margin-top: 2px; }
+    .ticket-row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .status-badge {
+      font-size: .65rem; font-weight: 800; padding: 3px 9px; border-radius: 100px;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .badge-open     { background: var(--accent-light); color: var(--accent); }
+    .badge-progress { background: var(--amber-bg); color: var(--amber); }
+    .badge-resolved { background: var(--green-bg); color: var(--green); }
+    .badge-warning  { background: var(--amber-bg); color: var(--amber); }
+    .ticket-time { font-size: .7rem; color: var(--text-light); }
+
+    /* ═══ REQUESTS ══════════════════════════════════ */
+    .request-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .req-type-card {
+      padding: 16px; border-radius: var(--radius-sm); border: 2px solid var(--border);
+      background: var(--surface); cursor: pointer; transition: all .15s; text-align: center;
+    }
+    .req-type-card:hover { border-color: var(--accent); background: var(--accent-light); }
+    .req-type-card.selected { border-color: var(--accent); background: var(--accent-light); }
+    .req-type-icon { font-size: 1.4rem; margin-bottom: 6px; }
+    .req-type-label { font-size: .82rem; font-weight: 700; color: var(--text); }
+    .req-type-sub { font-size: .72rem; color: var(--text-muted); margin-top: 2px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .field label { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+    .field input, .field select, .field textarea {
+      padding: 9px 12px; background: var(--bg);
+      border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      font-family: inherit; font-size: .88rem; color: var(--text);
+      outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ═══ NOTIFICATIONS ═════════════════════════════ */
+    .notif-list { display: flex; flex-direction: column; gap: 8px; }
+    .notif-item {
+      display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); transition: background .15s;
+    }
+    .notif-item.unread { border-left: 3px solid var(--accent); background: var(--accent-light); }
+    .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
+    .notif-body { flex: 1; }
+    .notif-msg { font-size: .85rem; color: var(--text); line-height: 1.5; }
+    .notif-time { font-size: .72rem; color: var(--text-muted); margin-top: 3px; }
+
+    /* ═══ CHAT SLIDE PANEL ══════════════════════════ */
+    #chatPanelOverlay {
+      position: fixed; inset: 0; background: rgba(15,23,42,.5);
+      backdrop-filter: blur(3px); z-index: 499;
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    #chatPanelOverlay.open { opacity: 1; pointer-events: all; }
+
+    #chatPanel {
+      position: fixed; top: 0; right: 0;
+      width: 400px; max-width: 100vw; height: 100vh;
+      background: var(--surface); border-left: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      display: flex; flex-direction: column;
+      z-index: 500; transform: translateX(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    #chatPanel.open { transform: translateX(0); }
+
+    .chat-panel-head {
+      padding: 16px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .chat-panel-head-info { flex: 1; min-width: 0; }
+    .chat-panel-title { font-size: .92rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-panel-sub { font-size: .74rem; color: var(--text-muted); margin-top: 2px; }
+    .btn-close-panel {
+      background: none; border: none; font-size: 1.1rem; color: var(--text-muted);
+      cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: background .15s; flex-shrink: 0;
+    }
+    .btn-close-panel:hover { background: var(--bg2); color: var(--red); }
+
+    #chatPanelMessages {
+      flex: 1; overflow-y: auto; padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .msg-wrap { display: flex; gap: 8px; align-items: flex-end; }
+    .msg-wrap.outgoing { flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .6rem; font-weight: 800; color: white;
+    }
+    .av-mgr { background: var(--purple); }
+    .av-emp { background: var(--accent); }
+    .msg-bubble {
+      max-width: 75%; padding: 9px 13px; border-radius: 13px;
+      font-size: .86rem; line-height: 1.5;
+    }
+    .msg-wrap.incoming .msg-bubble {
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+      border-bottom-left-radius: 4px; box-shadow: var(--shadow);
+    }
+    .msg-wrap.outgoing .msg-bubble {
+      background: var(--accent); color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .msg-ts { font-size: .65rem; opacity: .6; margin-top: 3px; display: block; }
+    .msg-wrap.outgoing .msg-ts { text-align: right; }
+
+    #chatPanelTyping { font-size: .74rem; color: var(--text-muted); padding: 0 16px 6px; min-height: 20px; flex-shrink: 0; }
+
+    .chat-input-row {
+      display: flex; gap: 8px; padding: 12px 14px;
+      border-top: 1px solid var(--border); flex-shrink: 0;
+      background: var(--surface);
+    }
+    .chat-input-inner {
+      flex: 1; display: flex; align-items: center; gap: 8px;
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 12px; padding: 9px 13px; transition: border-color .15s;
+    }
+    .chat-input-inner:focus-within { border-color: var(--accent); }
+    .chat-input-inner input { flex: 1; border: none; background: transparent; outline: none; font-family: inherit; font-size: .86rem; color: var(--text); }
+    .chat-input-inner input::placeholder { color: var(--text-light); }
+    .btn-chat-send {
+      width: 38px; height: 38px; border-radius: 10px; border: none;
+      background: var(--accent); color: white; font-size: .88rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(37,99,235,.3); transition: all .15s; flex-shrink: 0;
+    }
+    .btn-chat-send:hover { background: var(--accent-dark); transform: scale(1.05); }
+
+    /* ═══ BUTTONS ═══════════════════════════════════ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: var(--radius-sm);
+      font-family: inherit; font-size: .85rem; font-weight: 700;
+      border: none; transition: all .15s;
+    }
+    .btn-primary { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(37,99,235,.25); }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-secondary { background: var(--bg2); color: var(--text2); border: 1px solid var(--border2); }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-full { width: 100%; justify-content: center; }
+
+    /* ═══ EMPTY STATE ═══════════════════════════════ */
+    .empty-state { padding: 40px 20px; text-align: center; color: var(--text-muted); }
+    .empty-state i { font-size: 2rem; margin-bottom: 12px; opacity: .25; display: block; }
+    .empty-state p { font-size: .85rem; line-height: 1.6; }
+
+    /* ═══ TOAST ═════════════════════════════════════ */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid var(--border); border-radius: 100px;
+      padding: 10px 22px; font-size: .84rem; font-weight: 600; color: var(--text);
+      box-shadow: var(--shadow-lg); opacity: 0; transition: all .3s; z-index: 9999;
+      display: flex; align-items: center; gap: 8px; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast-dot.green { color: var(--green); }
+    .toast-dot.amber { color: var(--amber); }
+    .toast-dot.red   { color: var(--red); }
+
+    /* ═══ RESPONSIVE ════════════════════════════════ */
+    @media (max-width: 720px) {
+      .portal-nav { display: none; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .request-grid { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .portal-main { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Dark mode: apply instantly, no flash -->
+<script>
+  if (localStorage.getItem('portalDark') === '1') document.body.classList.add('dark-mode');
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     PIN GATE
+══════════════════════════════════════════════════ -->
+<div id="pinGateWrap">
+  <div class="pin-card">
+    <div class="pin-logo"><i class="fas fa-layer-group"></i></div>
+    <div class="pin-title">Employee Portal</div>
+    <div class="pin-sub" id="portalCompanyName">Competent Management</div>
+
+    <div class="pin-input-wrap">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="employeePin" maxlength="6" placeholder="Enter your PIN" autofocus
+             onkeydown="if(event.key==='Enter') verifyPin()"/>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+    <button class="btn-pin" id="verifyPinBtn" onclick="verifyPin()">
+      <i class="fas fa-arrow-right-to-bracket"></i> &nbsp;Access Portal
+    </button>
+
+    <div class="pin-dark-row">
+      <i class="fas fa-moon"></i> Dark mode
+      <div class="toggle-knob" onclick="toggleDark()" style="cursor:pointer;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     APP SHELL
+══════════════════════════════════════════════════ -->
+<div id="appShell">
+
+  <!-- Header -->
+  <header class="portal-header">
+    <div class="portal-brand">
+      <div class="portal-brand-icon"><i class="fas fa-layer-group"></i></div>
+      <div>
+        <div class="portal-brand-name" id="headerCompanyName">Competent Management</div>
+        <div class="portal-brand-tag">Employee Portal</div>
+      </div>
+    </div>
+
+    <div class="header-spacer"></div>
+
+    <div class="emp-header-pill">
+      <div class="emp-avatar-sm" id="headerAvatarSm">E</div>
+      <span id="headerEmpName">Employee</span>
+    </div>
+
+    <div class="dark-pill" onclick="toggleDark()" title="Toggle dark mode">
+      <i class="fas fa-moon" id="darkIcon"></i>
+      <div class="toggle-knob"></div>
+    </div>
+
+    <button class="btn-logout" onclick="logoutEmployee()">
+      <i class="fas fa-right-from-bracket"></i> Logout
+    </button>
+  </header>
+
+  <!-- Body -->
+  <div class="portal-body">
+
+    <!-- Left nav -->
+    <nav class="portal-nav">
+      <div class="nav-emp-card">
+        <div class="nav-emp-avatar" id="navAvatar">E</div>
+        <div class="nav-emp-name" id="navEmpName">Employee</div>
+        <div class="nav-emp-role" id="navEmpRole">—</div>
+        <div class="nav-emp-shift" id="navEmpShift"><i class="fas fa-clock"></i> —</div>
+      </div>
+
+      <div class="portal-nav-links">
+        <div class="nav-section-lbl">My Portal</div>
+        <button class="nav-link active" data-page="home" onclick="switchPage('home', this)">
+          <span class="nav-icon"><i class="fas fa-house"></i></span> Overview
+        </button>
+        <button class="nav-link" data-page="schedule" onclick="switchPage('schedule', this)">
+          <span class="nav-icon"><i class="fas fa-calendar-days"></i></span> My Schedule
+        </button>
+        <button class="nav-link" data-page="hours" onclick="switchPage('hours', this)">
+          <span class="nav-icon"><i class="fas fa-clock"></i></span> Hours & Pay
+        </button>
+
+        <div class="nav-section-lbl">Communication</div>
+        <button class="nav-link" data-page="tickets" onclick="switchPage('tickets', this)">
+          <span class="nav-icon"><i class="fas fa-ticket"></i></span> My Tickets
+          <span class="nav-badge" id="ticketBadge" style="display:none;">0</span>
+        </button>
+        <button class="nav-link" data-page="notifications" onclick="switchPage('notifications', this)">
+          <span class="nav-icon"><i class="fas fa-bell"></i></span> Notifications
+          <span class="nav-badge" id="notifBadge" style="display:none;">0</span>
+        </button>
+
+        <div class="nav-section-lbl">Requests</div>
+        <button class="nav-link" data-page="requests" onclick="switchPage('requests', this)">
+          <span class="nav-icon"><i class="fas fa-paper-plane"></i></span> Submit Request
+        </button>
+        <button class="nav-link" data-page="archive" onclick="switchPage('archive', this)">
+          <span class="nav-icon"><i class="fas fa-box-archive"></i></span> Archive
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="portal-main">
+
+      <!-- ── HOME / OVERVIEW ─────────────────────── -->
+      <section class="portal-page active" id="page-home">
+        <div class="page-hd">
+          <div class="page-hd-title">Welcome back, <span id="overviewName">—</span> 👋</div>
+          <div class="page-hd-sub">Here's what's going on with your shifts and requests.</div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Hours This Week</div>
+            <div class="stat-value" id="statHours">0.0</div>
+            <div class="stat-sub" id="statHoursSub">hrs worked</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Open Tickets</div>
+            <div class="stat-value" id="statTickets">0</div>
+            <div class="stat-sub">awaiting response</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Next Shift</div>
+            <div class="stat-value" style="font-size:1.1rem;" id="statNextShift">—</div>
+            <div class="stat-sub" id="statNextShiftSub">—</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-hd">
+            <span class="card-title"><i class="fas fa-calendar-week" style="color:var(--accent);margin-right:7px;"></i>This Week's Schedule</span>
+          </div>
+          <div class="card-body">
+            <div class="schedule-week" id="homeSchedule">
+              <div class="empty-state"><i class="fas fa-calendar"></i><p>Loading schedule…</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd">
+            <span class="card-title"><i class="fas fa-ticket" style="color:var(--purple);margin-right:7px;"></i>Recent Tickets</span>
+            <button class="btn btn-secondary" style="padding:5px 12px;font-size:.76rem;" onclick="switchPage('tickets', document.querySelector('[data-page=tickets]'))">View All</button>
+          </div>
+          <div class="card-body" id="homeRecentTickets">
+            <div class="empty-state"><i class="fas fa-ticket"></i><p>No tickets yet.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SCHEDULE ─────────────────────────────── -->
+      <section class="portal-page" id="page-schedule">
+        <div class="page-hd">
+          <div class="page-hd-title">My Schedule</div>
+          <div class="page-hd-sub">Your assigned shifts for the current week.</div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Week at a Glance</span></div>
+          <div class="card-body">
+            <div class="schedule-week" id="fullSchedule">
+              <div class="empty-state"><i class="fas fa-calendar"></i><p>Loading…</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── HOURS & PAY ──────────────────────────── -->
+      <section class="portal-page" id="page-hours">
+        <div class="page-hd">
+          <div class="page-hd-title">Hours & Pay</div>
+          <div class="page-hd-sub">Your punch log and earnings for the current week.</div>
+        </div>
+
+        <div class="stats-row" style="margin-bottom:16px;">
+          <div class="stat-card">
+            <div class="stat-label">Hourly Rate</div>
+            <div class="stat-value" id="payDisplay" style="font-size:1.2rem;">$—</div>
+            <div class="stat-sub">per hour</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Hours Worked</div>
+            <div class="stat-value" id="empTotalHours">0.0</div>
+            <div class="stat-sub">this week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Est. Earnings</div>
+            <div class="stat-value" id="estEarnings" style="font-size:1.1rem;">$—</div>
+            <div class="stat-sub">this week</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><span class="card-title"><i class="fas fa-clock" style="color:var(--green);margin-right:7px;"></i>Punch Log — This Week</span></div>
+          <div class="card-body">
+            <div class="punch-log" id="punchLogList">
+              <div class="empty-state"><i class="fas fa-clock"></i><p>No punches recorded this week.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TICKETS ──────────────────────────────── -->
+      <section class="portal-page" id="page-tickets">
+        <div class="page-hd">
+          <div class="page-hd-title">My Tickets</div>
+          <div class="page-hd-sub">Open a ticket to chat with your manager about a shift, payroll, or any issue.</div>
+        </div>
+        <div class="ticket-list-wrap" id="ticketList">
+          <div class="empty-state"><i class="fas fa-ticket"></i><p>No tickets yet. Submit a request to get started.</p></div>
+        </div>
+      </section>
+
+      <!-- ── NOTIFICATIONS ───────────────────────── -->
+      <section class="portal-page" id="page-notifications">
+        <div class="page-hd">
+          <div class="page-hd-title">Notifications</div>
+          <div class="page-hd-sub">Updates and messages from your manager.</div>
+        </div>
+        <div class="notif-list" id="notifList">
+          <div class="empty-state"><i class="fas fa-bell"></i><p>You're all caught up!</p></div>
+        </div>
+      </section>
+
+      <!-- ── REQUESTS ─────────────────────────────── -->
+      <section class="portal-page" id="page-requests">
+        <div class="page-hd">
+          <div class="page-hd-title">Submit a Request</div>
+          <div class="page-hd-sub">Choose a request type and fill in the details below.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="request-grid" id="reqTypeGrid">
+              <div class="req-type-card selected" data-type="running_late" onclick="selectReqType(this)">
+                <div class="req-type-icon">⏰</div>
+                <div class="req-type-label">Running Late</div>
+                <div class="req-type-sub">Let your manager know</div>
+              </div>
+              <div class="req-type-card" data-type="call_out" onclick="selectReqType(this)">
+                <div class="req-type-icon">🤒</div>
+                <div class="req-type-label">Call Out / Sick</div>
+                <div class="req-type-sub">Miss a shift</div>
+              </div>
+              <div class="req-type-card" data-type="time_off" onclick="selectReqType(this)">
+                <div class="req-type-icon">🏖️</div>
+                <div class="req-type-label">Time Off</div>
+                <div class="req-type-sub">Request days off</div>
+              </div>
+              <div class="req-type-card" data-type="shift_swap" onclick="selectReqType(this)">
+                <div class="req-type-icon">🔄</div>
+                <div class="req-type-label">Shift Swap</div>
+                <div class="req-type-sub">Trade with a coworker</div>
+              </div>
+            </div>
+
+            <div id="reqForm">
+              <div class="field-row">
+                <div class="field">
+                  <label id="startLabel">Date</label>
+                  <input type="date" id="reqStartDate"/>
+                </div>
+                <div class="field" id="endDateField" style="display:none;">
+                  <label>End Date</label>
+                  <input type="date" id="reqEndDate"/>
+                </div>
+              </div>
+
+              <div class="field" id="swapField" style="display:none;">
+                <label>Swap With (Coworker)</label>
+                <select id="targetEmployee"><option value="">Select coworker…</option></select>
+              </div>
+
+              <div class="field">
+                <label>Notes / Details</label>
+                <textarea id="reqNotes" rows="3" placeholder="Any additional info for your manager…"></textarea>
+              </div>
+<input
+  type="text"
+  id="ticketSubject"
+  placeholder="Subject"
+  style="
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #d1d5db;
+    margin-bottom:10px;
+  "
+/>
+              <button class="btn btn-primary btn-full" id="submitReqBtn" onclick="submitRequest()">
+                <i class="fas fa-paper-plane"></i> Submit Request
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ARCHIVE ──────────────────────────────── -->
+      <section class="portal-page" id="page-archive">
+        <div class="page-hd">
+          <div class="page-hd-title">Archived Tickets</div>
+          <div class="page-hd-sub">Resolved and closed tickets.</div>
+        </div>
+        <div class="ticket-list-wrap" id="archiveTicketList">
+          <div class="empty-state"><i class="fas fa-box-archive"></i><p>No archived tickets.</p></div>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- portal-body -->
+</div><!-- appShell -->
+
+<!-- ══ CHAT SLIDE PANEL ══════════════════════════ -->
+<div id="chatPanelOverlay" onclick="closeChatPanel()"></div>
+<div id="chatPanel">
+  <div class="chat-panel-head">
+    <div class="chat-panel-head-info">
+      <div class="chat-panel-title" id="chatPanelTitle">Ticket</div>
+      <div class="chat-panel-sub" id="chatPanelSub">—</div>
+    </div>
+    <button class="btn-close-panel" onclick="closeChatPanel()"><i class="fas fa-xmark"></i></button>
+  </div>
+  <div id="chatPanelMessages"></div>
+  <div id="chatPanelTyping"></div>
+  <div class="chat-input-row" id="chatInputRow">
+    <div class="chat-input-inner">
+      <input type="text" id="chatPanelMsgInput" placeholder="Type a reply…"
+             onkeydown="if(event.key==='Enter') sendChatMsg()"/>
+    </div>
+    <button class="btn-chat-send" onclick="sendChatMsg()"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-dot" id="toastDot">●</span><span id="toastMsg"></span></div>
+
+<!-- HIDDEN LEGACY ANCHORS (preserves employee-portal.js bindings) -->
+<div style="display:none;">
+  <div id="portalNav"></div>
+  <div id="pinGate"></div>
+  <div id="portalContent"></div>
+  <div id="form-support"></div>
+  <div id="form-notifications"></div>
+  <div id="form-hours"></div>
+  <div id="form-archive"></div>
+  <div id="form-requests"></div>
+  <div id="chatArea"></div>
+  <div id="ticketMessages"></div>
+  <input id="msgInput"/>
+  <button id="sendMsgBtn"></button>
+  <div id="typingIndicator"></div>
+  <div id="scheduleContainer"></div>
+  <div id="absDisplay"></div>
+  <select id="reqType"></select>
+  <option value="support_ticket">Support Ticket</option>
+  <div id="empNameDisplay"></div>
+</div>
+
+
+<script>
+/* ══════════════════════════════════════════════════
+   PORTAL UI LOGIC
+═════════════════════════════════════════════════ */
+
+// ── Dark mode ──────────────────────────────────────
+function toggleDark() {
+  const on = document.body.classList.toggle('dark-mode');
+  localStorage.setItem('portalDark', on ? '1' : '0');
+  document.getElementById('darkIcon').className = on ? 'fas fa-sun' : 'fas fa-moon';
+}
+(function(){
+  if (localStorage.getItem('portalDark') === '1') {
+    document.getElementById('darkIcon').className = 'fas fa-sun';
+  }
+})();
+
+// ── Page switching (merged — triggers data loaders too) ────────────────────
+function switchPage(page, btn) {
+  document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const pg = document.getElementById('page-' + page);
+  if (pg) pg.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  // Fire the JS module's data loader for tabs that need live data
+  const tabMap = {
+    hours:         'hours',
+    tickets:       'support',
+    notifications: 'notifications',
+    archive:       'archive',
+    requests:      'requests'
+  };
+  if (tabMap[page] && typeof window.switchTab === 'function') {
+    window.switchTab(tabMap[page]);
+  }
+}
+
+// ── Expose tab switcher for legacy JS module calls ─────────────────────────
+window.switchTab = function(tab) {
+  const map = {
+    support: 'tickets', notifications: 'notifications',
+    requests: 'requests', hours: 'hours', archive: 'archive'
+  };
+  const page = map[tab] || tab;
+  const btn = document.querySelector(`[data-page="${page}"]`);
+  // Switch the page visually without re-triggering the data loader (avoid loop)
+  document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const pg = document.getElementById('page-' + page);
+  if (pg) pg.classList.add('active');
+  if (btn) btn.classList.add('active');
+};
+
+// ── PIN verification ───────────────────────────────
+function verifyPin() {
+  if (typeof window._portalVerify === 'function') {
+    window._portalVerify();
+  }
+}
+
+// ── Expose portal login UI (called by module after auth) ──────────────────
+window.showPortalContent = function(emp) {
+  document.getElementById('pinGateWrap').style.display = 'none';
+  const shell = document.getElementById('appShell');
+  shell.classList.add('visible');
+
+  const name    = emp?.name  || 'Employee';
+  const role    = emp?.role  || '—';
+  const shift   = emp?.shift || '—';
+  const initial = name[0]?.toUpperCase() || 'E';
+
+  document.getElementById('headerAvatarSm').textContent = initial;
+  document.getElementById('headerEmpName').textContent  = name;
+  document.getElementById('navAvatar').textContent      = initial;
+  document.getElementById('navEmpName').textContent     = name;
+  document.getElementById('navEmpRole').textContent     = role;
+  document.getElementById('navEmpShift').innerHTML      = `<i class="fas fa-clock"></i> ${shift}`;
+  document.getElementById('overviewName').textContent   = name.split(' ')[0];
+
+  const cn = localStorage.getItem('companyName');
+  if (cn) {
+    document.getElementById('headerCompanyName').textContent = cn;
+    document.getElementById('portalCompanyName').textContent = cn;
+  }
+};
+
+// ── Logout ─────────────────────────────────────────
+function logoutEmployee() {
+  document.getElementById('appShell').classList.remove('visible');
+  document.getElementById('pinGateWrap').style.display = 'flex';
+  document.getElementById('employeePin').value = '';
+  document.getElementById('pinError').textContent = '';
+  if (typeof window._portalLogout === 'function') window._portalLogout();
+}
+
+// ── Chat Panel UI Controls ─────────────────────────────────────────────────
+function openChatPanel(title, sub, readonly) {
+  document.getElementById('chatPanelOverlay').classList.add('open');
+  document.getElementById('chatPanel').classList.add('open');
+  document.getElementById('chatPanelTitle').textContent = title;
+  document.getElementById('chatPanelSub').textContent = sub;
+  document.getElementById('chatInputRow').style.display = readonly ? 'none' : 'flex';
+}
+
+function closeChatPanel() {
+  document.getElementById('chatPanelOverlay').classList.remove('open');
+  document.getElementById('chatPanel').classList.remove('open');
+  if (typeof window._portalCloseTicket === 'function') window._portalCloseTicket();
+}
+
+function sendChatMsg() {
+  const input = document.getElementById('chatPanelMsgInput');
+  const text = input.value.trim();
+  if (!text) return;
+  if (typeof window._portalSendMsg === 'function') {
+    window._portalSendMsg(text);
+    input.value = '';
+  }
+}
+
+// ── Request type selector ──────────────────────────────────────────────────
+function selectReqType(card) {
+  document.querySelectorAll('.req-type-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+
+  const type = card.dataset.type;
+
+  const endDateField = document.getElementById('endDateField');
+  if (endDateField) endDateField.style.display = type === 'time_off' ? 'block' : 'none';
+
+  const swapField = document.getElementById('swapField');
+  if (swapField) swapField.style.display = type === 'shift_swap' ? 'block' : 'none';
+
+  const startLabel = document.getElementById('startLabel');
+  if (startLabel) {
+    startLabel.textContent =
+      type === 'time_off'   ? 'Start Date'      :
+      type === 'shift_swap' ? 'Date to Swap'    :
+      type === 'call_out'   ? 'Date of Absence' :
+                              'Date';
+  }
+}
+
+// ── Submit request ─────────────────────────────────────────────────────────
+async function submitRequest() {
+  const selectedCard = document.querySelector('.req-type-card.selected');
+  if (!selectedCard) {
+    alert('Please select a request type.');
+    return;
+  }
+
+  const type  = selectedCard.dataset.type;
+  const start = document.getElementById('reqStartDate')?.value?.trim();
+  const end   = document.getElementById('reqEndDate')?.value?.trim()    || '';
+  const swap  = document.getElementById('targetEmployee')?.value?.trim() || '';
+  const notes = document.getElementById('reqNotes')?.value?.trim()      || '';
+
+  if (!start) {
+    alert('Please select a date.');
+    return;
+  }
+
+  if (type === 'shift_swap' && !swap) {
+    alert('Please select a coworker to swap with.');
+    return;
+  }
+
+  if (typeof window._portalSubmitRequest !== 'function') {
+    alert('Portal not fully loaded yet. Please wait a moment and try again.');
+    return;
+  }
+
+  const btn = document.getElementById('submitReqBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting…';
+
+  try {
+    await window._portalSubmitRequest({ type, start, end, swap, notes });
+
+    btn.innerHTML = '<i class="fas fa-check"></i> Submitted!';
+
+    setTimeout(() => {
+      document.getElementById('reqStartDate').value = '';
+      document.getElementById('reqEndDate').value   = '';
+      document.getElementById('reqNotes').value     = '';
+      const swapSel = document.getElementById('targetEmployee');
+      if (swapSel) swapSel.selectedIndex = 0;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Request';
+    }, 2000);
+
+  } catch (e) {
+    console.error('submitRequest failed:', e);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Request';
+  }
+}
+
+</script>
+<script type="module" src="js/auth-share.js"></script>
+<script type="module" src="js/employee-portal.js"></script>
+
+</body>
+</html>

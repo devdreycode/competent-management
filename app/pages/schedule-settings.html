@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scheduling Settings | Competent Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    /* ═══════════════════════════════════════════════
+       DESIGN TOKENS — LIGHT
+    ═══════════════════════════════════════════════ */
+    :root {
+      --bg:           #f1f5fb;
+      --bg2:          #e8edf7;
+      --surface:      #ffffff;
+      --surface2:     #f8faff;
+      --border:       #e2e8f4;
+      --border2:      #d0d9ee;
+      --text:         #0f172a;
+      --text2:        #374160;
+      --text-muted:   #64748b;
+      --text-light:   #94a3b8;
+      --accent:       #2563eb;
+      --accent-light: #dbeafe;
+      --accent-dark:  #1d4ed8;
+      --green:        #16a34a;
+      --green-bg:     #dcfce7;
+      --red:          #dc2626;
+      --red-bg:       #fee2e2;
+      --amber:        #d97706;
+      --amber-bg:     #fef3c7;
+      --purple:       #7c3aed;
+      --purple-bg:    #ede9fe;
+      --shadow:       0 1px 3px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.05);
+      --shadow-lg:    0 8px 32px rgba(15,23,42,.10), 0 2px 8px rgba(15,23,42,.06);
+      --radius:       14px;
+      --radius-sm:    9px;
+      --sidebar-w:    240px;
+      --header-h:     60px;
+    }
+
+    body.dark-mode {
+      --bg:           #0e1117;
+      --bg2:          #161b27;
+      --surface:      #1a2133;
+      --surface2:     #212d42;
+      --border:       #2a3654;
+      --border2:      #334066;
+      --text:         #e8edf8;
+      --text2:        #b8c4de;
+      --text-muted:   #7a8db0;
+      --text-light:   #4d617f;
+      --accent:       #3b82f6;
+      --accent-light: #1e3a6e;
+      --accent-dark:  #60a5fa;
+      --green:        #22c55e;
+      --green-bg:     #14532d;
+      --red:          #f87171;
+      --red-bg:       #7f1d1d;
+      --amber:        #fbbf24;
+      --amber-bg:     #78350f;
+      --purple:       #a78bfa;
+      --purple-bg:    #4c1d95;
+      --shadow:       0 1px 3px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.25);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body {
+      height: 100%; font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      transition: background .25s, color .25s;
+    }
+
+    /* ── SHELL ── */
+    .app-shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: background .25s, border-color .25s;
+    }
+    .sidebar-brand {
+      height: var(--header-h); display: flex; align-items: center; gap: 10px;
+      padding: 0 16px; border-bottom: 1px solid var(--border);
+      font-weight: 700; font-size: .92rem; color: var(--text); flex-shrink: 0;
+    }
+    .brand-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; }
+    .brand-name { font-weight: 700; font-size: .88rem; color: var(--text); }
+    .brand-tag  { font-size: .68rem; color: var(--text-muted); margin-top: 1px; }
+
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 8px; }
+    .nav-section-label { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-light); padding: 12px 10px 5px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 12px; border-radius: var(--radius-sm);
+      font-size: .85rem; font-weight: 500; color: var(--text-muted);
+      cursor: pointer; transition: background .15s, color .15s; text-decoration: none;
+    }
+    .nav-item:hover { background: var(--bg2); color: var(--text); }
+    .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+    .nav-icon { width: 16px; text-align: center; font-size: .88rem; }
+
+    .sidebar-footer { padding: 12px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .back-btn {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      padding: 9px 12px; border-radius: var(--radius-sm);
+      background: var(--bg2); border: 1px solid var(--border);
+      color: var(--text2); font-size: .83rem; font-weight: 600;
+      cursor: pointer; transition: all .15s; text-decoration: none;
+    }
+    .back-btn:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+
+    /* ── MAIN ── */
+    .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .top-header {
+      height: var(--header-h); display: flex; align-items: center; gap: 12px;
+      padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border);
+      flex-shrink: 0; transition: background .25s, border-color .25s;
+    }
+    .header-title  { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .header-spacer { flex: 1; }
+    .header-badge  {
+      font-size: .72rem; font-weight: 700; padding: 4px 12px; border-radius: 100px;
+      background: var(--accent-light); color: var(--accent); border: 1px solid rgba(37,99,235,.2);
+    }
+    .page-body { flex: 1; overflow-y: auto; padding: 28px 28px 48px; }
+
+    /* ── SECTION ── */
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+    }
+    .section-title {
+      font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .settings-section { margin-bottom: 32px; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      transition: background .25s, border-color .25s; overflow: hidden;
+    }
+    .card-head {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-head-icon {
+      width: 34px; height: 34px; border-radius: 9px; display: flex;
+      align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0;
+    }
+    .card-head-icon.blue   { background: var(--accent-light); color: var(--accent); }
+    .card-head-icon.green  { background: var(--green-bg);     color: var(--green);  }
+    .card-head-icon.amber  { background: var(--amber-bg);     color: var(--amber);  }
+    .card-head-icon.purple { background: var(--purple-bg);    color: var(--purple); }
+    .card-head-title { font-size: .92rem; font-weight: 700; color: var(--text); }
+    .card-head-sub   { font-size: .78rem; color: var(--text-muted); margin-top: 1px; }
+    .card-body { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+
+    /* ── FIELDS ── */
+    .field-row   { display: grid; grid-template-columns: 1fr 1fr;   gap: 16px; }
+    .field       { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: .76rem; font-weight: 700; color: var(--text-muted);
+      letter-spacing: .02em; text-transform: uppercase;
+    }
+    .field input, .field select {
+      padding: 9px 12px; background: var(--bg);
+      border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif; font-size: .88rem; color: var(--text);
+      transition: border-color .15s, box-shadow .15s, background .25s; outline: none;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+      background: var(--surface);
+    }
+    .field select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center;
+    }
+    .field-hint { font-size: .74rem; color: var(--text-light); margin-top: 2px; }
+
+    /* ── SHIFT GRID ── */
+    .shift-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .shift-slot {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px 16px;
+      transition: background .25s, border-color .25s;
+    }
+    .shift-slot-name {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--text-muted); margin-bottom: 12px;
+    }
+    .shift-times { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .shift-color-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.day-check-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #e2e8f0);
+}
+.day-check-label:has(input:checked) {
+  background: var(--accent, #1e56c4);
+  color: #fff;
+  border-color: transparent;
+}
+    /* ── TOGGLES ── */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-row:first-child { padding-top: 0; }
+    .toggle-label { font-size: .88rem; font-weight: 600; color: var(--text); }
+    .toggle-sub   { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+    .toggle { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0; background: var(--border2);
+      border-radius: 100px; cursor: pointer; transition: background .2s;
+    }
+    .slider::before {
+      content: ''; position: absolute; width: 18px; height: 18px;
+      left: 3px; top: 3px; background: white; border-radius: 50%;
+      transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+    .toggle input:checked + .slider { background: var(--accent); }
+    .toggle input:checked + .slider::before { transform: translateX(18px); }
+
+    /* ── POSITION LIST ── */
+    .day-pill {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--border);
+      border-radius: 14px; background: var(--surface); color: var(--text2);
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 700;
+      text-align: left; cursor: pointer; transition: all .18s ease; box-shadow: var(--shadow);
+    }
+    .day-pill:hover { background: var(--bg2); border-color: var(--accent); color: var(--text); transform: translateY(-1px); }
+    .day-pill.active { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; border-color: var(--accent-dark); box-shadow: 0 8px 20px rgba(37,99,235,.22); }
+
+    .add-position-btn {
+      padding: 11px 16px; border: 1px solid var(--accent); border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white;
+      font-family: 'DM Sans', sans-serif; font-size: .88rem; font-weight: 700;
+      cursor: pointer; transition: all .18s ease; box-shadow: 0 8px 18px rgba(37,99,235,.18);
+    }
+    .add-position-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(37,99,235,.24); }
+    .add-position-btn:active { transform: translateY(0); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 600;
+      cursor: pointer; border: none; transition: all .15s; text-decoration: none;
+    }
+    .btn-primary { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(37,99,235,.25); }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(37,99,235,.35); }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg2); color: var(--text); }
+
+    /* ── SAVE BAR ── */
+    .save-bar {
+      position: sticky; bottom: 0; left: 0; right: 0;
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; transition: background .25s, border-color .25s;
+      box-shadow: 0 -4px 20px rgba(15,23,42,.06);
+    }
+    .save-bar-hint { font-size: .8rem; color: var(--text-muted); }
+    .save-bar-btns { display: flex; gap: 10px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid var(--border); border-radius: 100px;
+      padding: 10px 22px; font-size: .85rem; font-weight: 600; color: var(--text);
+      box-shadow: var(--shadow-lg); opacity: 0; transition: all .3s; z-index: 9999;
+      display: flex; align-items: center; gap: 8px; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success .toast-dot { color: var(--green); }
+    .toast.error   .toast-dot { color: var(--red); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .shift-grid, .field-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-body { padding: 16px 16px 80px; }
+      .top-header { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  if (localStorage.getItem('dark-mode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+</script>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+      <div class="sidebar-footer"> <a href="schedule-editor.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Schedule</a> </div>
+
+      <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
+      <div>
+        <div class="brand-name" id="companyNameDisplay">Your Company</div>
+        <div class="brand-tag">Schedule Settings</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Settings</div>
+      <a class="nav-item active" href="#shifts">
+        <span class="nav-icon"><i class="fas fa-clock"></i></span>Shift Times
+      </a>
+      <a class="nav-item" href="#positions">
+        <span class="nav-icon"><i class="fas fa-id-badge"></i></span>Positions & Coverage
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="schedule-editor.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Schedule
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <header class="top-header">
+      <span class="header-title">Scheduling Settings</span>
+      <div class="header-spacer"></div>
+      <span class="header-badge"><i class="fas fa-calendar-days"></i>&nbsp; Schedule Config</span>
+    </header>
+
+    <div class="page-body">
+
+      <!-- ── SHIFT TIMES ─────────────────────────────── -->
+      <div class="settings-section" id="shifts">
+        <div class="section-head">
+          <div class="section-title">Shift Times</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon blue"><i class="fas fa-clock"></i></div>
+            <div>
+              <div class="card-head-title">Define Your Shifts</div>
+              <div class="card-head-sub">Start and end times for each shift window. Used in the schedule editor and auto-generator.</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="shift-grid">
+              <div class="shift-slot">
+                <div class="shift-slot-name">
+                  <span class="shift-color-dot" style="background:#3b82f6"></span>Morning
+                </div>
+                <div class="shift-times">
+                  <div class="field"><label>Start</label><input type="time" id="morningStart" value="07:00"/></div>
+                  <div class="field"><label>End</label><input type="time" id="morningEnd" value="15:00"/></div>
+                </div>
+              </div>
+              <div class="shift-slot">
+                <div class="shift-slot-name">
+                  <span class="shift-color-dot" style="background:#f97316"></span>Evening
+                </div>
+                <div class="shift-times">
+                  <div class="field"><label>Start</label><input type="time" id="eveningStart" value="15:00"/></div>
+                  <div class="field"><label>End</label><input type="time" id="eveningEnd" value="23:00"/></div>
+                </div>
+              </div>
+              <div class="shift-slot">
+                <div class="shift-slot-name">
+                  <span class="shift-color-dot" style="background:#7c3aed"></span>Night
+                </div>
+                <div class="shift-times">
+                  <div class="field"><label>Start</label><input type="time" id="nightStart" value="23:00"/></div>
+                  <div class="field"><label>End</label><input type="time" id="nightEnd" value="07:00"/></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── POSITIONS & COVERAGE ───────────────────── -->
+      <div class="settings-section" id="positions">
+        <div class="section-head">
+          <div class="section-title">Positions &amp; Coverage</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon green"><i class="fas fa-id-badge"></i></div>
+            <div>
+              <div class="card-head-title">Minimum Staffing by Position</div>
+              <div class="card-head-sub">Pick a shift and day, then set how many of each position are required. Drives the coverage strip and auto-generator.</div>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <!-- Shift selector -->
+            <div>
+              <label style="display:block; margin-bottom:10px; font-size:.76rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.02em;">Shift</label>
+              <select id="shiftSelect" style="max-width:200px; padding:9px 12px; background:var(--bg); border:1px solid var(--border2); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:.88rem; color:var(--text); outline:none;">
+                <option value="morning">Morning</option>
+                <option value="evening">Evening</option>
+                <option value="night">Night</option>
+              </select>
+            </div>
+
+            <!-- Day + panel -->
+            <div style="display:grid; grid-template-columns:220px 1fr; gap:18px; margin-top:4px;">
+
+              <!-- Day list -->
+              <div>
+                <label style="display:block; margin-bottom:10px; font-size:.76rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.02em;">Day of Week</label>
+                <div id="dayList" style="display:flex; flex-direction:column; gap:10px;">
+                  <button type="button" class="day-pill active" data-day="Mon">Monday</button>
+                  <button type="button" class="day-pill"        data-day="Tue">Tuesday</button>
+                  <button type="button" class="day-pill"        data-day="Wed">Wednesday</button>
+                  <button type="button" class="day-pill"        data-day="Thu">Thursday</button>
+                  <button type="button" class="day-pill"        data-day="Fri">Friday</button>
+                  <button type="button" class="day-pill"        data-day="Sat">Saturday</button>
+                  <button type="button" class="day-pill"        data-day="Sun">Sunday</button>
+                </div>
+              </div>
+
+              <!-- Coverage panel -->
+              <div class="card" style="border:1px solid var(--border); box-shadow:none;">
+                <div class="card-head">
+                  <div>
+                    <div class="card-head-title" id="coveragePanelTitle">Morning · Monday</div>
+                    <div class="card-head-sub">Minimum staff required for this shift / day.</div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div id="positionList"></div>
+                  <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; align-items:center;">
+                    <input id="positionInput" type="text" placeholder="New position name…"
+                      style="flex:1; min-width:160px; max-width:260px; padding:9px 12px; background:var(--bg); border:1px solid var(--border2); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:.88rem; color:var(--text); outline:none;">
+                    <button id="addBtn" type="button" class="add-position-btn">+ Add Position</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+<!-- ── Typical Off Days ─────────────────────── -->
+<div class="setting-row" style="margin-top:18px;">
+  <label class="setting-label">Typical Days Off</label>
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;">
+    <label class="day-check-label"><input type="checkbox" class="offday-check" value="Mon"> Mon</label>
+    <label class="day-check-label"><input type="checkbox" class="offday-check" value="Tue"> Tue</label>
+    <label class="day-check-label"><input type="checkbox" class="offday-check" value="Wed"> Wed</label>
+    <label class="day-check-label"><input type="checkbox" class="offday-check" value="Thu"> Thu</label>
+    <label class="day-check-label"><input type="checkbox" class="offday-check" value="Fri"> Fri</label>
+    <label class="day-check-label"><input type="checkbox" class="offday-check" value="Sat"> Sat</label>
+    <label class="day-check-label"><input type="checkbox" class="offday-check" value="Sun"> Sun</label>
+  </div>
+  <p class="setting-hint">Employees without a specific schedule will be marked OFF on these days.</p>
+</div>
+
+<!-- ── Typical Weekly Hours ───────────────────── -->
+<div class="setting-row" style="margin-top:18px;">
+  <label class="setting-label" for="weeklyHours">Typical Hours Per Week</label>
+  <input type="number" id="weeklyHours" min="1" max="80" value="40"
+         style="width:90px; margin-top:6px;">
+  <p class="setting-hint">Used by auto-generate to avoid over-scheduling. Employees near this limit get OFF instead of extra shifts.</p>
+</div>
+
+<!-- ── REQUIRED CERTIFICATIONS PER POSITION ───────── -->
+<div class="settings-section" id="certRequirements" style="margin-top:28px;">
+  <div class="section-head">
+    <div class="section-title">Required Certifications per Position</div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon purple"><i class="fas fa-certificate"></i></div>
+      <div>
+        <div class="card-head-title">Certification Requirements</div>
+        <div class="card-head-sub">Assign which certifications employees must hold to be auto-scheduled into a position. Employees missing a required cert will be skipped by auto-generate.</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:.82rem; color:var(--text-muted); margin:0 0 12px;">
+        First add your available certifications in <strong>App Settings → Certifications</strong>, then assign them to positions here.
+      </p>
+      <div id="certRequirementsList" style="display:flex; flex-direction:column; gap:14px;"></div>
+      <p id="certRequirementsEmpty" style="font-size:.82rem; color:var(--text-muted); font-style:italic; display:none;">
+        No positions found. Add positions in the Coverage section above, then reload this page.
+      </p>
+    </div>
+  </div>
+</div>
+
+    </div><!-- /page-body -->
+
+    <!-- STICKY SAVE BAR -->
+    <div class="save-bar">
+      <div class="save-bar-hint" id="saveBarHint">Changes are not yet saved.</div>
+      <div class="save-bar-btns">
+        <button class="btn btn-ghost" id="resetBtn"><i class="fas fa-rotate-left"></i> Reset Coverage</button>
+        <button class="btn btn-primary" id="saveBtn"><i class="fas fa-floppy-disk"></i> Save Settings</button>
+      </div>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /app-shell -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-dot">●</span><span id="toastMsg"></span></div>
+
+<script type="module" src="js/auth-share.js"></script>
+<script type="module" src="js/scheduling_settings.js"></script>
+</body>
+</html>

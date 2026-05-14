@@ -1,0 +1,122 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Angled Analytics - Command Center</title>
+
+  <link rel="stylesheet" href="css/admin.css"/>
+
+  <!-- Firebase -->
+  <script type="module" src="js/admin.js" defer></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="logo">
+      <h2>Angled Analytics</h2>
+      <p>COMMAND CENTER</p>
+    </div>
+
+    <nav>
+
+      <button class="nav-btn active">
+        Dashboard
+      </button>
+
+      <button class="nav-btn">
+        Companies
+      </button>
+
+      <button class="nav-btn">
+        Users
+      </button>
+
+      <button class="nav-btn">
+        Revenue
+      </button>
+
+      <button class="nav-btn">
+        Reports
+      </button>
+
+      <button class="nav-btn">
+        Logs
+      </button>
+
+      <button class="nav-btn">
+        Settings
+      </button>
+
+    </nav>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+
+      <div>
+        <h1>Owner Dashboard</h1>
+        <p>Welcome back, Audrey</p>
+      </div>
+
+      <button id="logoutBtn">
+        Logout
+      </button>
+
+    </header>
+
+    <!-- STAT CARDS -->
+    <section class="cards">
+
+      <div class="card">
+        <h3>Total Users</h3>
+        <span id="totalUsers">0</span>
+      </div>
+
+      <div class="card">
+        <h3>Active Companies</h3>
+        <span id="activeCompanies">0</span>
+      </div>
+
+      <div class="card">
+        <h3>Monthly Revenue</h3>
+        <span>$0</span>
+      </div>
+
+      <div class="card">
+        <h3>Reports Generated</h3>
+        <span>0</span>
+      </div>
+
+    </section>
+
+    <!-- RECENT ACTIVITY -->
+    <section class="activity">
+
+      <div class="activity-box">
+        <h2>Recent Activity</h2>
+
+        <ul id="activityList">
+
+          <li>User signed up</li>
+          <li>New survey created</li>
+          <li>Company upgraded plan</li>
+
+        </ul>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+</html>

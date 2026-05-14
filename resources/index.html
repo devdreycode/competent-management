@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant Leadership & Operations Blog</title>
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+
+
+<style>
+/* ========================= */
+/* GLOBAL */
+/* ========================= */
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --bg-surface: #f8fafc;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: var(--bg-surface);
+  color: var(--text-dark);
+}
+
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
+
+.navbar {
+  background: white;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar a {
+  text-decoration: none;
+  color: var(--text-muted);
+  margin-left: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.navbar a:hover {
+  color: var(--primary);
+}
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
+.header {
+  background: white;
+  padding: 80px 20px 60px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.header h1 {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.header p {
+  font-size: 17px;
+  color: var(--text-muted);
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* ========================= */
+/* BLOG CONTAINER */
+/* ========================= */
+
+.blog-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 60px 20px;
+}
+
+/* ========================= */
+/* FILTER BUTTONS */
+/* ========================= */
+
+.filter-bar {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.filter-btn {
+  padding: 8px 18px;
+  margin: 6px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: 0.2s ease;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #eef2ff;
+}
+
+/* ========================= */
+/* ARTICLE GRID */
+/* ========================= */
+
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.article-card {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: 0.2s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+}
+
+.article-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.article-card h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.article-card p {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.article-category {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+
+.read-more {
+  margin-top: 15px;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 14px;
+}
+
+/* ========================= */
+/* FOOTER */
+/* ========================= */
+
+.site-footer {
+  background: #0f172a;
+  color: #cbd5e1;
+  margin-top: 120px;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+}
+
+.footer-logo span {
+  color: var(--primary);
+}
+
+.footer-brand p {
+  margin-top: 15px;
+  max-width: 320px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #94a3b8;
+}
+
+.footer-columns {
+  display: flex;
+  gap: 60px;
+}
+
+.footer-columns h4 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: white;
+}
+
+.footer-columns a {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.footer-columns a:hover {
+  color: white;
+}
+
+.footer-bottom {
+  border-top: 1px solid #1e293b;
+  padding: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+</style>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://cloud.umami.is/script.js" data-website-id="afb1c59e-b6d6-4236-8b5a-1e2d1a4c902b"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div><strong>Competent Management</strong></div>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="blog.html">Blog</a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Restaurant Leadership & Operations Blog</h1>
+  <p>Practical insights for building stronger systems and stronger teams.</p>
+</div>
+
+<div class="blog-container">
+
+  <!-- FILTERS -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-category="all">All</button>
+    <button class="filter-btn" data-category="Leadership">Leadership</button>
+    <button class="filter-btn" data-category="Operations">Operations</button>
+    <button class="filter-btn" data-category="Time Tracking">Time Tracking</button>
+     <button class="filter-btn" data-category="Scheduling">Scheduling</button>
+    <button class="filter-btn" data-category="other">Other</button>
+  </div>
+
+
+
+
+  <!-- ARTICLES -->
+  <div class="article-grid">
+
+<div class="article-card" data-category="Time Tracking">
+      <a href="articles/employee-time-tracking-guide.html">
+        <div class="article-category">employee time tracking guide</div>
+        <h2>What Small Business Owners Need to Know About 1099 Contractors in 2026</h2>
+        <p>Payroll mistakes cost money fast, Time tracking helps answer overtime, overstaffed, money being wasted.....</p>
+        <div class="read-more">Read Article →</div>
+      </a>
+    </div>
+
+ <div class="article-card" data-category="other">
+      <a href="articles/what-is-a-1099-guide.html">
+        <div class="article-category">Operational clarity for small businesses</div>
+        <h2>What Small Business Owners Need to Know About 1099 Contractors in 2026</h2>
+        <p>When should you use 1099 contractors?
+
+When should you NOT?
+
+What are the real cost differences?</p>
+        <div class="read-more">Read Article →</div>
+      </a>
+    </div>
+    <div class="article-card" data-category="Leadership">
+      <a href="articles/when-employee-struggling.html">
+        <div class="article-category">Leadership</div>
+        <h2>When an Employee Is Struggling</h2>
+        <p>A practical guide for restaurant leaders navigating personal challenges within their teams.</p>
+        <div class="read-more">Read Article →</div>
+      </a>
+    </div>
+ <div class="article-card" data-category="Scheduling">
+      <a href="articles/why-employee-scheduling-keeps-failing.html">
+        <div class="article-category">Scheduling</div>
+        <h2>Ways To Keep Your Schedule From Failing</h2>
+        <p>A practical guide for restaurant leaders navigating personal challenges within their teams.</p>
+        <div class="read-more">Read Article →</div>
+      </a>
+    </div>
+    <div class="article-card" data-category="Leadership">
+      <a href="articles/nervous-candidates.html">
+        <div class="article-category">Hiring</div>
+        <h2>Why Nervous Candidates Might Be Your Best Employees</h2>
+        <p>Rethinking confidence and ownership in food service.</p>
+        <div class="read-more">Read Article →</div>
+      </a>
+    </div>
+
+    <div class="article-card" data-category="Operations">
+      <a href="articles/attendance-trends.html">
+        <div class="article-category">Operations</div>
+        <h2>When Attendance Changes</h2>
+        <p>Using awareness before discipline to build accountability.</p>
+        <div class="read-more">Read Article →</div>
+      </a>
+    </div>
+
+    <div class="article-card" data-category="other">
+      <a href="articles/fruit-flies-summer.html">
+        <div class="article-category">other</div>
+        <h2>Ways to Keep Flies Out This Summer</h2>
+        <p>Preventative systems and proven methods to reduce fly problems.</p>
+        <div class="read-more">Read Article →</div>
+      </a>
+    </div>
+
+    <div class="article-card" data-category="operations">
+      <a href="articles/management-system-new-business.html">
+        <div class="article-category">Operations</div>
+        <h2>How to Build a Strong Management System</h2>
+        <p>Structure determines whether your business scales or stalls.</p>
+        <div class="read-more">Read Article →</div>
+      </a>
+    </div>
+
+  </div>
+</div>
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+      <div class="footer-logo">
+        Competent<span>Management</span>
+      </div>
+      <p>
+        Workforce operations software built for managers who need clarity,
+        accountability, and payroll-ready records.
+      </p>
+    </div>
+
+    <div class="footer-columns">
+      <div>
+        <h4>Product</h4>
+     <div>
+  <h4>Product</h4>
+  <a href="features.html">Features</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="scheduling-demo.html">Live Demo</a>
+  <a href="articles/index.html">Insights</a>
+</div>
+
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="contactus.html">Contact</a>
+      </div>
+
+      <div>
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © <span id="year"></span> Competent Management. All rights reserved.
+  </div>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+<script>
+
+const buttons = document.querySelectorAll(".filter-btn");
+const cards = document.querySelectorAll(".article-card");
+
+buttons.forEach(btn => {
+  btn.addEventListener("click", () => {
+
+    document.querySelector(".filter-btn.active").classList.remove("active");
+    btn.classList.add("active");
+
+    const category = btn.dataset.category;
+
+    cards.forEach(card => {
+      if (category === "all" || card.dataset.category === category) {
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+  });
+});
+
+</script>
+
+</body>
+</html>
+

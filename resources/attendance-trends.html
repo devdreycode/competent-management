@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Attendance Patterns as an Operational Signal | Competent Management</title>
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<meta name="description" content="Attendance pattern shifts are often early indicators of operational strain. Learn how structured scheduling and time visibility help managers respond strategically.">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+/* ========================= */
+/* ROOT */
+/* ========================= */
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --bg-surface: #f8fafc;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-surface);
+  color: var(--text-dark);
+}
+
+/* ========================= */
+/* NAV */
+/* ========================= */
+
+.navbar {
+  background: white;
+  padding: 18px 40px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-left: 25px;
+  transition: 0.2s ease;
+}
+
+.navbar a:hover {
+  color: var(--primary);
+}
+
+/* ========================= */
+/* ARTICLE WRAPPER */
+/* ========================= */
+
+.article-wrapper {
+  max-width: 760px;
+  margin: 100px auto;
+  padding: 0 20px;
+}
+
+.article-wrapper h1 {
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.article-subtitle {
+  font-size: 18px;
+  color: var(--text-muted);
+  margin-bottom: 50px;
+}
+
+.article-wrapper h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 60px;
+  margin-bottom: 15px;
+}
+
+.article-wrapper p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #334155;
+  margin-bottom: 20px;
+}
+
+.article-wrapper ul {
+  padding-left: 20px;
+  margin-bottom: 25px;
+}
+
+.article-wrapper li {
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+
+/* ========================= */
+/* SOFT CTA BLOCK */
+/* ========================= */
+
+.soft-cta {
+  margin-top: 80px;
+  padding: 40px;
+  border-radius: 20px;
+  background: white;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.soft-cta h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.soft-cta p {
+  color: var(--text-muted);
+  margin-bottom: 25px;
+}
+
+.soft-cta a {
+  background: var(--primary);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.soft-cta a:hover {
+  background: var(--primary-dark);
+}
+
+/* ========================= */
+/* FOOTER */
+/* ========================= */
+
+.site-footer {
+  background: #0f172a;
+  color: #cbd5e1;
+  margin-top: 120px;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+}
+
+.footer-logo span {
+  color: var(--primary);
+}
+
+.footer-columns {
+  display: flex;
+  gap: 60px;
+}
+
+.footer-columns h4 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: white;
+}
+
+.footer-columns a {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.footer-columns a:hover {
+  color: white;
+}
+
+.footer-bottom {
+  border-top: 1px solid #1e293b;
+  padding: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+.back-to-blog {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  font-size: 14px;
+  text-decoration: none;
+  color: #1a1a1a;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  transition: all 0.2s ease;
+}
+
+.back-to-blog:hover {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border-color: #1a1a1a;
+}
+</style>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://cloud.umami.is/script.js" data-website-id="afb1c59e-b6d6-4236-8b5a-1e2d1a4c902b"></script>
+</head>
+<body>
+
+<div class="navbar">
+  <div><strong>Competent Management</strong></div>
+  <div>
+    <a href="../features.html">Features</a>
+    <a href="../pricing.html">Pricing</a>
+    <a href="../scheduling-demo.html">Live Demo</a>
+  </div>
+</div>
+<a href="/articles/" class="back-to-blog">← Back to Blog</a>
+<article class="article-wrapper">
+
+<h1>Attendance Patterns as an Operational Signal</h1>
+
+<p class="article-subtitle">
+Attendance changes are rarely random. They are often early indicators of strain within a team or system.
+</p>
+
+<h2>Attendance Is Data — Not Just Discipline</h2>
+
+<p>
+When attendance shifts occur, the instinctive reaction is often corrective. But before discipline comes diagnosis.
+Attendance patterns reflect morale, workload balance, shift fairness, and operational pressure.
+</p>
+
+<p>
+A single missed shift may be isolated. A repeated pattern across roles or days often signals a structural issue.
+</p>
+
+<h2>The Hidden Cost of Ignoring Patterns</h2>
+
+<p>
+Unaddressed attendance trends lead to:
+</p>
+
+<ul>
+<li>Inconsistent coverage across critical roles</li>
+<li>Overtime concentration among dependable employees</li>
+<li>Burnout in high-performing staff</li>
+<li>Payroll unpredictability</li>
+</ul>
+
+<p>
+By the time payroll is affected, the root cause has usually been visible for weeks.
+</p>
+
+<h2>Operational Visibility Changes the Response</h2>
+
+<p>
+Managers who can see attendance data clearly respond differently. Instead of reacting to isolated incidents,
+they observe distribution trends, role gaps, and uneven hour allocations.
+</p>
+
+<p>
+Visibility turns attendance from a disciplinary issue into a planning insight.
+</p>
+
+<h2>Structured Systems Reduce Blind Spots</h2>
+
+<p>
+When scheduling systems highlight coverage gaps, track approved time off against required roles,
+and display hour distribution across employees, pattern recognition becomes immediate.
+</p>
+
+<p>
+This reduces reactive scheduling decisions and strengthens leadership confidence.
+</p>
+
+<div class="soft-cta">
+  <h3>See Coverage Gaps Before They Happen</h3>
+  <p>
+  Explore how structured scheduling makes attendance patterns visible in real time.
+  </p>
+  <a href="scheduling-demo.html">View Live Demo</a>
+</div>
+
+</article>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <div>
+      <div class="footer-logo">Competent<span>Management</span></div>
+    </div>
+
+    <div class="footer-columns">
+      <div>
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="scheduling-demo.html">Live Demo</a>
+        <a href="articles/index.html">Insights</a>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="contactus.html">Contact</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © <span id="year"></span> Competent Management
+  </div>
+</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
+

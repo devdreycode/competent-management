@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In | Competent Management</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="afb1c59e-b6d6-4236-8b5a-1e2d1a4c902b"></script>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f2f5fb;
+      --bg2:      #e8edf7;
+      --white:    #ffffff;
+      --border:   #dae0ef;
+      --border2:  #c2cce0;
+      --text:     #0b1526;
+      --text2:    #374160;
+      --text3:    #7e8aa6;
+      --navy:     #0d2151;
+      --navy2:    #162e6e;
+      --blue:     #1e56c4;
+      --blue-lt:  #e4ecfb;
+      --green:    #0ea86e;
+      --green-bg: #e5f8f1;
+      --red:      #cc2b2b;
+      --shadow:   0 4px 20px rgba(13,33,81,.08), 0 1px 4px rgba(13,33,81,.05);
+      --shadow-lg:0 20px 60px rgba(13,33,81,.13), 0 4px 16px rgba(13,33,81,.07);
+    }
+    html { height: 100%; }
+    body { min-height: 100vh; font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; display: flex; }
+
+    /* SPLIT LAYOUT */
+    .page-wrapper { display: flex; width: 100%; min-height: 100vh; }
+
+    /* LEFT — brand panel */
+    .brand-side {
+      width: 52%; background: linear-gradient(160deg, var(--navy) 0%, #162e6e 55%, #1a3d8a 100%);
+      position: relative; overflow: hidden; display: flex; flex-direction: column;
+      padding: 48px 64px; min-height: 100vh;
+    }
+    .brand-side::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+    /* Orbital decoration */
+    .brand-orb {
+      position: absolute; bottom: -80px; right: -80px; pointer-events: none;
+    }
+    .orb-ring {
+      position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.07);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+    }
+    .orb-ring:nth-child(1) { width: 500px; height: 500px; }
+    .orb-ring:nth-child(2) { width: 360px; height: 360px; border-style: dashed; opacity: .5; transform: translate(-50%,-50%) rotate(20deg); }
+    .orb-ring:nth-child(3) { width: 220px; height: 220px; border-width: 2px; opacity: .15; }
+
+    .brand-content { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; }
+
+    .logo-wrap { display: flex; align-items: center; gap: 11px; text-decoration: none; margin-bottom: auto; }
+    .logo-hex { width: 36px; height: 36px; }
+    .logo-text-block { display: flex; flex-direction: column; line-height: 1; }
+    .logo-top { font-size: .9rem; font-weight: 900; color: white; letter-spacing: .09em; text-transform: uppercase; }
+    .logo-bot { font-size: .56rem; font-weight: 500; color: rgba(255,255,255,.5); letter-spacing: .22em; text-transform: uppercase; margin-top: 2px; }
+
+    .brand-hero { margin: auto 0; padding: 48px 0; }
+    .brand-hero h1 { font-size: clamp(2.4rem, 3.5vw, 3.2rem); font-weight: 900; color: white; letter-spacing: -.04em; line-height: 1.08; margin-bottom: 16px; }
+    .brand-hero h1 em { color: #7eb4f8; font-style: normal; }
+    .brand-hero p { font-size: .97rem; color: rgba(255,255,255,.65); line-height: 1.72; margin-bottom: 40px; max-width: 380px; }
+
+    .feature-list { display: flex; flex-direction: column; gap: 18px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 14px; }
+    .fi-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; color: #7eb4f8; font-size: .9rem; flex-shrink: 0; }
+    .fi-text h4 { font-size: .88rem; font-weight: 700; color: white; margin-bottom: 3px; }
+    .fi-text p { font-size: .8rem; color: rgba(255,255,255,.55); line-height: 1.5; }
+
+    .brand-foot { position: relative; z-index: 2; font-size: .75rem; color: rgba(255,255,255,.3); margin-top: 48px; }
+
+    /* RIGHT — form panel */
+    .form-side {
+      flex: 1; background: var(--bg); display: flex; align-items: center;
+      justify-content: center; padding: 48px 40px; min-height: 100vh;
+    }
+    .form-card { width: 100%; max-width: 400px; }
+    .form-header { margin-bottom: 32px; }
+    .form-header h2 { font-size: 1.9rem; font-weight: 900; color: var(--navy); letter-spacing: -.03em; margin-bottom: 6px; }
+    .form-header p { font-size: .9rem; color: var(--text3); }
+
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--text); margin-bottom: 7px; }
+    .field input {
+      width: 100%; padding: 12px 14px; background: var(--white);
+      border: 1px solid var(--border2); border-radius: 10px;
+      font-family: 'Outfit', sans-serif; font-size: .92rem; color: var(--text);
+      transition: border-color .15s, box-shadow .15s; outline: none;
+    }
+    .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,86,196,.1); }
+
+    .forgot-link { display: block; text-align: right; font-size: .78rem; color: var(--blue); text-decoration: none; margin-top: -12px; margin-bottom: 20px; }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .submit-btn {
+      width: 100%; padding: 14px; background: var(--navy); color: white;
+      border: none; border-radius: 10px; font-family: 'Outfit', sans-serif;
+      font-size: .95rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(13,33,81,.28); transition: all .15s; margin-bottom: 20px;
+    }
+    .submit-btn:hover { background: var(--navy2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(13,33,81,.38); }
+
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .divider span { font-size: .75rem; color: var(--text3); white-space: nowrap; }
+
+    .bottom-link { text-align: center; font-size: .85rem; color: var(--text3); }
+    .bottom-link a { color: var(--blue); text-decoration: none; font-weight: 600; }
+    .bottom-link a:hover { text-decoration: underline; }
+
+    .error-msg { display: none; padding: 12px 16px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: var(--red); font-size: .85rem; margin-bottom: 16px; }
+
+    @media (max-width: 900px) {
+      .brand-side { display: none; }
+      .form-side { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- BRAND SIDE -->
+  <div class="brand-side">
+    <div class="brand-orb">
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+    </div>
+    <div class="brand-content">
+      <a href="index.html" class="logo-wrap">
+        <svg class="logo-hex" viewBox="0 0 48 48" fill="none">
+          <defs>
+            <linearGradient id="hg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
+            <linearGradient id="fg" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
+          </defs>
+          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hg)" opacity=".18"/>
+          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hg)" stroke-width="1.5"/>
+          <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#fg)" opacity=".85"/>
+          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
+          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
+          <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
+        </svg>
+        <div class="logo-text-block">
+          <span class="logo-top">Competent</span>
+          <span class="logo-bot">Management</span>
+        </div>
+      </a>
+
+      <div class="brand-hero">
+        <h1>Welcome<br><em>Back.</em></h1>
+        <p>Sign in to manage time clocks, scheduling, coverage, and payroll-ready records — all in one secure dashboard.</p>
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="fi-icon"><i class="fas fa-clock"></i></div>
+            <div class="fi-text">
+              <h4>Time & Attendance</h4>
+              <p>Fast punch-in logs with full visibility for managers.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="fi-icon"><i class="fas fa-calendar-days"></i></div>
+            <div class="fi-text">
+              <h4>Visual Scheduling</h4>
+              <p>See your whole team's week at a glance, with coverage gaps flagged.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="fi-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="fi-text">
+              <h4>Payroll Estimates</h4>
+              <p>Real-time labor cost tracking as the week happens.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-foot">© 2025 Competent Management. Built for Business.</div>
+    </div>
+  </div>
+
+  <!-- FORM SIDE -->
+  <div class="form-side">
+    <div class="form-card">
+      <div class="form-header">
+        <h2>Sign In</h2>
+        <p>Access your management dashboard.</p>
+      </div>
+
+      <div class="error-msg" id="loginError"></div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="you@company.com" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Your password" required autocomplete="current-password">
+        </div>
+        <a href="#" class="forgot-link">Forgot password?</a>
+        <button type="submit" class="submit-btn">
+          Sign In &nbsp;<i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="divider"><span>New to Competent Management?</span></div>
+      <div class="bottom-link">
+        <a href="signup.html">Create a free account →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+  // Show error helper
+  function showError(msg) {
+    const el = document.getElementById('loginError');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+</script>
+<script type="module" src="js/firebase.js"></script>
+<script type="module" src="js/login.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(err => console.error('SW failed:', err));
+  }
+</script>
+</body>
+</html>

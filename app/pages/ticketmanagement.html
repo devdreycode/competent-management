@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1"/>
+  <title>Ticket System | Competent Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    /* ═══════════════════════════════════════════════
+       TOKENS — LIGHT
+    ═══════════════════════════════════════════════ */
+    :root {
+      --bg:           #f1f5fb;
+      --bg2:          #e8edf7;
+      --surface:      #ffffff;
+      --surface2:     #f8faff;
+      --border:       #e2e8f4;
+      --border2:      #d0d9ee;
+      --text:         #0f172a;
+      --text2:        #374160;
+      --text-muted:   #64748b;
+      --text-light:   #94a3b8;
+      --accent:       #2563eb;
+      --accent-light: #dbeafe;
+      --accent-dark:  #1d4ed8;
+      --green:        #16a34a;
+      --green-bg:     #dcfce7;
+      --red:          #dc2626;
+      --red-bg:       #fee2e2;
+      --amber:        #d97706;
+      --amber-bg:     #fef3c7;
+      --purple:       #7c3aed;
+      --purple-bg:    #ede9fe;
+      --shadow:       0 1px 3px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.05);
+      --shadow-lg:    0 8px 32px rgba(15,23,42,.10), 0 2px 8px rgba(15,23,42,.06);
+      --radius:       14px;
+      --radius-sm:    9px;
+      --sidebar-w:    300px;
+      --info-w:       280px;
+      --header-h:     60px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       TOKENS — DARK
+    ═══════════════════════════════════════════════ */
+    body.dark-mode {
+      --bg:           #0e1117;
+      --bg2:          #161b27;
+      --surface:      #1a2133;
+      --surface2:     #212d42;
+      --border:       #2a3654;
+      --border2:      #334066;
+      --text:         #e8edf8;
+      --text2:        #b8c4de;
+      --text-muted:   #7a8db0;
+      --text-light:   #4d617f;
+      --accent:       #3b82f6;
+      --accent-light: #1e3a6e;
+      --accent-dark:  #60a5fa;
+      --green:        #22c55e;
+      --green-bg:     #14532d;
+      --red:          #f87171;
+      --red-bg:       #7f1d1d;
+      --amber:        #fbbf24;
+      --amber-bg:     #78350f;
+      --purple:       #a78bfa;
+      --purple-bg:    #4c1d95;
+      --shadow:       0 1px 3px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.25);
+    }
+
+    /* ═══════════════════════════════════════════════
+       BASE
+    ═══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      transition: background .25s, color .25s;
+    }
+    button { font-family: inherit; }
+
+    /* ═══════════════════════════════════════════════
+       APP SHELL — 3-COLUMN
+    ═══════════════════════════════════════════════ */
+    .app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr var(--info-w);
+      grid-template-rows: var(--header-h) 1fr;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════════ */
+    .top-header {
+      grid-column: 1 / -1;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px; padding: 0 20px;
+      transition: background .25s, border-color .25s;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border-radius: var(--radius-sm);
+      background: var(--bg2); border: 1px solid var(--border2);
+      color: var(--text2); font-size: .82rem; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: all .15s; flex-shrink: 0;
+    }
+    .back-btn:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+    .header-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .header-spacer { flex: 1; }
+
+    .stat-pills { display: flex; gap: 8px; }
+    .stat-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 100px; font-size: .75rem; font-weight: 700;
+      border: 1px solid transparent;
+    }
+    .pill-open    { background: var(--accent-light); color: var(--accent); border-color: rgba(37,99,235,.2); }
+    .pill-progress{ background: var(--amber-bg); color: var(--amber); border-color: rgba(217,119,6,.2); }
+    .pill-resolved{ background: var(--green-bg); color: var(--green); border-color: rgba(22,163,74,.2); }
+
+    .btn-new {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border-radius: var(--radius-sm);
+      background: var(--accent); color: white; border: none;
+      font-size: .83rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37,99,235,.3); transition: all .15s;
+    }
+    .btn-new:hover { background: var(--accent-dark); transform: translateY(-1px); }
+
+    /* ═══════════════════════════════════════════════
+       LEFT — TICKET LIST
+    ═══════════════════════════════════════════════ */
+    .ticket-sidebar {
+      background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: background .25s, border-color .25s;
+    }
+
+    .ticket-search { padding: 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .search-wrap {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); padding: 8px 12px;
+    }
+    .search-wrap i { color: var(--text-light); font-size: .82rem; }
+    .search-wrap input {
+      border: none; background: transparent; outline: none;
+      font-family: inherit; font-size: .85rem; color: var(--text); flex: 1;
+    }
+    .search-wrap input::placeholder { color: var(--text-light); }
+
+    .filter-tabs {
+      display: flex; gap: 4px; padding: 10px 12px;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .filter-tab {
+      flex: 1; padding: 6px 4px; border-radius: 7px; border: none;
+      font-family: inherit; font-size: .75rem; font-weight: 600;
+      cursor: pointer; background: transparent; color: var(--text-muted);
+      transition: all .15s; text-align: center;
+    }
+    .filter-tab.active { background: var(--accent-light); color: var(--accent); }
+    .filter-tab:hover:not(.active) { background: var(--bg2); }
+
+    .ticket-list { flex: 1; overflow-y: auto; }
+    .ticket-item {
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background .15s; position: relative;
+    }
+    .ticket-item:hover { background: var(--bg2); }
+    .ticket-item.active { background: var(--accent-light); border-left: 3px solid var(--accent); }
+    .ticket-item.active .ti-title { color: var(--accent); }
+
+    .ti-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; gap: 8px; }
+    .ti-title { font-size: .88rem; font-weight: 700; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ti-time { font-size: .7rem; color: var(--text-light); white-space: nowrap; flex-shrink: 0; }
+    .ti-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .ti-emp { font-size: .78rem; color: var(--text-muted); }
+    .status-badge {
+      font-size: .65rem; font-weight: 800; padding: 2px 8px; border-radius: 100px;
+      text-transform: uppercase; letter-spacing: .04em; flex-shrink: 0;
+    }
+    .badge-open     { background: var(--accent-light); color: var(--accent); }
+    .badge-progress { background: var(--amber-bg); color: var(--amber); }
+    .badge-resolved { background: var(--green-bg); color: var(--green); }
+    .badge-archived { background: var(--bg2); color: var(--text-muted); }
+
+    .unread-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+      position: absolute; top: 14px; right: 14px; flex-shrink: 0;
+    }
+
+    .archive-toggle {
+      padding: 11px 16px; border-top: 1px solid var(--border);
+      font-size: .8rem; font-weight: 600; color: var(--text-muted);
+      cursor: pointer; display: flex; align-items: center; gap: 8px;
+      transition: background .15s; flex-shrink: 0;
+    }
+    .archive-toggle:hover { background: var(--bg2); }
+    .archive-count { font-size: .72rem; background: var(--bg2); padding: 2px 8px; border-radius: 100px; }
+
+    .empty-state { padding: 40px 20px; text-align: center; color: var(--text-muted); }
+    .empty-state i { font-size: 2rem; margin-bottom: 12px; opacity: .35; display: block; }
+    .empty-state p { font-size: .85rem; line-height: 1.6; }
+
+    /* ═══════════════════════════════════════════════
+       MIDDLE — CHAT
+    ═══════════════════════════════════════════════ */
+    .chat-panel {
+      background: var(--bg); display: flex; flex-direction: column;
+      overflow: hidden; transition: background .25s;
+    }
+
+    .chat-header {
+      padding: 14px 20px; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+      transition: background .25s, border-color .25s;
+    }
+    .chat-header-info { flex: 1; min-width: 0; }
+    .chat-header-title { font-size: .95rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-header-sub { font-size: .76rem; color: var(--text-muted); margin-top: 2px; }
+    .chat-header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .btn-resolve {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: var(--radius-sm);
+      background: var(--green-bg); color: var(--green); border: 1px solid rgba(22,163,74,.25);
+      font-size: .8rem; font-weight: 700; cursor: pointer; transition: all .15s;
+    }
+    .btn-resolve:hover { background: var(--green); color: white; }
+
+    .chat-history {
+      flex: 1; overflow-y: auto; padding: 20px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .chat-day-label {
+      text-align: center; font-size: .7rem; font-weight: 700; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: .08em;
+      display: flex; align-items: center; gap: 10px; margin: 4px 0;
+    }
+    .chat-day-label::before, .chat-day-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .msg-wrap { display: flex; gap: 10px; align-items: flex-end; }
+    .msg-wrap.manager { flex-direction: row-reverse; }
+
+    .msg-avatar {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 800; color: white;
+    }
+    .avatar-mgr { background: var(--accent); }
+    .avatar-emp { background: var(--purple); }
+
+    .msg-bubble {
+      max-width: 72%; padding: 10px 14px; border-radius: 14px;
+      font-size: .88rem; line-height: 1.55; position: relative;
+    }
+    .msg-wrap.manager .msg-bubble {
+      background: var(--accent); color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .msg-wrap.employee .msg-bubble {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      border-bottom-left-radius: 4px; box-shadow: var(--shadow);
+    }
+    .msg-time { font-size: .66rem; opacity: .65; margin-top: 4px; display: block; }
+    .msg-wrap.manager .msg-time { text-align: right; }
+
+    /* System message bubble */
+    .msg-system {
+      text-align: center; font-size: .76rem; color: var(--text-muted);
+      padding: 6px 14px; background: var(--bg2); border-radius: 100px;
+      align-self: center; border: 1px solid var(--border);
+    }
+
+    .typing-indicator {
+      font-size: .76rem; color: var(--text-muted); padding: 0 20px 8px;
+      min-height: 24px; flex-shrink: 0;
+    }
+
+    .chat-input-area {
+      padding: 14px 16px; background: var(--surface);
+      border-top: 1px solid var(--border); display: flex; gap: 10px;
+      align-items: flex-end; flex-shrink: 0;
+      transition: background .25s, border-color .25s;
+    }
+    .input-wrap {
+      flex: 1; background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+      transition: border-color .15s;
+    }
+    .input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .input-wrap input {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-family: inherit; font-size: .88rem; color: var(--text);
+    }
+    .input-wrap input::placeholder { color: var(--text-light); }
+    .send-btn {
+      width: 40px; height: 40px; border-radius: 10px; border: none;
+      background: var(--accent); color: white; font-size: .9rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .15s; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(37,99,235,.3);
+    }
+    .send-btn:hover { background: var(--accent-dark); transform: scale(1.05); }
+
+    .chat-placeholder {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--text-muted); gap: 14px;
+    }
+    .chat-placeholder i { font-size: 2.5rem; opacity: .2; }
+    .chat-placeholder p { font-size: .9rem; }
+
+    /* ═══════════════════════════════════════════════
+       RIGHT — INFO PANEL
+    ═══════════════════════════════════════════════ */
+    .info-panel {
+      background: var(--surface); border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow-y: auto;
+      transition: background .25s, border-color .25s;
+    }
+    .info-section { padding: 16px; border-bottom: 1px solid var(--border); }
+    .info-section:last-child { border-bottom: none; }
+    .info-label {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--text-light); margin-bottom: 12px;
+    }
+
+    .detail-row { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+    .detail-key { font-size: .72rem; color: var(--text-muted); }
+    .detail-val { font-size: .88rem; font-weight: 600; color: var(--text); }
+
+    /* Dates pill for time-off */
+    .dates-display {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 10px; background: var(--accent-light);
+      border-radius: var(--radius-sm); margin-bottom: 12px;
+      font-size: .78rem; font-weight: 600; color: var(--accent);
+    }
+
+    /* Decision badge shown after approve/decline */
+    .decision-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 100px; font-size: .75rem; font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .decision-badge.approved { background: var(--green-bg); color: var(--green); }
+    .decision-badge.declined { background: var(--red-bg); color: var(--red); }
+
+    .notes-area {
+      width: 100%; min-height: 110px; padding: 10px 12px;
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); font-family: inherit; font-size: .84rem;
+      color: var(--text); outline: none; resize: vertical;
+      transition: border-color .15s, background .25s;
+    }
+    .notes-area:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+
+    .btn-full {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      width: 100%; padding: 9px 12px; border-radius: var(--radius-sm);
+      font-family: inherit; font-size: .82rem; font-weight: 700;
+      cursor: pointer; border: none; transition: all .15s; margin-bottom: 6px;
+    }
+    .btn-save    { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(37,99,235,.25); }
+    .btn-save:hover { background: var(--accent-dark); }
+    .btn-warning-action { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
+    .btn-warning-action:hover { background: var(--amber); color: white; }
+    .btn-approve { background: var(--green-bg); color: var(--green); border: 1px solid rgba(22,163,74,.25); }
+    .btn-approve:hover { background: var(--green); color: white; }
+    .btn-decline { background: var(--red-bg); color: var(--red); border: 1px solid rgba(220,38,38,.25); }
+    .btn-decline:hover { background: var(--red); color: white; }
+
+    .warning-count {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-size: .82rem; margin-top: 2px;
+    }
+    .warning-count .label { color: var(--text-muted); }
+    .warning-count .value { font-weight: 800; color: var(--amber); }
+
+    /* ═══════════════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════════════ */
+    .modal {
+      position: fixed; inset: 0; background: rgba(15,23,42,.6);
+      backdrop-filter: blur(6px); z-index: 1000;
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-lg);
+      width: 420px; max-width: 94vw;
+    }
+    .modal-head {
+      padding: 18px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: .95rem; font-weight: 700; color: var(--text); }
+    .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .modal-foot { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-modal-close { background: none; border: none; font-size: 1.1rem; color: var(--text-muted); cursor: pointer; padding: 2px; }
+    .btn-modal-close:hover { color: var(--red); }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: .76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+    .field input, .field select {
+      padding: 9px 12px; background: var(--bg);
+      border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      font-family: inherit; font-size: .88rem; color: var(--text);
+      outline: none; transition: border-color .15s;
+    }
+    .field input:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+
+    .date-pair { display: flex; gap: 8px; }
+    .date-pair input { flex: 1; }
+
+    .btn-modal-primary {
+      padding: 9px 18px; border-radius: var(--radius-sm); border: none;
+      background: var(--accent); color: white; font-family: inherit;
+      font-size: .85rem; font-weight: 700; cursor: pointer; transition: background .15s;
+    }
+    .btn-modal-primary:hover { background: var(--accent-dark); }
+    .btn-modal-cancel {
+      padding: 9px 18px; border-radius: var(--radius-sm);
+      background: var(--bg2); border: 1px solid var(--border2); color: var(--text2);
+      font-family: inherit; font-size: .85rem; font-weight: 600; cursor: pointer;
+    }
+
+    /* ═══════════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════════ */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 100px; padding: 10px 22px;
+      font-size: .84rem; font-weight: 600; color: var(--text);
+      box-shadow: var(--shadow-lg); opacity: 0; transition: all .3s;
+      z-index: 9999; display: flex; align-items: center; gap: 8px; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast-dot.green { color: var(--green); }
+    .toast-dot.amber { color: var(--amber); }
+    .toast-dot.red   { color: var(--red); }
+
+    /* ═══════════════════════════════════════════════
+       SCROLLBAR
+    ═══════════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 100px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE — MOBILE
+    ═══════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: var(--header-h) auto 1fr;
+      }
+      .ticket-sidebar {
+        display: none;
+        position: fixed; inset: var(--header-h) 0 0 0;
+        z-index: 200; max-width: 340px;
+        box-shadow: var(--shadow-lg);
+      }
+      .ticket-sidebar.mobile-open { display: flex; }
+      .info-panel { display: none; }
+      .chat-panel { grid-column: 1; grid-row: 2 / 4; }
+      .stat-pills { display: none; }
+      .mobile-list-btn { display: flex !important; }
+    }
+    .mobile-list-btn { display: none; }
+
+    @media (max-width: 600px) {
+      :root { --header-h: 56px; }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  if (localStorage.getItem('dark-mode') === 'true') document.body.classList.add('dark-mode');
+</script>
+
+<div class="app-shell">
+
+  <!-- ── HEADER ──────────────────────────────────── -->
+  <header class="top-header">
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    <div class="header-title">Ticket System</div>
+    <div class="header-spacer"></div>
+
+    <div class="stat-pills">
+      <div class="stat-pill pill-open"><i class="fas fa-circle-dot"></i> <span id="countOpen">0</span> Open</div>
+      <div class="stat-pill pill-progress"><i class="fas fa-spinner"></i> <span id="countProgress">0</span> Active</div>
+      <div class="stat-pill pill-resolved"><i class="fas fa-check-circle"></i> <span id="countResolved">0</span> Resolved</div>
+    </div>
+
+    <button class="back-btn mobile-list-btn" id="mobileListBtn" onclick="toggleMobileList()">
+      <i class="fas fa-list"></i> Tickets
+    </button>
+
+    <button class="btn-new" onclick="openModal()"><i class="fas fa-plus"></i> New Ticket</button>
+  </header>
+
+  <!-- ── TICKET SIDEBAR ──────────────────────────── -->
+  <aside class="ticket-sidebar" id="ticketSidebar">
+    <div class="ticket-search">
+      <div class="search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search tickets..." oninput="filterTickets()"/>
+      </div>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all" onclick="setFilter('all',this)">All</button>
+      <button class="filter-tab" data-filter="open" onclick="setFilter('open',this)">Open</button>
+      <button class="filter-tab" data-filter="in_progress" onclick="setFilter('in_progress',this)">Active</button>
+      <button class="filter-tab" data-filter="resolved" onclick="setFilter('resolved',this)">Resolved</button>
+    </div>
+    <div id="ticketList" class="ticket-list"></div>
+    <div class="archive-toggle" onclick="toggleArchive()">
+      <i class="fas fa-box-archive"></i>
+      Archive
+      <span class="archive-count" id="archiveCount">0</span>
+    </div>
+    <div id="archiveList" class="ticket-list" style="display:none;"></div>
+  </aside>
+
+  <!-- ── CHAT PANEL ──────────────────────────────── -->
+  <main class="chat-panel" id="chatPanel">
+    <div class="chat-placeholder" id="chatPlaceholder">
+      <i class="fas fa-ticket"></i>
+      <p>Select a ticket to view the conversation</p>
+    </div>
+
+    <div id="chatActive" style="display:none; flex-direction:column; height:100%; overflow:hidden;">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="chat-header-title" id="chatTitle">Ticket</div>
+          <div class="chat-header-sub" id="chatSub">—</div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="btn-resolve" id="resolveBtn" onclick="resolveTicket()" style="display:none;">
+            <i class="fas fa-check"></i> Resolve
+          </button>
+        </div>
+      </div>
+      <div id="chatHistory" class="chat-history"></div>
+      <div class="typing-indicator" id="typingIndicator"></div>
+      <div class="chat-input-area">
+        <div class="input-wrap">
+          <input type="text" id="msgInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMessage()"/>
+        </div>
+        <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── INFO PANEL ──────────────────────────────── -->
+  <aside class="info-panel">
+    <!-- Ticket Details -->
+    <div class="info-section">
+      <div class="info-label">Ticket Details</div>
+      <div class="detail-row"><div class="detail-key">Employee</div><div class="detail-val" id="detEmp">—</div></div>
+      <div class="detail-row"><div class="detail-key">Reason</div><div class="detail-val" id="detReason">—</div></div>
+      <div class="detail-row"><div class="detail-key">Shift</div><div class="detail-val" id="detShift">—</div></div>
+      <div class="detail-row"><div class="detail-key">Status</div><div class="detail-val" id="detStatus">—</div></div>
+      <div class="detail-row"><div class="detail-key">Created</div><div class="detail-val" id="detCreated">—</div></div>
+    </div>
+
+    <!-- ★ REQUEST ACTIONS — shown for Time Off, Callout, and Swap -->
+    <div class="info-section" id="requestActionSection" style="display:none;">
+      <div class="info-label" id="requestActionLabel">Request</div>
+
+      <!-- Date range (for Time Off) -->
+      <div id="timeOffDatesRow" style="display:none;">
+        <div class="dates-display">
+          <i class="fas fa-calendar-days"></i>
+          <span id="timeOffDatesDisplay">—</span>
+        </div>
+      </div>
+
+      <!-- Decision badge (shown after approve/decline) -->
+      <div id="decisionBadge" style="display:none;"></div>
+
+      <!-- Action buttons (hidden once resolved) -->
+      <div id="requestActionButtons">
+        <button class="btn-full btn-approve" id="approveRequestBtn" onclick="acceptRequest()">
+          <i class="fas fa-check"></i> <span id="approveLabel">Approve</span>
+        </button>
+        <button class="btn-full btn-decline" id="declineRequestBtn" onclick="declineRequest()">
+          <i class="fas fa-xmark"></i> <span id="declineLabel">Decline</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Manager Notes -->
+    <div class="info-section">
+      <div class="info-label">Manager Notes</div>
+      <textarea class="notes-area" id="mgrNotes" placeholder="Private notes — not visible to employees…"></textarea>
+      <button id="saveNotes" class="btn-full btn-save" style="margin-top:10px;" onclick="saveNotes()">
+        <i class="fas fa-floppy-disk"></i> Save Notes
+      </button>
+    </div>
+
+    <!-- Disciplinary -->
+    <div class="info-section">
+      <div class="info-label">Disciplinary</div>
+      <button class="btn-full btn-warning-action" onclick="issueWarning()">
+        <i class="fas fa-triangle-exclamation"></i> Issue Warning
+      </button>
+      <div class="warning-count">
+        <span class="label">Total warnings</span>
+        <span class="value" id="warningCount">0</span>
+      </div>
+    </div>
+  </aside>
+
+</div><!-- app-shell -->
+
+<!-- ── NEW TICKET MODAL ─────────────────────────── -->
+<div id="newTicketModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title"><i class="fas fa-ticket" style="color:var(--accent); margin-right:8px;"></i>New Ticket</div>
+      <button class="btn-modal-close" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Shift</label>
+        <select id="shiftSelect">
+          <option value="">Select shift…</option>
+          <option value="Morning">Morning</option>
+          <option value="Evening">Evening</option>
+          <option value="Night">Night</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Employee</label>
+        <select id="employeeSelect"><option value="">Select employee…</option></select>
+      </div>
+      <div class="field">
+        <label>Reason / Category</label>
+        <select id="inReason" onchange="onReasonChange()">
+          <option value="Scheduling">Scheduling</option>
+          <option value="Payroll">Payroll</option>
+          <option value="Performance">Performance</option>
+          <option value="Swap Request">Swap Request</option>
+          <option value="Time Off">Time Off</option>
+          <option value="Callout">Callout</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <!-- Shown when "Time Off" is selected -->
+      <div class="field" id="timeOffDateField" style="display:none;">
+        <label>Date Range (Off)</label>
+        <div class="date-pair">
+          <input type="date" id="inStartDate" placeholder="Start"/>
+          <input type="date" id="inEndDate" placeholder="End"/>
+        </div>
+      </div>
+
+      <!-- Shown when "Swap Request" is selected -->
+      <div class="field" id="swapDetailField" style="display:none;">
+        <label>Swap Date</label>
+        <input type="date" id="inSwapDate"/>
+      </div>
+
+      <div class="field">
+        <label>Initial note (optional)</label>
+        <input type="text" id="inNote" placeholder="Briefly describe the issue…"/>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-modal-primary" onclick="createTicket()"><i class="fas fa-plus"></i> Create Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-dot" id="toastDot">●</span><span id="toastMsg">Saved</span></div>
+
+<!-- Firebase module -->
+<script type="module" src="../js/ticketmanagement.js"></script>
+<script type="module" src="../js/auth-share.js"></script>
+
+<script>
+// ─── Dark mode ────────────────────────────────────────────
+(function() {
+  if (localStorage.getItem('dark-mode') === 'true') document.body.classList.add('dark-mode');
+})();
+
+// ─── Mobile ────────────────────────────────────────────────
+function toggleMobileList() {
+  document.getElementById('ticketSidebar').classList.toggle('mobile-open');
+}
+
+// ─── State ────────────────────────────────────────────────
+let activeTicketId = null;
+let currentFilter  = 'all';
+let archiveVisible = false;
+let tickets        = [];
+let employees      = [];
+
+// ─── Firebase hook surface ────────────────────────────────
+window.ticketUI = {
+  setTickets(data)   { tickets = data; renderTicketList(); updateStats(); },
+  setEmployees(data) {
+    employees = data;
+    const sel = document.getElementById('employeeSelect');
+    sel.innerHTML = '<option value="">Select employee…</option>';
+    data.forEach(e => {
+      const o = document.createElement('option');
+      o.value = e.id; o.textContent = e.name;
+      sel.appendChild(o);
+    });
+  }
+};
+
+// ─── Stats ────────────────────────────────────────────────
+function updateStats() {
+  const active = tickets.filter(t => !t.archived);
+  document.getElementById('countOpen').textContent     = active.filter(t => t.status === 'open').length;
+  document.getElementById('countProgress').textContent = active.filter(t => t.status === 'in_progress').length;
+  document.getElementById('countResolved').textContent = active.filter(t => t.status === 'resolved').length;
+  document.getElementById('archiveCount').textContent  = tickets.filter(t => t.archived).length;
+}
+
+// ─── Filter ───────────────────────────────────────────────
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderTicketList();
+}
+function filterTickets() { renderTicketList(); }
+
+// ─── Render list ──────────────────────────────────────────
+function renderTicketList() {
+  const search  = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  const active  = tickets.filter(t => !t.archived);
+  const archive = tickets.filter(t => t.archived);
+
+  const filtered = active.filter(t => {
+    const matchFilter = currentFilter === 'all' || t.status === currentFilter;
+    const matchSearch = !search ||
+      t.employee?.toLowerCase().includes(search) ||
+      t.reason?.toLowerCase().includes(search);
+    return matchFilter && matchSearch;
+  });
+
+  const listEl = document.getElementById('ticketList');
+  if (!filtered.length) {
+    listEl.innerHTML = `<div class="empty-state"><i class="fas fa-ticket-simple"></i><p>No tickets match this filter.</p></div>`;
+  } else {
+    listEl.innerHTML = filtered.map(t => renderTicketItem(t)).join('');
+  }
+
+  const archEl = document.getElementById('archiveList');
+  archEl.innerHTML = archive.map(t => renderTicketItem(t, true)).join('');
+  document.getElementById('archiveCount').textContent = archive.length;
+}
+
+function renderTicketItem(t, archived = false) {
+  const statusMap   = { open: 'badge-open', in_progress: 'badge-progress', resolved: 'badge-resolved' };
+  const statusLabel = { open: 'Open', in_progress: 'Active', resolved: 'Resolved' };
+  const badge = archived ? 'badge-archived' : (statusMap[t.status] || 'badge-open');
+  const label = archived ? 'Archived' : (statusLabel[t.status] || t.status);
+  const isActive = t.id === activeTicketId;
+  const time = t.createdAt ? new Date(t.createdAt.seconds * 1000).toLocaleDateString('en-US', { month:'short', day:'numeric' }) : '';
+
+  // Reason icon
+  const icons = {
+    'Time Off': '📅', 'Callout': '⚠️', 'Swap Request': '🔄',
+    'Payroll': '💰', 'Performance': '📋', 'Scheduling': '🗓️'
+  };
+  const icon = icons[t.reason] || '🎫';
+
+  return `
+    <div class="ticket-item ${isActive ? 'active' : ''}" onclick="selectTicket('${t.id}')">
+      ${t.unread ? '<div class="unread-dot"></div>' : ''}
+      <div class="ti-top">
+        <div class="ti-title">${icon} ${t.employee || 'Unknown'} — ${t.reason || ''}</div>
+        <div class="ti-time">${time}</div>
+      </div>
+      <div class="ti-meta">
+        <span class="ti-emp"><i class="fas fa-clock" style="font-size:.65rem;margin-right:3px;"></i>${t.shift || '—'}</span>
+        <span class="status-badge ${badge}">${label}</span>
+      </div>
+    </div>`;
+}
+
+// ─── Select ticket ────────────────────────────────────────
+function selectTicket(id) {
+  activeTicketId = id;
+  const t = tickets.find(x => x.id === id);
+  if (!t) return;
+
+  document.getElementById('ticketSidebar').classList.remove('mobile-open');
+  renderTicketList();
+
+  document.getElementById('chatPlaceholder').style.display = 'none';
+  const chatActive = document.getElementById('chatActive');
+  chatActive.style.display = 'flex';
+
+  document.getElementById('chatTitle').textContent = `${t.employee} — ${t.reason}`;
+  document.getElementById('chatSub').textContent   =
+    `${t.shift || '—'} shift · Opened ${t.createdAt ? new Date(t.createdAt.seconds*1000).toLocaleDateString() : ''}`;
+
+  const rb = document.getElementById('resolveBtn');
+  rb.style.display = (t.status !== 'resolved' && t.status !== 'resolved_warning' && !t.archived) ? 'inline-flex' : 'none';
+
+  // Details panel
+  document.getElementById('detEmp').textContent     = t.employee || '—';
+  document.getElementById('detReason').textContent  = t.reason || '—';
+  document.getElementById('detShift').textContent   = t.shift || '—';
+  document.getElementById('detStatus').textContent  = t.status || '—';
+  document.getElementById('detCreated').textContent = t.createdAt ? new Date(t.createdAt.seconds*1000).toLocaleDateString() : '—';
+  document.getElementById('mgrNotes').value         = t.mgrNotes || '';
+  document.getElementById('warningCount').textContent = t.warnings || 0;
+
+  // ── REQUEST ACTIONS SECTION ──────────────────────────
+  const actionSection = document.getElementById('requestActionSection');
+  const actionLabel   = document.getElementById('requestActionLabel');
+  const actionBtns    = document.getElementById('requestActionButtons');
+  const decisionBadge = document.getElementById('decisionBadge');
+  const datesRow      = document.getElementById('timeOffDatesRow');
+
+  const isTimeOff = t.reason === 'Time Off' || t.reason === 'Time Off Request';
+  const isSwap    = t.reason === 'Swap Request';
+  const isCallout = t.reason === 'Callout';
+  const isResolved = t.status === 'resolved' || t.status === 'resolved_warning';
+
+  if (isTimeOff || isSwap || isCallout) {
+    actionSection.style.display = 'block';
+
+    // Label
+    if (isTimeOff)  actionLabel.textContent = '📅 Time Off Request';
+    if (isSwap)     actionLabel.textContent = '🔄 Shift Swap Request';
+    if (isCallout)  actionLabel.textContent = '⚠️ Callout';
+
+    // Approve/decline button labels
+    if (isTimeOff) {
+      document.getElementById('approveLabel').textContent = 'Approve Time Off';
+      document.getElementById('declineLabel').textContent = 'Decline Time Off';
+    } else if (isSwap) {
+      document.getElementById('approveLabel').textContent = 'Approve Swap';
+      document.getElementById('declineLabel').textContent = 'Decline Swap';
+    } else if (isCallout) {
+      document.getElementById('approveLabel').textContent = 'Acknowledge';
+      document.getElementById('declineLabel').textContent = 'Mark Unexcused';
+    }
+
+    // Date range (time off only)
+    if (isTimeOff && (t.startDate || t.endDate)) {
+      datesRow.style.display = 'block';
+      const fmt = (d) => {
+        if (!d) return '?';
+        const date = d.toDate ? d.toDate() : new Date(d);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      };
+      document.getElementById('timeOffDatesDisplay').textContent =
+        `${fmt(t.startDate)} → ${fmt(t.endDate)}`;
+    } else {
+      datesRow.style.display = 'none';
+    }
+
+    // Decision badge (already resolved)
+    if (isResolved && isTimeOff) {
+      decisionBadge.style.display = 'block';
+      if (t.timeOffApproved === true) {
+        decisionBadge.innerHTML = `<div class="decision-badge approved"><i class="fas fa-check"></i> Approved</div>`;
+      } else if (t.timeOffApproved === false) {
+        decisionBadge.innerHTML = `<div class="decision-badge declined"><i class="fas fa-xmark"></i> Declined</div>`;
+      } else {
+        decisionBadge.style.display = 'none';
+      }
+    } else if (isResolved && isSwap) {
+      decisionBadge.style.display = 'block';
+      decisionBadge.innerHTML = t.swapApproved
+        ? `<div class="decision-badge approved"><i class="fas fa-check"></i> Swap Approved</div>`
+        : `<div class="decision-badge declined"><i class="fas fa-xmark"></i> Swap Declined</div>`;
+    } else {
+      decisionBadge.style.display = 'none';
+    }
+
+    // Hide buttons if already resolved
+    actionBtns.style.display = isResolved ? 'none' : 'block';
+
+  } else {
+    actionSection.style.display = 'none';
+  }
+
+  // Live messages
+  if (typeof window.listenTicketMessages === 'function') {
+    window.listenTicketMessages(id, (msgs) => renderMessages(msgs));
+  } else {
+    renderMessages(t.messages || []);
+  }
+}
+
+// ─── Render messages ──────────────────────────────────────
+function renderMessages(msgs) {
+  const hist = document.getElementById('chatHistory');
+  if (!msgs.length) {
+    hist.innerHTML = `<div class="msg-system">Ticket opened. No messages yet.</div>`;
+    return;
+  }
+  hist.innerHTML = msgs.map(m => {
+    // System messages render as centered pills
+    if (m.isSystem || m.sender === 'system') {
+      return `<div class="msg-system">${m.text}</div>`;
+    }
+    const isMgr = m.sender === 'manager';
+    return `
+      <div class="msg-wrap ${isMgr ? 'manager' : 'employee'}">
+        <div class="msg-avatar ${isMgr ? 'avatar-mgr' : 'avatar-emp'}">${isMgr ? 'M' : (m.name?.[0] || 'E')}</div>
+        <div class="msg-bubble">
+          ${m.text}
+          <span class="msg-time">${m.timestamp || ''}</span>
+        </div>
+      </div>`;
+  }).join('');
+  hist.scrollTop = hist.scrollHeight;
+}
+
+// ─── Actions ──────────────────────────────────────────────
+function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text  = input.value.trim();
+  if (!text || !activeTicketId) return;
+  input.value = '';
+  if (typeof window.sendTicketMessage === 'function') {
+    window.sendTicketMessage(activeTicketId, text);
+  }
+}
+
+function resolveTicket() {
+  if (!activeTicketId) return;
+  if (typeof window.resolveTicketAction === 'function') {
+    window.resolveTicketAction(activeTicketId);
+  }
+  showToast('Ticket resolved', 'green');
+}
+
+function acceptRequest() {
+  if (!activeTicketId) return;
+  const t = tickets.find(x => x.id === activeTicketId);
+  if (!t) return;
+
+  if (t.reason === 'Time Off' || t.reason === 'Time Off Request') {
+    if (typeof window.approveTimeOffAction === 'function') {
+      window.approveTimeOffAction(activeTicketId)
+        .then(() => showToast('Time off approved — schedule updated', 'green'))
+        .catch(() => showToast('Error approving time off', 'red'));
+    }
+  } else if (t.reason === 'Swap Request') {
+    if (typeof window.approveSwapAction === 'function') {
+      window.approveSwapAction(activeTicketId)
+        .then(() => showToast('Shift swap approved', 'green'))
+        .catch(() => showToast('Error approving swap', 'red'));
+    }
+  } else if (t.reason === 'Callout') {
+    if (typeof window.resolveTicketAction === 'function') {
+      window.resolveTicketAction(activeTicketId);
+    }
+    showToast('Callout acknowledged', 'green');
+  }
+}
+
+function declineRequest() {
+  if (!activeTicketId) return;
+  const t = tickets.find(x => x.id === activeTicketId);
+  if (!t) return;
+  if (!confirm('Decline this request?')) return;
+
+  if (t.reason === 'Time Off' || t.reason === 'Time Off Request') {
+    if (typeof window.declineTimeOffAction === 'function') {
+      window.declineTimeOffAction(activeTicketId)
+        .then(() => showToast('Time off declined', 'red'))
+        .catch(() => showToast('Error declining request', 'red'));
+    }
+  } else if (t.reason === 'Swap Request') {
+    if (typeof window.declineSwapAction === 'function') {
+      window.declineSwapAction(activeTicketId)
+        .then(() => showToast('Swap declined', 'red'))
+        .catch(() => showToast('Error declining swap', 'red'));
+    }
+  } else {
+    if (typeof window.resolveTicketAction === 'function') {
+      window.resolveTicketAction(activeTicketId);
+    }
+    showToast('Marked unexcused', 'amber');
+  }
+}
+
+function saveNotes() {
+  if (!activeTicketId) return;
+  const notes = document.getElementById('mgrNotes').value;
+  if (typeof window.saveTicketNotes === 'function') window.saveTicketNotes(activeTicketId, notes);
+  showToast('Notes saved', 'green');
+}
+
+function issueWarning() {
+  if (!activeTicketId) return;
+  if (!confirm('Issue a formal warning to this employee?')) return;
+  if (typeof window.issueWarningAction === 'function') window.issueWarningAction(activeTicketId);
+  const el = document.getElementById('warningCount');
+  el.textContent = +el.textContent + 1;
+  showToast('Warning issued', 'amber');
+}
+
+// ─── Archive ──────────────────────────────────────────────
+function toggleArchive() {
+  archiveVisible = !archiveVisible;
+  document.getElementById('archiveList').style.display = archiveVisible ? 'block' : 'none';
+}
+
+// ─── Modal ────────────────────────────────────────────────
+function openModal() {
+  document.getElementById('newTicketModal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('newTicketModal').classList.remove('open');
+}
+function onReasonChange() {
+  const reason = document.getElementById('inReason').value;
+  document.getElementById('timeOffDateField').style.display  = reason === 'Time Off' ? 'block' : 'none';
+  document.getElementById('swapDetailField').style.display   = reason === 'Swap Request' ? 'block' : 'none';
+}
+function createTicket() {
+  const shift     = document.getElementById('shiftSelect').value;
+  const empId     = document.getElementById('employeeSelect').value;
+  const reason    = document.getElementById('inReason').value;
+  const note      = document.getElementById('inNote').value.trim();
+  const startDate = document.getElementById('inStartDate').value || null;
+  const endDate   = document.getElementById('inEndDate').value   || null;
+  const swapDate  = document.getElementById('inSwapDate').value  || null;
+
+  if (!shift || !empId) { showToast('Select a shift and employee', 'red'); return; }
+  if (reason === 'Time Off' && !startDate) { showToast('Select a start date for the time off', 'red'); return; }
+
+  if (typeof window.createTicketAction === 'function') {
+    window.createTicketAction({ shift, empId, reason, note, startDate, endDate, swapDate });
+  }
+  closeModal();
+  showToast('Ticket created', 'green');
+  document.getElementById('inNote').value = '';
+  document.getElementById('inStartDate').value = '';
+  document.getElementById('inEndDate').value = '';
+  document.getElementById('inSwapDate').value = '';
+}
+
+// ─── Toast ────────────────────────────────────────────────
+function showToast(msg, color = 'green') {
+  const t = document.getElementById('toast');
+  const d = document.getElementById('toastDot');
+  document.getElementById('toastMsg').textContent = msg;
+  d.className = `toast-dot ${color}`;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── Modal overlay close ──────────────────────────────────
+document.getElementById('newTicketModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+</script>
+</body>
+</html>

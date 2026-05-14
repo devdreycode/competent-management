@@ -1,0 +1,170 @@
+/* admin.css */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+  display:flex;
+  background:#07111f;
+  color:white;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:260px;
+  background:#0b1728;
+  border-right:1px solid rgba(255,255,255,0.08);
+  padding:25px;
+}
+
+.logo h2{
+  color:#58b7ff;
+  margin-bottom:5px;
+}
+
+.logo p{
+  color:#9cb3c9;
+  font-size:12px;
+  letter-spacing:2px;
+}
+
+nav{
+  margin-top:40px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.nav-btn{
+  background:transparent;
+  border:none;
+  color:#d8e7ff;
+  text-align:left;
+  padding:14px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:0.3s;
+  font-size:15px;
+}
+
+.nav-btn:hover{
+  background:rgba(88,183,255,0.15);
+}
+
+.active{
+  background:linear-gradient(
+    90deg,
+    rgba(88,183,255,0.25),
+    rgba(255,255,255,0.03)
+  );
+
+  border:1px solid rgba(88,183,255,0.4);
+}
+
+/* MAIN */
+
+.main-content{
+  flex:1;
+  padding:30px;
+}
+
+/* TOPBAR */
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:35px;
+}
+
+.topbar h1{
+  font-size:32px;
+}
+
+.topbar p{
+  color:#8ca3bb;
+  margin-top:5px;
+}
+
+#logoutBtn{
+  background:#ff7b2c;
+  border:none;
+  color:white;
+  padding:12px 20px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+#logoutBtn:hover{
+  transform:translateY(-2px);
+}
+
+/* CARDS */
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(10px);
+
+  padding:25px;
+  border-radius:20px;
+
+  box-shadow:
+  0 0 20px rgba(0,0,0,0.2);
+}
+
+.card h3{
+  color:#9eb6cf;
+  margin-bottom:15px;
+}
+
+.card span{
+  font-size:34px;
+  font-weight:bold;
+  color:#58b7ff;
+}
+
+/* ACTIVITY */
+
+.activity{
+  margin-top:35px;
+}
+
+.activity-box{
+  background:rgba(255,255,255,0.04);
+  border-radius:20px;
+  padding:25px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.activity-box h2{
+  margin-bottom:20px;
+}
+
+#activityList{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+#activityList li{
+  list-style:none;
+  background:rgba(255,255,255,0.03);
+  padding:14px;
+  border-radius:12px;
+}

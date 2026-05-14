@@ -1,0 +1,64 @@
+<div id="page-payroll" class="page">
+        <div class="sec-header">
+          <div><div class="sec-title">Payroll Estimator</div><div class="sec-sub">Wages estimated from punch log data</div></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" id="printBtn">🖨 Print</button>
+            <button class="btn btn-ghost btn-sm" id="exportPayroll">📥 Export CSV</button>
+          </div>
+        </div>
+        <div class="period-nav">
+          <button class="btn btn-secondary btn-sm" id="prevPeriod">← Prev</button>
+          <button class="btn btn-ghost btn-sm" id="currentPeriod">Today</button>
+          <span class="period-label" id="payPeriodLabel">—</span>
+          <button class="btn btn-secondary btn-sm" id="nextPeriod" disabled>Next →</button>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-label">⚙️ Pay Period Settings</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+            <div class="field" style="margin:0;min-width:160px;"><label>Period Type</label>
+              <select id="periodType" class="form-input">
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Bi-Weekly</option>
+                <option value="semimonthly">Semi-Monthly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <div id="weeklyOptions" style="display:none;"><div class="field" style="margin:0;"><label>Week Starts</label><select id="weekStartDay" class="form-input"><option value="1">Monday</option><option value="0">Sunday</option><option value="6">Saturday</option></select></div></div>
+            <div id="biweeklyOptions" style="display:flex;"><div class="field" style="margin:0;"><label>Anchor Date</label><input type="date" id="biweeklyAnchor" class="form-input"></div></div>
+            <div id="semimonthlyOptions" style="display:none;gap:10px;">
+              <div class="field" style="margin:0;display:inline-block;"><label>Day 1</label><input type="number" id="semiDay1" class="form-input" value="1" min="1" max="28" style="width:70px;"></div>
+              <div class="field" style="margin:0;display:inline-block;"><label>Day 2</label><input type="number" id="semiDay2" class="form-input" value="15" min="1" max="28" style="width:70px;"></div>
+            </div>
+            <button class="btn btn-primary btn-sm" id="savePeriodConfig">Save Config</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:7px;font-size:.845rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="showFICA"> Show FICA Estimates</label>
+          <input type="text" id="empSearch" placeholder="Search employee..." style="padding:7px 12px;border:1px solid var(--chrome-border);border-radius:var(--radius-sm);font-size:.845rem;font-family:'DM Sans',sans-serif;outline:none;background:var(--surface);color:var(--text);width:200px;">
+        </div>
+        <div id="messageContainer"></div>
+        <div class="table-wrap" style="margin-bottom:16px;">
+          <table>
+            <thead><tr><th>Employee</th><th>Position</th><th>Rate</th><th>Reg Hours</th><th>OT Hours</th><th>Gross</th></tr></thead>
+            <tbody id="payrollBody"><tr><td colspan="7" style="text-align:center;padding:30px;color:#6b7280;">No punch data for this period.</td></tr></tbody>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:14px;padding:12px 0;">
+          <span style="font-size:.855rem;color:var(--text-muted);">Estimated Total:</span>
+          <span style="font-size:1.4rem;font-weight:700;font-family:'Space Mono',monospace;color:var(--green);" id="payrollGrandTotal">$0.00</span>
+        </div>
+        <div id="empModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:700;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+          <div class="modal-box" style="max-width:500px;">
+            <div class="modal-head">
+              <div><div class="modal-title" id="empModalName">Employee</div><div style="font-size:.78rem;color:var(--text-muted);margin-top:3px;" id="empModalRole"></div></div>
+              <button class="btn-modal-close" onclick="closeEmpModal()">✕</button>
+            </div>
+            <div class="modal-body">
+              <div id="empModalStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;"></div>
+              <div style="height:8px;border-radius:8px;overflow:hidden;background:var(--border);display:flex;" id="empModalBar"></div>
+              <div class="divider"></div>
+              <div id="empModalShifts"></div>
+            </div>
+          </div>
+        </div>
+      </div>

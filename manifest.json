@@ -1,0 +1,16 @@
+{
+  "name": "Competent Management - Employee Scheduling & Time Tracking",
+"short_name": "Competent Mgmt",
+  "start_url": "/login.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1a6fdb",
+  "theme_color": "#1a6fdb",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+     {"src": "assets/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"}
+  ]
+}

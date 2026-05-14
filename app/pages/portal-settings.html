@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent:#0891b2;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Settings – WorkForce Manager</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/nav.css">
+  <link rel="stylesheet" href="../css/top-header.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <header class="top-header">
+    <div class="brand-mark" id="brandMark">⚡</div>
+    <div style="display:flex;flex-direction:column;line-height:1.1;">
+      <div class="brand-name" id="companyNameDisplay">Company</div>
+      <div class="brand-tag">Workforce Manager</div>
+    </div>
+    <div style="width:1px;height:22px;background:var(--chrome-border);margin:0 4px;flex-shrink:0;"></div>
+    <span class="header-title" id="headerTitle">Portal Settings</span>
+    <div id="upgradeBtn">⚡ Upgrade</div>
+    <div class="header-spacer"></div>
+    <div id="welcome-msg">Welcome, User</div>
+
+    <div class="notif-wrapper">
+      <div id="notifBell" onclick="toggleNotifPanel(event)" title="Notifications">
+        <i class="fas fa-bell" style="font-size:.9rem;"></i>
+        <span id="notifCount" style="display:none;">0</span>
+      </div>
+      <div id="notifPanel" style="display:none;">
+        <div class="notif-header">
+          <span class="notif-header-title">Notifications</span>
+          <button id="notifMarkAll" onclick="markAllRead(event)" disabled>All caught up</button>
+        </div>
+        <div id="notifList"></div>
+        <div id="notifEmpty" style="display:block;">You're all caught up! 🎉</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin-left:4px;">
+      <div class="user-avatar" id="sidebarAvatar" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;" title="Account">A</div>
+      <button class="btn-signout" id="logoutBtn" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="main-area">
+    <div class="page-body">
+      <div class="page active">
+
+        <div class="sec-header" style="margin-bottom:16px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <a href="settings.html" class="btn btn-ghost btn-sm" style="text-decoration:none;">← Back</a>
+              <div class="sec-title">🔗 Portal Settings</div>
+            </div>
+            <div class="sec-sub">Employee portal access, permissions, certifications, and QR code</div>
+          </div>
+          <button class="btn btn-primary" id="savePortal">💾 Save</button>
+        </div>
+
+        <div class="stab-2col">
+
+          <div class="card">
+            <div class="card-label">🔗 Portal Settings</div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Publish to Employee Portal</div><div class="toggle-sub">Employees can see their schedule in the portal</div></div>
+              <label class="toggle"><input type="checkbox" id="publishToPortal" checked><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Allow Shift Swaps</div><div class="toggle-sub">Employees can request swaps through the portal</div></div>
+              <label class="toggle"><input type="checkbox" id="portalAllowSwaps" checked><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Allow Time Off Requests</div><div class="toggle-sub">Employees can submit time off through the portal</div></div>
+              <label class="toggle"><input type="checkbox" id="portalAllowTimeOff" checked><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Show Hours to Employees</div><div class="toggle-sub">Display total hours worked in the portal</div></div>
+              <label class="toggle"><input type="checkbox" id="portalShowHours" checked><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Show Pay Rate to Employees</div><div class="toggle-sub">Display hourly rate in the employee portal</div></div>
+              <label class="toggle"><input type="checkbox" id="portalShowPayRate"><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">📋 Certifications</div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;">
+              <input
+                id="newCertInput"
+                type="text"
+                placeholder="e.g. Forklift, Food Handler, CPR…"
+                style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid var(--chrome-border);background:var(--surface);color:var(--text);font-size:.875rem;outline:none;"
+              />
+              <button id="addCertBtn" class="btn btn-primary btn-sm" style="white-space:nowrap;">+ Add</button>
+            </div>
+            <ul id="masterCertList" style="list-style:none;padding:0;margin:0;border-radius:10px;border:1px solid var(--chrome-border);overflow:hidden;min-height:48px;"></ul>
+          </div>
+
+        </div>
+
+        <!-- QR Code section — full width -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-label">📱 Employee Portal QR Code</div>
+
+          <div style="margin-bottom:16px;">
+            <label style="font-size:.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;">
+              Portal File Path
+            </label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+              <input
+                id="portalPathInput"
+                type="text"
+                placeholder="e.g. /app/employee-portal.html or https://yoursite.com/portal.html"
+                style="flex:1;min-width:220px;padding:9px 13px;border-radius:8px;border:1px solid var(--chrome-border);background:var(--surface);color:var(--text);font-size:.845rem;outline:none;font-family:'DM Sans',sans-serif;"
+              />
+              <button id="portalPathSaveBtn" class="btn btn-primary btn-sm">Save</button>
+              <button id="portalTestBtn" class="btn btn-secondary btn-sm" title="Opens the link in a new tab to verify it works">🔗 Test Link</button>
+            </div>
+            <div style="font-size:.72rem;color:var(--text-muted);margin-top:5px;">
+              Use a relative path like <code style="background:var(--surface-raised,rgba(255,255,255,.07));padding:1px 5px;border-radius:4px;">/employee-portal.html</code> or a full URL. The companyId is appended automatically.
+            </div>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;">
+            <div id="qrCode" style="background:#fff;padding:12px;border-radius:10px;display:inline-block;line-height:0;"></div>
+            <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-width:180px;">
+              <p id="qrPortalUrl" style="font-size:.72rem;color:var(--text-muted);word-break:break-all;margin:0;line-height:1.6;">Loading…</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button id="qrDownloadBtn" class="btn btn-secondary btn-sm">⬇ Download PNG</button>
+                <button id="qrCopyBtn" class="btn btn-secondary btn-sm">📋 Copy Link</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
+      <span class="nav-label">Home</span>
+    </a>
+    <a href="employees.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-users"></i></div>
+      <span class="nav-label">Staff</span>
+    </a>
+    <a href="schedule.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
+      <span class="nav-label">Schedule</span>
+    </a>
+    <a href="settings.html" class="nav-item active">
+      <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
+      <span class="nav-label">Settings</span>
+    </a>
+  </nav>
+
+</div>
+
+<script type="module" src="../js/firebase.js"></script>
+<script type="module" src="../js/auth-share.js"></script>
+<script type="module" src="../js/main.js"></script>
+<script type="module" src="../js/portal-settings.js"></script>
+
+</body>
+</html>

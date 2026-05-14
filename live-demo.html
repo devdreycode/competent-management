@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competent Management | Live Scheduler Demo</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #f2f5fb;
+      --bg2:       #e8edf7;
+      --white:     #ffffff;
+      --border:    #dae0ef;
+      --border2:   #c2cce0;
+      --text:      #0b1526;
+      --text2:     #374160;
+      --text3:     #7e8aa6;
+      --navy:      #0d2151;
+      --navy2:     #162e6e;
+      --blue:      #1e56c4;
+      --blue-lt:   #e4ecfb;
+      --steel:     #3d6db5;
+      --green:     #0ea86e;
+      --green-bg:  #e5f8f1;
+      --amber:     #d98f00;
+      --amber-bg:  #fef3c7;
+      --red:       #cc2b2b;
+      --red-bg:    #fee2e2;
+      --purple:    #6d3fc4;
+      --purple-bg: #f0ebfc;
+      --shadow:    0 4px 20px rgba(13,33,81,.08), 0 1px 4px rgba(13,33,81,.05);
+      --shadow-lg: 0 20px 60px rgba(13,33,81,.13), 0 4px 16px rgba(13,33,81,.07);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      height: 64px; display: flex; align-items: center; padding: 0 40px;
+      background: rgba(242,245,251,.95); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 8px rgba(13,33,81,.06);
+    }
+    .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-hex { width: 32px; height: 32px; }
+    .logo-top { font-size: .88rem; font-weight: 900; color: var(--navy); letter-spacing: .09em; text-transform: uppercase; line-height: 1; }
+    .logo-bot { font-size: .54rem; font-weight: 500; color: var(--text3); letter-spacing: .22em; text-transform: uppercase; margin-top: 2px; }
+    .nav-links { display: flex; gap: 2px; list-style: none; margin-left: 28px; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: .84rem; font-weight: 500; padding: 6px 12px; border-radius: 7px; transition: background .15s; }
+    .nav-links a:hover { background: var(--bg2); color: var(--navy); }
+    .nav-r { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .nav-login { color: var(--text2); text-decoration: none; font-size: .84rem; font-weight: 500; padding: 7px 14px; border-radius: 8px; transition: background .15s; }
+    .nav-login:hover { background: var(--bg2); }
+    .nav-signup { background: var(--navy); color: white; text-decoration: none; font-size: .84rem; font-weight: 700; padding: 8px 18px; border-radius: 8px; box-shadow: 0 2px 8px rgba(13,33,81,.22); transition: all .15s; }
+    .nav-signup:hover { background: var(--navy2); transform: translateY(-1px); }
+
+    /* ── PAGE ── */
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 32px 80px; }
+
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+    }
+    .page-header-left { display: flex; align-items: center; gap: 14px; }
+    .back-link {
+      color: var(--blue); text-decoration: none; font-weight: 700;
+      font-size: .82rem; display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 7px; border: 1px solid var(--border);
+      background: var(--white); transition: background .15s;
+    }
+    .back-link:hover { background: var(--bg2); }
+    .page-title { font-size: 1.2rem; font-weight: 900; color: var(--navy); letter-spacing: -.03em; margin: 0; }
+    .page-sub { font-size: .8rem; color: var(--text3); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+    .demo-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--blue-lt); border: 1px solid rgba(30,86,196,.22);
+      color: var(--blue); font-size: .7rem; font-weight: 800;
+      padding: 5px 12px; border-radius: 100px; letter-spacing: .05em; text-transform: uppercase;
+    }
+    .demo-badge::before { content: ''; width: 7px; height: 7px; background: var(--blue); border-radius: 50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── TOOLBAR (matches real app exactly) ── */
+    .toolbar-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 18px;
+      margin-bottom: 16px; display: flex; flex-direction: column; gap: 10px;
+      box-shadow: var(--shadow);
+    }
+    .toolbar-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .toolbar-actions { border-top: 1px solid var(--border); padding-top: 10px; justify-content: space-between; }
+    .toolbar-group { display: flex; align-items: center; gap: 6px; }
+    .toolbar-label { font-size: .76rem; font-weight: 700; color: var(--text3); white-space: nowrap; }
+    .toolbar-divider { width: 1px; height: 22px; background: var(--border); margin: 0 4px; }
+    .toolbar-select {
+      padding: 6px 10px; border: 1px solid var(--border); border-radius: 7px;
+      background: var(--bg2); color: var(--text); font-weight: 600; font-size: .8rem;
+      font-family: 'Outfit', sans-serif; cursor: pointer;
+    }
+    .toolbar-input {
+      padding: 6px 10px; border: 1px solid var(--border); border-radius: 7px;
+      background: var(--bg2); color: var(--text); font-size: .8rem; font-family: 'JetBrains Mono', monospace;
+      width: 110px;
+    }
+    .action-group { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .tbtn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 13px; border-radius: 7px; font-size: .8rem; font-weight: 700;
+      border: 1px solid var(--border); background: var(--white); color: var(--text);
+      cursor: pointer; transition: all .15s; font-family: 'Outfit', sans-serif;
+    }
+    .tbtn:hover { background: var(--bg2); }
+    .tbtn.save  { background: var(--navy); color: white; border-color: var(--navy); }
+    .tbtn.save:hover  { background: var(--navy2); }
+    .tbtn.pub   { background: #16a34a; color: white; border-color: #16a34a; }
+    .tbtn.pub:hover   { background: #15803d; }
+    .tbtn.auto  { background: var(--blue-lt); color: var(--blue); border-color: rgba(30,86,196,.25); }
+    .tbtn.auto:hover  { background: #d4e4fa; }
+    .tbtn.clear { color: var(--red); border-color: rgba(204,43,43,.25); }
+    .tbtn.clear:hover { background: var(--red-bg); }
+    .pub-badge  { padding: 3px 10px; border-radius: 100px; font-size: .7rem; font-weight: 800; background: var(--green-bg); color: var(--green); border: 1px solid #a7f3d0; }
+    .coverage-strip { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .cov-pill {
+      padding: 3px 10px; border-radius: 100px; font-size: .68rem; font-weight: 800;
+      border: 1px solid; cursor: default;
+    }
+    .cov-good   { background: var(--green-bg); color: var(--green); border-color: #a7f3d0; }
+    .cov-warn   { background: var(--amber-bg); color: var(--amber); border-color: #fcd34d; }
+    .cov-low    { background: var(--red-bg); color: var(--red); border-color: #fca5a5; }
+
+    /* ── SUMMARY STRIP ── */
+    .summary-card {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; margin-bottom: 16px; overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .sum-item { padding: 16px 20px; border-right: 1px solid var(--border); }
+    .sum-item:last-child { border-right: none; }
+    .sum-label { font-size: .6rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); font-weight: 700; margin-bottom: 4px; }
+    .sum-value { font-size: 1.4rem; font-weight: 900; color: var(--navy); font-family: 'JetBrains Mono', monospace; line-height: 1; }
+    .sum-value.green { color: var(--green); }
+    .sum-value.amber { color: var(--amber); }
+    .sum-value.red   { color: var(--red); }
+    .sum-sub { font-size: .65rem; color: var(--text3); margin-top: 3px; }
+
+    /* ── TABLE WRAPPER ── */
+    .table-wrapper {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
+    .tbl-wrap { overflow-x: auto; }
+
+    th {
+      background: var(--bg2); padding: 10px 12px; text-align: left;
+      font-size: .62rem; font-weight: 800; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .08em;
+      border-bottom: 2px solid var(--border); white-space: nowrap;
+    }
+    th.today-col { background: rgba(30,86,196,.07); color: var(--blue); }
+    th.name-th { min-width: 160px; border-right: 2px solid var(--border); }
+
+    td { border: 1px solid var(--border); padding: 0; height: 56px; }
+    td.name-col {
+      background: var(--bg2); border-right: 2px solid var(--border);
+      padding: 0 12px; white-space: nowrap;
+    }
+    td.cell { padding: 5px; position: relative; min-width: 110px; }
+    td.today-col-td { background: rgba(30,86,196,.03); }
+
+    /* Employee info */
+    .emp-info { display: flex; align-items: center; gap: 9px; }
+    .emp-av {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .6rem; font-weight: 900; color: white;
+    }
+    .emp-name { font-size: .78rem; font-weight: 800; color: var(--text); }
+    .emp-role { font-size: .6rem; color: var(--text3); margin-top: 1px; }
+
+    /* ── CELL BOX (matches real app) ── */
+    .cellBox {
+      height: 100%; border-radius: 9px; padding: 7px 9px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 6px; outline: 1px solid var(--border); background: var(--white);
+      position: relative; overflow: hidden;
+      cursor: pointer; user-select: none;
+      transition: outline .12s, box-shadow .12s, transform .08s;
+    }
+    .cellBox:hover { outline: 2px solid var(--blue); box-shadow: 0 4px 14px rgba(13,33,81,.1); }
+    .cellBox:active { transform: scale(.97); }
+
+    .cellBox.shift-normal  { outline: 1px solid var(--border); }
+    .cellBox.shift-off     { outline: 2px solid var(--red); background: var(--red-bg); }
+    .cellBox.shift-oncall  { outline: 2px solid var(--purple); background: var(--purple-bg); }
+    .cellBox.shift-holding { outline: 3px solid var(--amber); box-shadow: 0 0 0 3px rgba(217,143,0,.15); animation: pulse-hold .6s ease-in-out infinite alternate; }
+    @keyframes pulse-hold { from{box-shadow: 0 0 0 2px rgba(217,143,0,.15)} to{box-shadow: 0 0 0 6px rgba(217,143,0,.25)} }
+
+    .cv { font-size: .72rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cv.off-t    { color: var(--red); }
+    .cv.oncall-t { color: var(--purple); }
+    .cm { font-size: .58rem; color: var(--text3); margin-top: 1px; }
+
+    .pill-s {
+      font-size: .55rem; font-weight: 900; padding: 2px 6px;
+      border-radius: 100px; flex-shrink: 0;
+    }
+    .pill-active { background: var(--green-bg); color: var(--green); }
+    .pill-off    { background: var(--red-bg); color: var(--red); }
+    .pill-oc     { background: var(--purple-bg); color: var(--purple); }
+    .pill-empty  { background: var(--bg2); color: var(--text3); }
+
+    /* ── HOLD MENU (styled like real ctx-menu) ── */
+    #holdMenu {
+      position: fixed; display: none;
+      background: #111827; border-radius: 11px;
+      padding: 6px; min-width: 170px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.2);
+      z-index: 1000; animation: ctxIn .12s ease-out;
+    }
+    @keyframes ctxIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+    .ctx-item {
+      padding: 10px 13px; font-size: .82rem; color: #e5e7eb;
+      cursor: pointer; border-radius: 7px;
+      transition: background .12s, transform .05s;
+      display: flex; align-items: center; gap: 9px; font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+    }
+    .ctx-item:hover { background: #1f2937; transform: translateX(2px); }
+    .ctx-item.normal-opt { color: #6ee7b7; }
+    .ctx-item.eve-opt    { color: #93c5fd; }
+    .ctx-item.night-opt  { color: #c4b5fd; }
+    .ctx-item.oncall-opt { color: #a78bfa; }
+    .ctx-item.off-opt    { color: #fca5a5; }
+    .ctx-item.clear-opt  { color: #6b7280; }
+    .ctx-divider { height: 1px; background: #1f2937; margin: 4px 6px; }
+    .ctx-label { padding: 6px 13px 2px; font-size: .58rem; font-weight: 800; color: #4b5563; text-transform: uppercase; letter-spacing: .1em; }
+
+    /* ── INSTRUCTIONS CARD ── */
+    .instruction-card {
+      background: var(--navy); color: rgba(255,255,255,.85);
+      border-radius: 12px; padding: 14px 20px; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 14px;
+      font-size: .82rem; line-height: 1.5;
+      box-shadow: var(--shadow);
+    }
+    .instruction-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .instruction-card strong { color: white; }
+    .instruction-card kbd {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2);
+      padding: 1px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem; color: white;
+    }
+
+    /* ── FOOTER ── */
+    footer { background: var(--navy); color: rgba(255,255,255,.6); padding: 40px 40px 28px; margin-top: 60px; }
+    .foot-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap; margin-bottom: 32px; }
+    .foot-brand .logo-top { color: white; }
+    .foot-brand .logo-bot { color: rgba(255,255,255,.4); }
+    .foot-desc { font-size: .78rem; color: rgba(255,255,255,.45); line-height: 1.65; max-width: 220px; margin-top: 10px; }
+    .foot-col h5 { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.4); margin-bottom: 14px; }
+    .foot-col a { display: block; color: rgba(255,255,255,.6); text-decoration: none; font-size: .8rem; margin-bottom: 9px; transition: color .15s; }
+    .foot-col a:hover { color: white; }
+    .foot-cols { display: flex; gap: 48px; }
+    .foot-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 22px; font-size: .72rem; color: rgba(255,255,255,.3); }
+
+    @media(max-width:700px) {
+      nav { padding: 0 16px; } .nav-links { display: none; }
+      .page-wrap { padding: 20px 16px 60px; }
+      .summary-card { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body oncontextmenu="return false;">
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo-wrap">
+    <svg class="logo-hex" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="hg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
+        <linearGradient id="fg" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
+      </defs>
+      <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hg)" opacity=".18"/>
+      <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hg)" stroke-width="1.5"/>
+      <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#fg)" opacity=".85"/>
+      <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
+      <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
+      <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
+    </svg>
+    <div>
+      <div class="logo-top">Competent</div>
+      <div class="logo-bot">Management</div>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contactus.html">Contact</a></li>
+  </ul>
+  <div class="nav-r">
+    <a href="login.html" class="nav-login">Log in</a>
+    <a href="signup.html" class="nav-signup">Get started →</a>
+  </div>
+</nav>
+
+<!-- HOLD MENU -->
+<div id="holdMenu">
+  <div class="ctx-label">Shift Type</div>
+  <div class="ctx-item normal-opt" data-shift="7:00–15:00" data-type="normal"><i class="fas fa-sun"></i> Morning  <span style="opacity:.5;font-size:.68rem;margin-left:auto">7–15</span></div>
+  <div class="ctx-item eve-opt"    data-shift="15:00–23:00" data-type="normal"><i class="fas fa-cloud-sun"></i> Evening <span style="opacity:.5;font-size:.68rem;margin-left:auto">15–23</span></div>
+  <div class="ctx-item night-opt"  data-shift="23:00–7:00"  data-type="normal"><i class="fas fa-moon"></i> Night   <span style="opacity:.5;font-size:.68rem;margin-left:auto">23–7</span></div>
+  <div class="ctx-divider"></div>
+  <div class="ctx-item oncall-opt" data-shift="On Call"  data-type="oncall"><i class="fas fa-phone"></i> On Call</div>
+  <div class="ctx-item off-opt"    data-shift="OFF"      data-type="off"><i class="fas fa-ban"></i> OFF</div>
+  <div class="ctx-divider"></div>
+  <div class="ctx-item clear-opt"  data-shift="" data-type="empty"><i class="fas fa-xmark"></i> Clear</div>
+</div>
+
+<!-- PAGE -->
+<div class="page-wrap">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Home</a>
+      <div>
+        <h1 class="page-title">Live Scheduler Demo</h1>
+        <p class="page-sub">// Interactive · No account needed · Sample data</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="demo-badge">Live Demo</div>
+      <a href="signup.html" style="background:var(--navy);color:white;text-decoration:none;font-size:.82rem;font-weight:700;padding:8px 16px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(13,33,81,.22);">
+        <i class="fas fa-bolt"></i> Use the real thing
+      </a>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="instruction-card">
+    <div class="instruction-icon">👆</div>
+    <div><strong>How to use:</strong> Click and hold any cell to open the shift menu. Hover over a shift type and release to apply it. Try it on any employee for any day.</div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar-card">
+    <div class="toolbar-row">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Shift</span>
+        <select class="toolbar-select" id="shiftFilter" onchange="filterShift()">
+          <option value="all">All Shifts</option>
+          <option value="morning">Morning (7–15)</option>
+          <option value="evening">Evening (15–23)</option>
+          <option value="night">Night (23–7)</option>
+        </select>
+      </div>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-group">
+        <span class="toolbar-label">Week of</span>
+        <input class="toolbar-input" type="text" value="Jun 9 – Jun 15, 2026" readonly>
+      </div>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-group">
+        <span class="toolbar-label" id="weekLabel">Week</span>
+        <span id="coverageStrip" class="coverage-strip"></span>
+      </div>
+    </div>
+    <div class="toolbar-row toolbar-actions">
+      <div class="action-group">
+        <button class="tbtn auto" onclick="autoGenerate()"><i class="fas fa-wand-magic-sparkles"></i> Auto Generate</button>
+        <button class="tbtn clear" onclick="clearAll()"><i class="fas fa-trash-can"></i> Clear All</button>
+      </div>
+      <div class="action-group">
+        <button class="tbtn save" onclick="showSaved()"><i class="fas fa-floppy-disk"></i> Save</button>
+        <button class="tbtn pub"  onclick="showPublished()"><i class="fas fa-paper-plane"></i> Publish</button>
+        <span class="pub-badge" id="pubBadge">● Draft</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-card">
+    <div class="sum-item">
+      <div class="sum-label">Coverage Score</div>
+      <div class="sum-value green" id="covScore">—</div>
+      <div class="sum-sub">This week</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-label">Total Scheduled Hours</div>
+      <div class="sum-value" id="totalHrs">—</div>
+      <div class="sum-sub">Across all staff</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-label">Est. Payroll</div>
+      <div class="sum-value" id="estPay">—</div>
+      <div class="sum-sub">Based on sample rates</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-label">Rest Violations</div>
+      <div class="sum-value green" id="restViol">None ✓</div>
+      <div class="sum-sub">Compliance check</div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <div class="tbl-wrap">
+      <table id="schedTable">
+        <thead>
+          <tr>
+            <th class="name-th">Staff Member</th>
+            <th>Mon</th><th>Tue</th><th class="today-col">Wed ★</th>
+            <th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand">
+      <a href="index.html" class="logo-wrap">
+        <svg class="logo-hex" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="hg2" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
+            <linearGradient id="fg2" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
+          </defs>
+          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hg2)" opacity=".18"/>
+          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hg2)" stroke-width="1.5"/>
+          <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#fg2)" opacity=".85"/>
+          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
+          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
+          <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
+        </svg>
+        <div><div class="logo-top">Competent</div><div class="logo-bot">Management</div></div>
+      </a>
+      <p class="foot-desc">Workforce operations software built for managers who need clarity, accountability, and payroll-ready records.</p>
+    </div>
+    <div class="foot-cols">
+      <div class="foot-col">
+        <h5>Product</h5>
+        <a href="features.html">Features</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="scheduling-demo.html">Live Demo</a>
+        <a href="articles/index.html">Insights</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="about.html">About</a>
+        <a href="contactus.html">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h5>Legal</h5>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">© <span id="yr"></span> Competent Management. All rights reserved.</div>
+</footer>
+
+<script>
+/* ── DATA ── */
+const STAFF = [
+  { name: "Sophia Turner", role: "Floor Lead",  color: "#1e56c4", rate: 18,
+    shifts: ["7:00–15:00","7:00–15:00","OFF","OFF","7:00–15:00","7:00–15:00","7:00–15:00"] },
+  { name: "Maria Lopez",   role: "Associate",   color: "#0a8a5c", rate: 15,
+    shifts: ["15:00–23:00","ON-CALL","15:00–23:00","15:00–23:00","15:00–23:00","OFF","OFF"] },
+  { name: "Marcus Lee",    role: "Night Shift",  color: "#4b1f8c", rate: 17,
+    shifts: ["OFF","OFF","23:00–7:00","23:00–7:00","23:00–7:00","ON-CALL","23:00–7:00"] },
+  { name: "Jordan Smith",  role: "Associate",   color: "#b45309", rate: 15,
+    shifts: ["23:00–7:00","23:00–7:00","23:00–7:00","OFF","23:00–7:00","23:00–7:00","OFF"] },
+  { name: "Emily Carter",  role: "Supervisor",  color: "#1e56c4", rate: 20,
+    shifts: ["7:00–15:00","7:00–15:00","7:00–15:00","7:00–15:00","OFF","OFF","OFF"] },
+  { name: "Daniel Reed",   role: "Associate",   color: "#0a8a5c", rate: 15,
+    shifts: ["15:00–23:00","15:00–23:00","15:00–23:00","15:00–23:00","15:00–23:00","15:00–23:00","OFF"] },
+  { name: "Alex Johnson",  role: "Associate",   color: "#7c3aed", rate: 15,
+    shifts: ["OFF","OFF","7:00–15:00","7:00–15:00","7:00–15:00","7:00–15:00","7:00–15:00"] },
+  { name: "Nia Patel",     role: "Floor Lead",  color: "#b45309", rate: 18,
+    shifts: ["ON-CALL","15:00–23:00","OFF","15:00–23:00","15:00–23:00","OFF","OFF"] }
+];
+
+const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const TODAY_COL = 2; // Wed
+
+let active = { ei: null, di: null };
+let holdTimer = null;
+let published = false;
+
+/* ── HELPERS ── */
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+}
+function shiftHours(s) {
+  if (!s || s === 'OFF' || s === 'ON-CALL') return 0;
+  const parts = s.split('–');
+  if (parts.length < 2) return 0;
+  const parse = t => { let [h] = t.split(':').map(Number); return h; };
+  let diff = parse(parts[1]) - parse(parts[0]);
+  if (diff <= 0) diff += 24;
+  return diff;
+}
+function shiftType(s) {
+  if (!s) return 'empty';
+  if (s === 'OFF') return 'off';
+  if (s === 'ON-CALL') return 'oncall';
+  return 'normal';
+}
+function shiftLabel(s) {
+  if (!s) return '<span style="color:var(--text3);font-size:.65rem">—</span>';
+  return s;
+}
+
+/* ── RENDER ── */
+function render() {
+  const filter = document.getElementById('shiftFilter').value;
+  const tbody = document.getElementById('tableBody');
+
+  tbody.innerHTML = STAFF.map((emp, ei) => {
+    const av = `<div class="emp-av" style="background:${emp.color}">${initials(emp.name)}</div>`;
+    const nameCell = `<td class="name-col"><div class="emp-info">${av}<div><div class="emp-name">${emp.name}</div><div class="emp-role">${emp.role}</div></div></div></td>`;
+
+    const cells = emp.shifts.map((shift, di) => {
+      const type = shiftType(shift);
+      const hrs  = shiftHours(shift);
+      const todayCls = di === TODAY_COL ? 'today-col-td' : '';
+
+      // Filter
+      if (filter !== 'all') {
+        if (filter === 'morning' && !shift.startsWith('7'))  return `<td class="cell ${todayCls}"><div class="cellBox" style="opacity:.3" data-ei="${ei}" data-di="${di}"><span class="cv" style="color:var(--text3)">—</span></div></td>`;
+        if (filter === 'evening' && !shift.startsWith('15')) return `<td class="cell ${todayCls}"><div class="cellBox" style="opacity:.3" data-ei="${ei}" data-di="${di}"><span class="cv" style="color:var(--text3)">—</span></div></td>`;
+        if (filter === 'night'   && !shift.startsWith('23')) return `<td class="cell ${todayCls}"><div class="cellBox" style="opacity:.3" data-ei="${ei}" data-di="${di}"><span class="cv" style="color:var(--text3)">—</span></div></td>`;
+      }
+
+      let boxCls = `cellBox shift-${type}`;
+      let cvCls  = type === 'off' ? 'cv off-t' : type === 'oncall' ? 'cv oncall-t' : 'cv';
+      let pill   = '';
+      if (type === 'normal') pill = `<span class="pill-s pill-active">●</span>`;
+      if (type === 'off')    pill = `<span class="pill-s pill-off">✕</span>`;
+      if (type === 'oncall') pill = `<span class="pill-s pill-oc">📞</span>`;
+      if (type === 'empty')  pill = `<span class="pill-s pill-empty">—</span>`;
+
+      const subLabel = hrs ? `<div class="cm">${hrs}h</div>` : '';
+
+      return `<td class="cell ${todayCls}">
+        <div class="${boxCls}" data-ei="${ei}" data-di="${di}">
+          <div><span class="${cvCls}">${shiftLabel(shift)}</span>${subLabel}</div>
+          ${pill}
+        </div>
+      </td>`;
+    }).join('');
+
+    return `<tr>${nameCell}${cells}</tr>`;
+  }).join('');
+
+  // Bind hold events
+  document.querySelectorAll('.cellBox').forEach(box => {
+    box.addEventListener('mousedown', onMouseDown);
+    box.addEventListener('touchstart', onTouchStart, { passive: true });
+  });
+
+  updateSummary();
+  updateCoverageStrip();
+}
+
+/* ── HOLD INTERACTION ── */
+function onMouseDown(e) {
+  const box = e.currentTarget;
+  const ei = +box.dataset.ei, di = +box.dataset.di;
+  active = { ei, di };
+  box.classList.add('shift-holding');
+
+  holdTimer = setTimeout(() => openMenu(e.clientX, e.clientY), 250);
+
+  document.addEventListener('mouseup', onMouseUp, { once: true });
+}
+
+function onMouseUp() {
+  clearTimeout(holdTimer);
+  document.querySelectorAll('.shift-holding').forEach(b => b.classList.remove('shift-holding'));
+}
+
+function onTouchStart(e) {
+  const touch = e.touches[0];
+  const box = e.currentTarget;
+  active = { ei: +box.dataset.ei, di: +box.dataset.di };
+  box.classList.add('shift-holding');
+  holdTimer = setTimeout(() => openMenu(touch.clientX, touch.clientY), 300);
+  document.addEventListener('touchend', () => { clearTimeout(holdTimer); box.classList.remove('shift-holding'); }, { once: true });
+}
+
+function openMenu(x, y) {
+  const menu = document.getElementById('holdMenu');
+  menu.style.display = 'block';
+  // Keep in viewport
+  const mw = 180, mh = 240;
+  menu.style.left = Math.min(x + 6, window.innerWidth - mw - 10) + 'px';
+  menu.style.top  = Math.min(y + 6, window.innerHeight - mh - 10) + 'px';
+}
+
+function closeMenu() {
+  document.getElementById('holdMenu').style.display = 'none';
+  document.querySelectorAll('.shift-holding').forEach(b => b.classList.remove('shift-holding'));
+  active = { ei: null, di: null };
+}
+
+// Menu item clicks
+document.querySelectorAll('.ctx-item').forEach(item => {
+  item.addEventListener('mouseup', () => {
+    if (active.ei === null) return;
+    STAFF[active.ei].shifts[active.di] = item.dataset.shift;
+    closeMenu();
+    render();
+  });
+  item.addEventListener('click', () => {
+    if (active.ei === null) return;
+    STAFF[active.ei].shifts[active.di] = item.dataset.shift;
+    closeMenu();
+    render();
+  });
+});
+
+// Close on outside click
+document.addEventListener('mousedown', e => {
+  if (!document.getElementById('holdMenu').contains(e.target)) closeMenu();
+});
+
+/* ── SUMMARY ── */
+function updateSummary() {
+  let totalHrs = 0, worked = 0, total = 0;
+  STAFF.forEach(emp => {
+    emp.shifts.forEach(s => {
+      total++;
+      const h = shiftHours(s);
+      if (h > 0) { totalHrs += h; worked++; }
+    });
+  });
+  const covPct = Math.round(worked / total * 100);
+  const pay = Math.round(STAFF.reduce((acc, emp) => {
+    return acc + emp.shifts.reduce((a, s) => a + shiftHours(s) * emp.rate, 0);
+  }, 0));
+
+  const covEl = document.getElementById('covScore');
+  covEl.textContent = covPct + '%';
+  covEl.className = 'sum-value ' + (covPct >= 75 ? 'green' : covPct >= 50 ? 'amber' : 'red');
+
+  document.getElementById('totalHrs').textContent = totalHrs + 'h';
+  document.getElementById('estPay').textContent = '$' + pay.toLocaleString();
+
+  // Violations: check 7-consecutive days
+  let viol = 0;
+  STAFF.forEach(emp => {
+    if (emp.shifts.every(s => shiftHours(s) > 0)) viol++;
+  });
+  const vEl = document.getElementById('restViol');
+  vEl.textContent = viol ? viol + ' flagged ⚠' : 'None ✓';
+  vEl.className = 'sum-value ' + (viol ? 'red' : 'green');
+}
+
+/* ── COVERAGE STRIP ── */
+function updateCoverageStrip() {
+  const strip = document.getElementById('coverageStrip');
+  const dayTotals = DAYS.map((_, di) => {
+    const working = STAFF.filter(e => shiftHours(e.shifts[di]) > 0).length;
+    const pct = Math.round(working / STAFF.length * 100);
+    return { day: DAYS[di], pct, working };
+  });
+  strip.innerHTML = dayTotals.map(d => {
+    const cls = d.pct >= 60 ? 'cov-good' : d.pct >= 30 ? 'cov-warn' : 'cov-low';
+    return `<span class="cov-pill ${cls}">${d.day} ${d.pct}%</span>`;
+  }).join('');
+
+  // Week label
+  document.getElementById('weekLabel').textContent = `${STAFF.reduce((a,e)=>a+e.shifts.filter(s=>shiftHours(s)>0).length,0)} shifts scheduled`;
+}
+
+/* ── TOOLBAR ACTIONS ── */
+function filterShift() { render(); }
+
+function autoGenerate() {
+  const defaults = ["7:00–15:00","15:00–23:00","23:00–7:00","OFF","ON-CALL"];
+  STAFF.forEach(emp => {
+    emp.shifts = emp.shifts.map(s => s || defaults[Math.floor(Math.random() * 3)]);
+  });
+  render();
+  flash('Auto-generated schedule ✓');
+}
+
+function clearAll() {
+  STAFF.forEach(emp => { emp.shifts = emp.shifts.map(() => ''); });
+  published = false;
+  document.getElementById('pubBadge').textContent = '● Draft';
+  document.getElementById('pubBadge').style.background = '';
+  document.getElementById('pubBadge').style.color = '';
+  render();
+}
+
+function showSaved() { flash('Schedule saved ✓'); }
+
+function showPublished() {
+  published = !published;
+  const badge = document.getElementById('pubBadge');
+  if (published) {
+    badge.textContent = '● Published';
+    badge.style.background = 'var(--green-bg)';
+    badge.style.color = 'var(--green)';
+    badge.style.border = '1px solid #a7f3d0';
+    flash('Schedule published — staff can now view it ✓');
+  } else {
+    badge.textContent = '● Draft';
+    badge.style.background = '';
+    badge.style.color = '';
+    badge.style.border = '';
+    flash('Schedule unpublished');
+  }
+}
+
+function flash(msg) {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  Object.assign(el.style, {
+    position: 'fixed', bottom: '28px', left: '50%', transform: 'translateX(-50%) translateY(10px)',
+    background: '#111827', color: 'white', padding: '10px 22px', borderRadius: '10px',
+    fontSize: '.82rem', fontWeight: '700', fontFamily: "'Outfit', sans-serif",
+    boxShadow: '0 8px 24px rgba(0,0,0,.25)', zIndex: '9999',
+    transition: 'opacity .3s, transform .3s', opacity: '0'
+  });
+  document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateX(-50%) translateY(0)'; });
+  setTimeout(() => {
+    el.style.opacity = '0'; el.style.transform = 'translateX(-50%) translateY(10px)';
+    setTimeout(() => el.remove(), 400);
+  }, 2000);
+}
+
+/* ── INIT ── */
+render();
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

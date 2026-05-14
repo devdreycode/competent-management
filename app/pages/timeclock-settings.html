@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent:#0891b2;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Clock Settings – WorkForce Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/nav.css">
+  <link rel="stylesheet" href="../css/top-header.css">
+  <style>
+    #pinGate {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    #pinGate.hidden { display: none; }
+    #pinBox {
+      background: var(--surface, #fff);
+      border: 1px solid var(--chrome-border, #e2e8f0);
+      border-radius: 20px; padding: 32px 28px 26px;
+      width: 100%; max-width: 300px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.25);
+      display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+    }
+    .pin-gate-icon  { font-size: 2rem; line-height: 1; }
+    .pin-gate-title { font-size: 1rem; font-weight: 700; color: var(--text, #0f172a); margin: 0; }
+    .pin-gate-sub   { font-size: .75rem; color: var(--text-muted, #94a3b8); margin: -6px 0 0; line-height: 1.5; }
+    #pinDots { display: flex; gap: 10px; justify-content: center; margin: 4px 0; }
+    .pdot {
+      width: 13px; height: 13px; border-radius: 50%;
+      border: 2px solid var(--chrome-border, #e2e8f0); background: transparent;
+      transition: background .15s, border-color .15s, transform .15s;
+    }
+    .pdot.filled { background: var(--accent, #0891b2); border-color: var(--accent, #0891b2); transform: scale(1.15); }
+    .pdot.err    { background: #dc2626; border-color: #dc2626; }
+    #pinPad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; width: 100%; }
+    .pkey {
+      aspect-ratio: 1.2; border: 1px solid var(--chrome-border, #e2e8f0);
+      border-radius: 10px; background: var(--bg, #f8fafc); color: var(--text, #0f172a);
+      font-size: 1.05rem; font-weight: 600; cursor: pointer;
+      transition: background .1s, transform .08s; font-family: 'Space Mono', monospace;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pkey:hover  { background: var(--accent, #0891b2); color: #fff; border-color: var(--accent, #0891b2); }
+    .pkey:active { transform: scale(.92); }
+    .pkey.sym { font-family: 'DM Sans', sans-serif; font-size: .72rem; font-weight: 700; }
+    #pinError { font-size: .74rem; color: #dc2626; font-weight: 600; min-height: 1.1em; }
+    #pinCancelBtn { font-size: .73rem; color: var(--text-muted, #94a3b8); background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; }
+    #pinCancelBtn:hover { color: var(--text, #0f172a); }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); } 40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); } 80% { transform: translateX(4px); }
+    }
+    .shake-anim { animation: shake .35s ease; }
+  </style>
+</head>
+<body>
+
+<!-- ── PIN GATE ──────────────────────────────────────────── -->
+<div id="pinGate">
+  <div id="pinBox">
+    <div class="pin-gate-icon">🔐</div>
+    <div class="pin-gate-title">Manager PIN Required</div>
+    <div class="pin-gate-sub">Enter your manager PIN to access Time Clock Settings</div>
+    <div id="pinDots">
+      <div class="pdot" id="pd0"></div><div class="pdot" id="pd1"></div>
+      <div class="pdot" id="pd2"></div><div class="pdot" id="pd3"></div>
+      <div class="pdot" id="pd4"></div><div class="pdot" id="pd5"></div>
+    </div>
+    <div id="pinPad">
+      <button class="pkey" onclick="mgPinPress('1')">1</button>
+      <button class="pkey" onclick="mgPinPress('2')">2</button>
+      <button class="pkey" onclick="mgPinPress('3')">3</button>
+      <button class="pkey" onclick="mgPinPress('4')">4</button>
+      <button class="pkey" onclick="mgPinPress('5')">5</button>
+      <button class="pkey" onclick="mgPinPress('6')">6</button>
+      <button class="pkey" onclick="mgPinPress('7')">7</button>
+      <button class="pkey" onclick="mgPinPress('8')">8</button>
+      <button class="pkey" onclick="mgPinPress('9')">9</button>
+      <button class="pkey sym" onclick="mgPinClear()">CLR</button>
+      <button class="pkey" onclick="mgPinPress('0')">0</button>
+      <button class="pkey sym" onclick="mgPinBack()">⌫</button>
+    </div>
+    <div id="pinError"></div>
+    <button id="pinCancelBtn" onclick="history.back()">Cancel — go back</button>
+  </div>
+</div>
+
+<!-- ── APP SHELL ─────────────────────────────────────────── -->
+<div class="app-shell">
+  <header class="top-header">
+    <div class="brand-mark" id="brandMark">⚡</div>
+    <div style="display:flex;flex-direction:column;line-height:1.1;">
+      <div class="brand-name" id="companyNameDisplay">Company</div>
+      <div class="brand-tag">Workforce Manager</div>
+    </div>
+    <div style="width:1px;height:22px;background:var(--chrome-border);margin:0 4px;flex-shrink:0;"></div>
+    <span class="header-title">🕐 Time Clock Settings</span>
+    <div id="upgradeBtn">⚡ Upgrade</div>
+    <div class="header-spacer"></div>
+    <div id="welcome-msg">Welcome, User</div>
+    <div class="notif-wrapper">
+      <div id="notifBell" onclick="toggleNotifPanel(event)" title="Notifications">
+        <i class="fas fa-bell" style="font-size:.9rem;"></i>
+        <span id="notifCount" style="display:none;">0</span>
+      </div>
+      <div id="notifPanel" style="display:none;">
+        <div class="notif-header">
+          <span class="notif-header-title">Notifications</span>
+          <button id="notifMarkAll" onclick="markAllRead(event)" disabled>All caught up</button>
+        </div>
+        <div id="notifList"></div>
+        <div id="notifEmpty" style="display:block;">You're all caught up! 🎉</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-left:4px;">
+      <div class="user-avatar" id="sidebarAvatar" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;" title="Account">A</div>
+      <button class="btn-signout" id="logoutBtn" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </header>
+
+  <div class="main-area">
+    <div class="page-body">
+      <div class="page active">
+
+        <div class="sec-header" style="margin-bottom:20px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <a href="settings.html" class="btn btn-ghost btn-sm" style="text-decoration:none;">← Back</a>
+              <div class="sec-title">Time Clock Settings</div>
+            </div>
+            <div class="sec-sub">Kiosk behavior, clock-in rules, breaks, and alerts</div>
+          </div>
+          <button class="btn btn-primary" id="saveTimeclock">💾 Save</button>
+        </div>
+
+        <!-- Row 1 -->
+        <div class="stab-2col">
+
+          <!-- Clock-In -->
+          <div class="card">
+            <div class="card-label">🕐 Clock-In</div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Require PIN</div><div class="toggle-sub">Employees must enter their PIN to punch in</div></div>
+              <label class="toggle"><input type="checkbox" id="requirePin" checked><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Allow Early Clock-In</div><div class="toggle-sub">Let employees punch in before their shift starts</div></div>
+              <label class="toggle"><input type="checkbox" id="allowEarlyClockIn" checked><span class="slider"></span></label>
+            </div>
+            <div class="field" style="margin-top:8px;">
+              <label>Early Clock-In Window (minutes)</label>
+              <input type="number" id="earlyClockInWindow" value="15" min="0" max="60">
+              <div class="field-hint">How early before shift start an employee can punch in.</div>
+            </div>
+            <div class="toggle-row" style="margin-top:4px;">
+              <div><div class="toggle-label">Require Reason for Late Punch</div><div class="toggle-sub">Prompt employee to enter a reason when clocking in late</div></div>
+              <label class="toggle"><input type="checkbox" id="requireLateReason"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Show Scheduled Shift on Punch Screen</div><div class="toggle-sub">Display today's shift time after the employee enters their PIN</div></div>
+              <label class="toggle"><input type="checkbox" id="showShiftOnPunch" checked><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Warn When Approaching Overtime</div><div class="toggle-sub">Alert employee on punch-in if they're nearing the overtime threshold this week</div></div>
+              <label class="toggle"><input type="checkbox" id="warnOvertimeOnPunch" checked><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <!-- Clock-Out & Security -->
+          <div class="card">
+            <div class="card-label">🔒 Clock-Out &amp; Security</div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Auto Clock-Out</div><div class="toggle-sub">Automatically punch out employees who forget to clock out</div></div>
+              <label class="toggle"><input type="checkbox" id="autoClockOut"><span class="slider"></span></label>
+            </div>
+            <div class="field" style="margin-top:8px;">
+              <label>Auto Clock-Out After (hours)</label>
+              <input type="number" id="autoClockOutHours" value="12" min="1" max="24">
+              <div class="field-hint">Recommended 12–14h to catch genuine missed punches.</div>
+            </div>
+            <div class="toggle-row" style="margin-top:4px;">
+              <div><div class="toggle-label">Log IP Address on Punch</div><div class="toggle-sub">Record the kiosk device's IP with every clock-in and clock-out</div></div>
+              <label class="toggle"><input type="checkbox" id="logIpOnPunch"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Buddy Punch Warning</div><div class="toggle-sub">Flag when two employees punch in within 60 seconds of each other from the same device</div></div>
+              <label class="toggle"><input type="checkbox" id="buddyPunchWarning"><span class="slider"></span></label>
+            </div>
+            <div class="field" style="margin-top:8px;">
+              <label>Kiosk Auto-Reset (seconds)</label>
+              <input type="number" id="kioskIdleTimeout" value="30" min="5" max="120">
+              <div class="field-hint">Return to the PIN screen after this many seconds of inactivity.</div>
+            </div>
+          </div>
+
+        </div><!-- /.stab-2col row 1 -->
+
+        <!-- Row 2 -->
+        <div class="stab-2col" style="margin-top:16px;">
+
+          <!-- Breaks -->
+          <div class="card">
+            <div class="card-label">☕ Breaks</div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Allow Breaks</div><div class="toggle-sub">Show Start Break / End Break buttons on the kiosk</div></div>
+              <label class="toggle"><input type="checkbox" id="allowBreaks" checked><span class="slider"></span></label>
+            </div>
+            <div class="field" style="margin-top:8px;">
+              <label>Max Break Duration (minutes)</label>
+              <input type="number" id="maxBreakMinutes" value="30" min="5" max="120">
+              <div class="field-hint">Flag breaks that exceed this length for manager review.</div>
+            </div>
+            <div class="toggle-row" style="margin-top:4px;">
+              <div><div class="toggle-label">Paid Breaks</div><div class="toggle-sub">Count break time toward paid hours</div></div>
+              <label class="toggle"><input type="checkbox" id="breaksCountAsHours"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Alert on Long Break</div><div class="toggle-sub">Notify manager when an employee's break exceeds the max duration</div></div>
+              <label class="toggle"><input type="checkbox" id="alertLongBreak" checked><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <!-- Notifications -->
+          <div class="card">
+            <div class="card-label">🔔 Manager Alerts</div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Late Clock-In Alert</div><div class="toggle-sub">Notify manager when an employee punches in more than 5 minutes late</div></div>
+              <label class="toggle"><input type="checkbox" id="notifLateClockIn"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Missed Punch Alert</div><div class="toggle-sub">Notify manager when an employee never clocked out at end of day</div></div>
+              <label class="toggle"><input type="checkbox" id="notifMissedPunch" checked><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Early Clock-Out Alert</div><div class="toggle-sub">Notify manager when an employee leaves more than 15 minutes before shift end</div></div>
+              <label class="toggle"><input type="checkbox" id="notifEarlyClockOut"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Overtime Alert on Punch-In</div><div class="toggle-sub">Notify manager when a punch-in would push an employee into overtime</div></div>
+              <label class="toggle"><input type="checkbox" id="notifOvertimePunch" checked><span class="slider"></span></label>
+            </div>
+          </div>
+
+        </div><!-- /.stab-2col row 2 -->
+
+      </div>
+    </div><!-- /.page-body -->
+  </div><!-- /.main-area -->
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
+      <span class="nav-label">Home</span>
+    </a>
+    <a href="employees.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-users"></i></div>
+      <span class="nav-label">Staff</span>
+    </a>
+    <a href="schedule.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
+      <span class="nav-label">Schedule</span>
+    </a>
+    <a href="settings.html" class="nav-item active">
+      <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
+      <span class="nav-label">Settings</span>
+    </a>
+  </nav>
+
+</div><!-- /.app-shell -->
+
+<!-- ── PIN GATE LOGIC ─────────────────────────────────────── -->
+<script type="module">
+  import { db } from "../js/firebase.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  let mgPin      = '';
+  let correctPin = null;
+  const MAX_LEN  = 6;
+
+  // Load PIN from Firestore settings/config after authReady fires
+  // (window.appState.companyId is set by auth-share.js, never from localStorage)
+  async function loadPin() {
+    const companyId = window.appState?.companyId;
+    if (!companyId) {
+      // authReady hasn't fired yet — wait for it
+      window.addEventListener('authReady', loadPin, { once: true });
+      return;
+    }
+    try {
+      const snap = await getDoc(
+        doc(db, 'companies', companyId, 'settings', 'config')
+      );
+      correctPin = snap.exists() ? (snap.data().mgrKioskPin ?? null) : null;
+    } catch (err) {
+      console.warn('[pin-gate] PIN load failed:', err);
+    }
+  }
+  loadPin();
+
+  function renderDots(errState = false) {
+    for (let i = 0; i < MAX_LEN; i++) {
+      const d = document.getElementById('pd' + i);
+      if (!d) continue;
+      d.classList.remove('filled', 'err');
+      if (errState && i < mgPin.length) d.classList.add('err');
+      else if (i < mgPin.length) d.classList.add('filled');
+    }
+  }
+
+  window.mgPinPress = (num) => {
+    if (mgPin.length >= MAX_LEN) return;
+    mgPin += num;
+    renderDots();
+    // Auto-submit once the PIN reaches the correct length
+    if (correctPin && mgPin.length === String(correctPin).length) {
+      setTimeout(mgPinSubmit, 150);
+    }
+  };
+
+  window.mgPinBack  = () => { mgPin = mgPin.slice(0, -1); renderDots(); };
+  window.mgPinClear = () => {
+    mgPin = '';
+    renderDots();
+    document.getElementById('pinError').textContent = '';
+  };
+
+  async function mgPinSubmit() {
+    // If PIN not loaded yet, try once more
+    if (correctPin === null) await loadPin();
+
+    // No PIN configured → let them through, remind to set one
+    if (!correctPin) {
+      console.warn('[pin-gate] No manager PIN set — unlocking. Set one in Account Settings.');
+      unlock();
+      return;
+    }
+
+    if (mgPin === String(correctPin)) {
+      unlock();
+    } else {
+      renderDots(true);
+      const dotsEl = document.getElementById('pinDots');
+      dotsEl.classList.add('shake-anim');
+      document.getElementById('pinError').textContent = 'Incorrect PIN — try again';
+      setTimeout(() => {
+        dotsEl.classList.remove('shake-anim');
+        mgPin = '';
+        renderDots();
+        document.getElementById('pinError').textContent = '';
+      }, 600);
+    }
+  }
+
+  function unlock() {
+    document.getElementById('pinGate').classList.add('hidden');
+  }
+
+  window.mgPinSubmit = mgPinSubmit;
+
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('pinGate').classList.contains('hidden')) return;
+    if (e.key >= '0' && e.key <= '9') mgPinPress(e.key);
+    else if (e.key === 'Backspace') mgPinBack();
+    else if (e.key === 'Enter')     mgPinSubmit();
+    else if (e.key === 'Escape')    history.back();
+  });
+</script>
+
+<script type="module" src="../js/firebase.js"></script>
+<script type="module" src="../js/auth-share.js"></script>
+<script type="module" src="../js/main.js"></script>
+<script type="module" src="../js/timeclock-settings.js"></script>
+</body>
+</html>

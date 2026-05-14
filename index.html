@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="msvalidate.01" content="15EFF6AF10949EBF14C8F398A902D6EA">
+  <title>Competent Management | Workforce Operations</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d2151">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="afb1c59e-b6d6-4236-8b5a-1e2d1a4c902b"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f2f5fb;
+      --bg2:      #e8edf7;
+      --white:    #ffffff;
+      --border:   #dae0ef;
+      --border2:  #c2cce0;
+      --text:     #0b1526;
+      --text2:    #374160;
+      --text3:    #7e8aa6;
+      --navy:     #0d2151;
+      --navy2:    #162e6e;
+      --blue:     #1e56c4;
+      --blue-lt:  #e4ecfb;
+      --steel:    #3d6db5;
+      --green:    #0ea86e;
+      --green-bg: #e5f8f1;
+      --amber:    #d98f00;
+      --red:      #cc2b2b;
+      --purple:   #6d3fc4;
+      --purple-bg:#f0ebfc;
+      --shadow:   0 4px 20px rgba(13,33,81,.08), 0 1px 4px rgba(13,33,81,.05);
+      --shadow-lg:0 20px 60px rgba(13,33,81,.13), 0 4px 16px rgba(13,33,81,.07);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+    /* ──────────────── NAV ──────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      height: 64px; display: flex; align-items: center; padding: 0 48px;
+      background: rgba(242,245,251,.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 20px rgba(13,33,81,.1); }
+
+    /* Logo SVG mark */
+    .logo-wrap { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+    .logo-hex {
+      width: 36px; height: 36px; flex-shrink: 0;
+    }
+    .logo-text-block { display: flex; flex-direction: column; line-height: 1; }
+    .logo-top { font-size: .9rem; font-weight: 900; color: var(--navy); letter-spacing: .09em; text-transform: uppercase; }
+    .logo-bot { font-size: .56rem; font-weight: 500; color: var(--text3); letter-spacing: .22em; text-transform: uppercase; margin-top: 2px; }
+
+    .nav-links { display: flex; gap: 2px; list-style: none; margin-left: 32px; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: .86rem; font-weight: 500; padding: 7px 13px; border-radius: 8px; transition: background .15s, color .15s; }
+    .nav-links a:hover { background: var(--bg2); color: var(--navy); }
+    .nav-r { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .nav-login { color: var(--text2); text-decoration: none; font-size: .86rem; font-weight: 500; padding: 7px 14px; border-radius: 8px; transition: background .15s; }
+    .nav-login:hover { background: var(--bg2); }
+    .nav-signup { background: var(--navy); color: white; text-decoration: none; font-size: .86rem; font-weight: 700; padding: 9px 20px; border-radius: 9px; box-shadow: 0 2px 10px rgba(13,33,81,.25); transition: all .15s; }
+    .nav-signup:hover { background: var(--navy2); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(13,33,81,.32); }
+
+    /* ──────────────── HERO ──────────────── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 100px 48px 70px; position: relative; overflow: hidden;
+    }
+    .hero-bg-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(13,33,81,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(13,33,81,.05) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: radial-gradient(ellipse 85% 85% at 40% 50%, black 20%, transparent 100%);
+    }
+    /* Orbital rings echoing the logo */
+    .hero-orb {
+      position: absolute; right: -60px; top: 50%; transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .orb-ring {
+      position: absolute; border-radius: 50%; border: 1px solid rgba(30,86,196,.13);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+    }
+    .orb-ring:nth-child(1) { width: 560px; height: 560px; }
+    .orb-ring:nth-child(2) { width: 420px; height: 420px; border-style: dashed; opacity: .55; transform: translate(-50%,-50%) rotate(25deg); }
+    .orb-ring:nth-child(3) { width: 300px; height: 300px; border-width: 2px; opacity: .18; }
+    .orb-glow {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 300px; height: 300px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(30,86,196,.08) 0%, transparent 70%);
+    }
+
+    .hero-inner {
+      max-width: 1240px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1.05fr;
+      gap: 64px; align-items: center; position: relative; z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--blue-lt); border: 1px solid rgba(30,86,196,.22);
+      color: var(--blue); font-size: .72rem; font-weight: 700;
+      padding: 5px 13px 5px 7px; border-radius: 100px; margin-bottom: 26px;
+      letter-spacing: .04em; text-transform: uppercase;
+      animation: fadeUp .5s .1s ease both;
+    }
+    .badge-pip { width: 20px; height: 20px; background: var(--blue); color: white; border-radius: 100px; display: flex; align-items: center; justify-content: center; font-size: .55rem; font-weight: 900; }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 4vw, 3.9rem); font-weight: 900;
+      letter-spacing: -.04em; line-height: 1.07; color: var(--navy);
+      margin-bottom: 22px; animation: fadeUp .55s .2s ease both;
+        letter-spacing: -.06em; /* tighten more */
+  line-height: 1.0; /* tighter */
+    }
+    .h1-blue { color: var(--blue); }
+
+    .hero-sub {
+      font-size: 1.05rem; color: var(--text2); line-height: 1.72;
+      max-width: 460px; margin-bottom: 40px; font-weight: 400;
+      animation: fadeUp .55s .3s ease both;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; animation: fadeUp .55s .4s ease both; }
+    .btn-primary {
+      background: var(--navy); color: white; text-decoration: none; font-size: .92rem;
+      font-weight: 700; padding: 13px 26px; border-radius: 10px;
+      display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(13,33,81,.28); transition: all .15s;
+    }
+    .btn-primary:hover { background: var(--navy2); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(13,33,81,.35); }
+    .btn-primary svg { width: 16px; height: 16px; }
+    .btn-outline {
+      background: var(--white); color: var(--navy); text-decoration: none; font-size: .92rem;
+      font-weight: 600; padding: 13px 26px; border-radius: 10px;
+      border: 1px solid var(--border2); box-shadow: var(--shadow); transition: all .15s;
+    }
+    .btn-outline:hover { border-color: var(--steel); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+    .hero-note { margin-top: 16px; font-size: .75rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; animation: fadeUp .55s .5s ease both; }
+
+    /* ──────────────── SCHEDULER MOCKUP ──────────────── */
+    .sched-wrap {
+      animation: fadeIn .8s .45s ease both;
+      position: relative;
+    }
+    .sched-wrap::before {
+      content: '';
+      position: absolute; bottom: -20px; left: 10%; right: 10%;
+      height: 40px; background: radial-gradient(ellipse, rgba(13,33,81,.14) 0%, transparent 70%);
+      filter: blur(16px);
+    }
+    .sched-mock {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden;
+      transform: perspective(1400px) rotateY(-4deg) rotateX(2deg);
+      transition: transform .6s ease;
+    }
+    .sched-mock:hover { transform: perspective(1400px) rotateY(0deg) rotateX(0deg); }
+
+    /* titlebar */
+    .sm-bar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .sm-dots { display: flex; gap: 5px; }
+    .sm-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .sm-url {
+      flex: 1; max-width: 270px; margin: 0 auto; background: white;
+      border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: .63rem; color: var(--text3);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .sm-live { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* toolbar */
+    .sm-toolbar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 8px 12px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .sm-lbl { font-size: .6rem; font-weight: 700; color: var(--text3); }
+    .sm-sel {
+      padding: 3px 7px; border: 1px solid var(--border); border-radius: 5px;
+      font-size: .62rem; font-weight: 600; background: white; color: var(--text2); font-family: 'Outfit', sans-serif;
+    }
+    .sm-input { padding: 3px 7px; border: 1px solid var(--border); border-radius: 5px; font-size: .62rem; background: white; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+    .sm-spacer { flex: 1; }
+    .sm-tbtn {
+      padding: 4px 9px; border-radius: 6px; border: 1px solid var(--border);
+      font-size: .62rem; font-weight: 700; background: white; color: var(--text2);
+      display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
+    }
+    .sm-tbtn.save { background: var(--navy); color: white; border-color: var(--navy); }
+    .sm-tbtn.pub  { background: #16a34a; color: white; border-color: #16a34a; }
+    .sm-badge { padding: 2px 8px; border-radius: 100px; font-size: .58rem; font-weight: 700; background: var(--green-bg); color: var(--green); border: 1px solid #a7f3d0; }
+
+    /* summary strip */
+    .sm-summary { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid var(--border); }
+    .sm-si { padding: 9px 12px; border-right: 1px solid var(--border); }
+    .sm-si:last-child { border-right: none; }
+    .sm-si-lbl { font-size: .55rem; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); font-weight: 700; margin-bottom: 3px; }
+    .sm-si-val { font-size: 1.05rem; font-weight: 800; color: var(--navy); font-family: 'JetBrains Mono', monospace; }
+    .sm-si-val.green { color: var(--green); }
+    .sm-si-val.amber { color: var(--amber); }
+
+    /* schedule table */
+    .sm-tbl-wrap { overflow-x: auto; }
+    table.sm-tbl { width: 100%; border-collapse: collapse; }
+    .sm-tbl th {
+      background: var(--bg2); padding: 7px 10px; text-align: left;
+      font-size: .58rem; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .07em; border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+    .sm-tbl th.today { background: rgba(30,86,196,.07); color: var(--blue); }
+    .sm-tbl td { border: 1px solid var(--border); padding: 0; height: 50px; }
+    .sm-tbl td.namecol {
+      background: var(--bg2); padding: 0 10px; white-space: nowrap;
+      border-right: 2px solid var(--border);
+    }
+    .emp-info { display: flex; align-items: center; gap: 8px; }
+    .emp-av {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .58rem; font-weight: 800; color: white;
+    }
+    .emp-name { font-size: .72rem; font-weight: 700; color: var(--text); }
+    .emp-role { font-size: .58rem; color: var(--text3); }
+
+    /* cell box styled like real app */
+    .sm-tbl td.cell { padding: 5px; position: relative; min-width: 100px; }
+    .cellBox {
+      height: 100%; border-radius: 9px; padding: 6px 8px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 6px; outline: 1px solid var(--border); background: var(--white);
+      position: relative; overflow: hidden;
+    }
+    .cellBox::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+      animation: sheen 3s ease-in-out infinite;
+    }
+    @keyframes sheen { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+    .cellBox.active { outline: 2px solid var(--blue); }
+    .cellBox.off { outline: 2px solid var(--red); background: #fff5f5; }
+    .cellBox.oncall { outline: 2px solid var(--purple); background: var(--purple-bg); }
+    .cellBox.today-cell { background: rgba(30,86,196,.04); }
+
+    .cv { font-size: .7rem; font-weight: 800; white-space: nowrap; color: var(--text); }
+    .cv.off-text { color: var(--red); }
+    .cv.oncall-text { color: var(--purple); }
+    .cm { font-size: .58rem; opacity: .65; margin-top: 1px; }
+
+    .pill-status {
+      font-size: .55rem; font-weight: 800; padding: 2px 6px; border-radius: 100px;
+      flex-shrink: 0;
+    }
+    .pill-active { background: var(--green-bg); color: var(--green); }
+    .pill-off    { background: #fee2e2; color: var(--red); }
+    .pill-oc     { background: var(--purple-bg); color: var(--purple); }
+
+    /* ──────────────── TICKER ──────────────── */
+    .ticker-wrap {
+      overflow: hidden; white-space: nowrap; padding: 13px 0;
+      background: var(--navy); border-top: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255,255,255,.08); margin-top: 0;
+    }
+    .ticker { display: inline-block; animation: ticker 28s linear infinite; }
+    .ticker span { display: inline-block; padding: 0 32px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.75); }
+    .ticker span.sep { color: rgba(255,255,255,.25); padding: 0 8px; }
+    @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    /* ──────────────── SECTIONS shared ──────────────── */
+    .s-wrap { max-width: 1100px; margin: 0 auto; padding: 100px 48px; }
+    .eyebrow { letter-spacing: .14em; 
+  font-size: .68rem;; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--blue); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .eyebrow::before { content: ''; display: inline-block; width: 20px; height: 2px; background: var(--blue); border-radius: 2px; }
+    .s-h2 { font-size: clamp(1.9rem, 3.5vw, 3rem); font-weight: 900; letter-spacing: -.04em; line-height: 1.1; color: var(--navy); margin-bottom: 14px; }
+    .s-h2 em { font-style: italic; color: var(--blue); }
+    .s-body { font-size: 1rem; color: var(--text2); line-height: 1.68; max-width: 500px; }
+
+    /* ──────────────── PAIN ──────────────── */
+    .pain-bg { background: var(--white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .pain-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin-top: 56px; border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; background: var(--border); box-shadow: var(--shadow);
+    }
+    .pain-card {
+      background: var(--white); padding: 38px;
+      transition: background .2s; position: relative;
+    }
+    .pain-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform .3s;
+    }
+    .pain-card:hover { background: var(--bg); }
+    .pain-card:hover::after { transform: scaleX(1); }
+    .pain-icon { width: 42px; height: 42px; background: var(--blue-lt); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; color: var(--blue); }
+    .pain-icon svg { width: 20px; height: 20px; }
+    .pain-q { font-size: 1rem; font-weight: 800; color: var(--navy); margin-bottom: 10px; letter-spacing: -.02em; }
+    .pain-a { font-size: .83rem; color: var(--text2); line-height: 1.7; }
+
+    /* ──────────────── FEATURES ──────────────── */
+    .feat-bg { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 56px; }
+    .feat-card {
+      background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+      padding: 28px; transition: all .2s; box-shadow: var(--shadow);
+    }
+    .feat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(30,86,196,.3); }
+    .feat-num { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--blue); font-weight: 500; margin-bottom: 16px; }
+    .feat-name { font-size: .95rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; letter-spacing: -.02em; }
+    .feat-desc { font-size: .8rem; color: var(--text2); line-height: 1.65; }
+
+    /* ──────────────── CTA ──────────────── */
+    .cta-bg {
+      background: var(--navy); padding: 120px 48px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-orb {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(30,86,196,.35) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+    }
+    .cta-inner { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; }
+    .cta-inner .eyebrow { color: rgba(100,160,255,.85); justify-content: center; }
+    .cta-inner .eyebrow::before { background: rgba(100,160,255,.85); }
+    .cta-inner .s-h2 { color: white; }
+    .cta-sub { font-size: 1rem; color: rgba(255,255,255,.5); line-height: 1.68; max-width: 440px; margin: 0 auto 44px; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-white { background: white; color: var(--navy); text-decoration: none; font-size: .92rem; font-weight: 700; padding: 13px 26px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.15); transition: all .15s; }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.2); }
+    .btn-white svg { width: 16px; height: 16px; }
+    .btn-ghost-w { background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); text-decoration: none; font-size: .92rem; font-weight: 600; padding: 13px 26px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); transition: all .15s; }
+    .btn-ghost-w:hover { background: rgba(255,255,255,.15); transform: translateY(-2px); }
+
+    /* ──────────────── FOOTER ──────────────── */
+    footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 56px 48px 32px; }
+    .foot-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+    .foot-desc { font-size: .8rem; color: var(--text3); line-height: 1.65; max-width: 240px; margin-top: 12px; }
+    .foot-col h5 { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 16px; }
+    .foot-col a { display: block; color: var(--text2); text-decoration: none; font-size: .82rem; margin-bottom: 10px; transition: color .15s; }
+    .foot-col a:hover { color: var(--navy); }
+    .foot-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; }
+    .foot-bottom p { font-size: .75rem; color: var(--text3); }
+
+    /* ──────────────── REVEAL ──────────────── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .rd1 { transition-delay: .08s; } .rd2 { transition-delay: .16s; } .rd3 { transition-delay: .24s; } .rd4 { transition-delay: .32s; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    @media(max-width:900px) {
+      nav{padding:0 20px;} .nav-links{display:none;}
+      .hero{padding:100px 24px 60px;} .hero-inner{grid-template-columns:1fr;}
+      .hero-orb{display:none;}
+      .s-wrap{padding:72px 24px;}
+      .pain-grid,.feat-grid{grid-template-columns:1fr;}
+      .foot-top{grid-template-columns:1fr 1fr;}
+      .cta-bg{padding:80px 24px;}
+    }
+    .hero::after {
+  content: '';
+  position: absolute;
+  top: 10%; left: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(ellipse, rgba(30,86,196,.07) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+.pain-card {
+  padding: 38px;
+  border-left: 3px solid transparent; /* add this */
+  transition: background .2s, border-color .2s;
+}
+.pain-card:hover {
+  border-left-color: var(--blue); /* side accent instead of/in addition to top */
+  background: var(--bg);
+}
+.feat-card {
+  position: relative;
+  overflow: hidden;
+}
+.feat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--steel));
+  opacity: 0;
+  transition: opacity .25s;
+}
+.feat-card:hover::before { opacity: 1; }
+
+.feat-num {
+  font-size: .62rem;
+  color: var(--blue);
+  opacity: .5; /* more ghosted — it's a decoration, not content */
+}/* FIND: */
+@keyframes sheen { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+/* REPLACE: slower, subtler, longer pause between sweeps */
+.cellBox::after {
+  animation: sheen 5s 2s ease-in-out infinite; /* add 2s delay */
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent); /* dimmer */
+}
+@keyframes sheen {
+  0%, 70% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}.cta-bg::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; right: 5%;
+  width: 400px; height: 300px;
+  background: radial-gradient(ellipse, rgba(109,63,196,.2) 0%, transparent 65%);
+  pointer-events: none;
+}.nav-links a.active {
+  background: var(--bg2);
+  color: var(--navy);
+  font-weight: 600;
+}.foot-bottom p:first-child::before {
+  content: '●';
+  color: var(--blue);
+  margin-right: 8px;
+  font-size: .6rem;
+}.nav-links a.active {
+  background: var(--bg2);
+  color: var(--navy);
+  font-weight: 600;
+}.btn-primary:hover {
+  box-shadow: 0 10px 28px rgba(13,33,81,.35), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-white:hover {
+  box-shadow: 0 10px 28px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="logo-wrap">
+ 
+    <svg class="logo-hex" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="hexGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#4a9edd"/>
+          <stop offset="100%" stop-color="#1a3a8a"/>
+        </linearGradient>
+        <linearGradient id="faceGrad" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#6db8f0"/>
+          <stop offset="100%" stop-color="#2255bb"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="1" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Hexagon body -->
+      <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hexGrad)" opacity=".18"/>
+      <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hexGrad)" stroke-width="1.5"/>
+      <!-- Inner face -->
+      <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#faceGrad)" opacity=".85"/>
+      <!-- Orbital arcs -->
+      <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
+      <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
+      <!-- Center dot -->
+      <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9" filter="url(#glow)"/>
+    </svg>
+    <div class="logo-text-block">
+      <span class="logo-top">Competent</span>
+      <span class="logo-bot">Management</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="features.html">Features</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contactus.html">Contact</a></li>
+  </ul>
+  <div class="nav-r">
+    <a href="login.html" class="nav-login">Log in</a>
+    <a href="signup.html" class="nav-signup">Get started →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-orb">
+    <div class="orb-ring"></div>
+    <div class="orb-ring"></div>
+    <div class="orb-ring"></div>
+    <div class="orb-glow"></div>
+  </div>
+
+  <div class="hero-inner">
+    <!-- Left -->
+    <div>
+      <div class="hero-badge"><div class="badge-pip">v2</div> Version 2.0 is live</div>
+      <h1>Competent Management - Employee Scheduling & Time Tracking</h1>
+      <h2>You’re tracking time. But are you understanding it?</h2>
+      <p class="hero-sub">Everything about your team’s time — in one place.
+Schedules, punches, and payroll — connected and easy to understand.</p>
+      <div class="hero-btns">
+        <a href="signup.html" class="btn-primary">
+          Get started free
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+        <a href="scheduling-demo.html" class="btn-outline">▶ View live demo</a>
+      </div>
+      <p class="hero-note">// No signup required for demo &nbsp;·&nbsp; Real sample data</p>
+    </div>
+
+    <!-- Right: Scheduler Mockup -->
+    <div class="sched-wrap">
+      <div class="sched-mock">
+        <!-- Browser bar -->
+        <div class="sm-bar">
+          <div class="sm-dots">
+            <div class="sm-dot" style="background:#ff5f57"></div>
+            <div class="sm-dot" style="background:#ffbd2e"></div>
+            <div class="sm-dot" style="background:#28c840"></div>
+          </div>
+          <div class="sm-url"><div class="sm-live"></div>app.competentmanagement.com/schedule</div>
+        </div>
+
+        <!-- Toolbar (styled exactly like schedule-editor) -->
+        <div class="sm-toolbar">
+          <span class="sm-lbl">Shift</span>
+          <select class="sm-sel"><option>All Shifts</option></select>
+          <span class="sm-lbl" style="margin-left:6px">Position</span>
+          <select class="sm-sel"><option>All Positions</option></select>
+          <span class="sm-lbl" style="margin-left:6px">Week of</span>
+          <input class="sm-input" type="text" value="Mar 10, 2026" readonly style="width:90px">
+          <div class="sm-spacer"></div>
+          <span class="sm-tbtn"><i class="fas fa-wand-magic-sparkles"></i> Auto</span>
+          <span class="sm-tbtn save"><i class="fas fa-floppy-disk"></i> Save</span>
+          <span class="sm-tbtn pub"><i class="fas fa-paper-plane"></i> Publish</span>
+          <span class="sm-badge">● Published</span>
+        </div>
+
+        <!-- Summary strip -->
+        <div class="sm-summary">
+          <div class="sm-si">
+            <div class="sm-si-lbl">Coverage Score</div>
+            <div class="sm-si-val green" id="mc1">0%</div>
+          </div>
+          <div class="sm-si">
+            <div class="sm-si-lbl">Total Hours</div>
+            <div class="sm-si-val" id="mc2">0h</div>
+          </div>
+          <div class="sm-si">
+            <div class="sm-si-lbl">Est. Payroll</div>
+            <div class="sm-si-val" id="mc3">$0</div>
+          </div>
+          <div class="sm-si">
+            <div class="sm-si-lbl">Rest Violations</div>
+            <div class="sm-si-val green">None ✓</div>
+          </div>
+        </div>
+
+        <!-- Schedule table -->
+        <div class="sm-tbl-wrap">
+          <table class="sm-tbl">
+            <thead>
+              <tr>
+                <th style="min-width:120px">Staff Member</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th class="today">Wed ★</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+                <th>Sun</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1 -->
+              <tr>
+                <td class="namecol"><div class="emp-info"><div class="emp-av" style="background:#1e56c4">JR</div><div><div class="emp-name">Jamie R.</div><div class="emp-role">Floor Lead</div></div></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h · Morning</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active today-cell"><div><div class="cv">7:00–15:00</div><div class="cm">8h · TODAY</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div><div class="cm">—</div></div><span class="pill-status pill-off">✕</span></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
+              </tr>
+              <!-- Row 2 -->
+              <tr>
+                <td class="namecol"><div class="emp-info"><div class="emp-av" style="background:#7c3aed">TM</div><div><div class="emp-name">Tom M.</div><div class="emp-role">Associate</div></div></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">15:00–23:00</div><div class="cm">8h · Eve</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active today-cell"><div><div class="cv">15:00–23:00</div><div class="cm">8h · Eve</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">15:00–23:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">15:00–23:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">15:00–23:00</div><div class="cm">8h</div></div></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
+              </tr>
+              <!-- Row 3 -->
+              <tr>
+                <td class="namecol"><div class="emp-info"><div class="emp-av" style="background:#0a8a5c">SA</div><div><div class="emp-name">Sara A.</div><div class="emp-role">Supervisor</div></div></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox today-cell oncall"><div><div class="cv oncall-text">On Call</div><div class="cm">Available</div></div><span class="pill-status pill-oc">📞</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
+              </tr>
+              <!-- Row 4 -->
+              <tr>
+                <td class="namecol"><div class="emp-info"><div class="emp-av" style="background:#b45309">DK</div><div><div class="emp-name">Dan K.</div><div class="emp-role">Associate</div></div></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">23:00–7:00</div><div class="cm">8h · Night</div></div></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">23:00–7:00</div><div class="cm">8h</div></div></div></td>
+                <td class="cell"><div class="cellBox today-cell active"><div><div class="cv">23:00–7:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">23:00–7:00</div><div class="cm">8h</div></div></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
+                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
+                <td class="cell"><div class="cellBox active"><div><div class="cv">23:00–7:00</div><div class="cm">8h</div></div></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>Visual Scheduling</span><span class="sep">—</span>
+    <span>Live Punch Logs</span><span class="sep">—</span>
+    <span>Payroll Estimates</span><span class="sep">—</span>
+    <span>Coverage Risk</span><span class="sep">—</span>
+    <span>Geo-Fencing</span><span class="sep">—</span>
+    <span>Audit Trail</span><span class="sep">—</span>
+    <span>Employee Profiles</span><span class="sep">—</span>
+    <span>Ticket System</span><span class="sep">—</span>
+    <span>Auto Generate</span><span class="sep">—</span>
+    <span>Visual Scheduling</span><span class="sep">—</span>
+    <span>Live Punch Logs</span><span class="sep">—</span>
+    <span>Payroll Estimates</span><span class="sep">—</span>
+    <span>Coverage Risk</span><span class="sep">—</span>
+    <span>Geo-Fencing</span><span class="sep">—</span>
+    <span>Audit Trail</span><span class="sep">—</span>
+    <span>Employee Profiles</span><span class="sep">—</span>
+    <span>Ticket System</span><span class="sep">—</span>
+    <span>Auto Generate</span><span class="sep">—</span>
+  </div>
+</div>
+
+<!-- PAIN -->
+<div class="pain-bg">
+  <div class="s-wrap">
+    <div class="reveal">
+      <div class="eyebrow">Why managers switch</div>
+      <h2 class="s-h2">The questions keeping<br>you up at <em>night.</em></h2>
+      <p class="s-body">Every feature was built around the exact moments where visibility breaks down for real managers.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card reveal rd1">
+        <div class="pain-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <div class="pain-q">"Why did Jim take 12 breaks today?"</div>
+        <div class="pain-a">Live punch logs give you granular shift activity — every clock-in, break, and anomaly — before they hit your payroll.</div>
+      </div>
+      <div class="pain-card reveal rd2">
+        <div class="pain-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+        <div class="pain-q">"Was Tom actually on-site?"</div>
+        <div class="pain-a">Geo-fencing verification confirms your team is where they say they are. Every shift, no exceptions.</div>
+      </div>
+      <div class="pain-card reveal rd1">
+        <div class="pain-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+        <div class="pain-q">"Are we even covered next Tuesday?"</div>
+        <div class="pain-a">Coverage risk flags gaps days before they happen — not the morning of when it's already too late.</div>
+      </div>
+      <div class="pain-card reveal rd2">
+        <div class="pain-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <div class="pain-q">"What's this week going to cost?"</div>
+        <div class="pain-a">Payroll estimates update in real-time as shifts are worked. No end-of-period surprises.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="feat-bg">
+  <div class="s-wrap">
+    <div class="reveal">
+      <div class="eyebrow">Everything included</div>
+      <h2 class="s-h2">Every tool a manager<br>actually <em>needs.</em></h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal rd1"><div class="feat-num">01</div><div class="feat-name">Visual Scheduler</div><div class="feat-desc">Drag-and-drop shift building across your whole team. See conflicts, gaps, and coverage in one view.</div></div>
+      <div class="feat-card reveal rd2"><div class="feat-num">02</div><div class="feat-name">Live Punch Logs</div><div class="feat-desc">Real-time clock-ins with editable rows and a full audit trail. Every change logged, nothing lost.</div></div>
+      <div class="feat-card reveal rd3"><div class="feat-num">03</div><div class="feat-name">Payroll Estimates</div><div class="feat-desc">Watch your labor cost build as the week happens. Filter by employee, role, or date range.</div></div>
+      <div class="feat-card reveal rd1"><div class="feat-num">04</div><div class="feat-name">Coverage Risk</div><div class="feat-desc">Automated Low / Medium / High risk classification based on your real schedule data — not gut feel.</div></div>
+      <div class="feat-card reveal rd2"><div class="feat-num">05</div><div class="feat-name">Employee Profiles</div><div class="feat-desc">Roles, pay rates, availability, and documents in one place. No more digging through email threads.</div></div>
+      <div class="feat-card reveal rd3"><div class="feat-num">06</div><div class="feat-name">Ticket System</div><div class="feat-desc">Track requests and issues without switching apps. Everything tied to the right employee and shift.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-bg">
+  <div class="cta-orb"></div>
+  <div class="cta-grid"></div>
+  <div class="cta-inner">
+    <div class="eyebrow reveal">Get started today</div>
+    <h2 class="s-h2 reveal rd1">Stop guessing.<br>Start <em>knowing.</em></h2>
+    <p class="cta-sub reveal rd2">Try the live demo — no account needed. Real sample data, real workflows.</p>
+    <div class="cta-btns reveal rd3">
+      <a href="signup.html" class="btn-white">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Get started free
+      </a>
+      <a href="scheduling-demo.html" class="btn-ghost-w">▶ View live demo</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-top">
+    <div>
+      <a href="index.html" class="logo-wrap">
+        <svg class="logo-hex" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="hexGrad2" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
+            <linearGradient id="faceGrad2" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
+          </defs>
+          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hexGrad2)" opacity=".18"/>
+          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hexGrad2)" stroke-width="1.5"/>
+          <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#faceGrad2)" opacity=".85"/>
+          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
+          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
+          <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
+        </svg>
+        <div class="logo-text-block">
+          <span class="logo-top">Competent</span>
+          <span class="logo-bot">Management</span>
+        </div>
+      </a>
+      <p class="foot-desc">Workforce operations for managers who need clarity — not more software to learn.</p>
+    </div>
+    <div class="foot-col">
+      <h5>Product</h5>
+      <a href="features.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="scheduling-demo.html">Live Demo</a>
+      <a href="articles/index.html">Insights</a>
+    </div>
+    <div class="foot-col">
+      <h5>Company</h5>
+      <a href="about.html">About</a>
+      <a href="contactus.html">Contact</a>
+    </div>
+    <div class="foot-col">
+      <h5>Account</h5>
+      <a href="login.html">Log In</a>
+      <a href="signup.html">Sign Up</a>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <p>© <span id="yr"></span> Competent Management. All rights reserved.</p>
+    <p>Built for managers who mean business.</p>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 30));
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Animated counters in mockup
+  function count(id, target, fmt, delay = 0) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    setTimeout(() => {
+      let v = 0; const step = target / 60;
+      const t = setInterval(() => {
+        v = Math.min(v + step, target);
+        el.textContent = fmt(Math.round(v));
+        if (v >= target) clearInterval(t);
+      }, 20);
+    }, delay);
+  }
+  count('mc1', 91, v => v + '%', 800);
+  count('mc2', 164, v => v + 'h', 900);
+  count('mc3', 6820, v => '$' + v.toLocaleString(), 1000);
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+</script>
+</body>
+</html>

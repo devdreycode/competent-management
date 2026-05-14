@@ -1,0 +1,15 @@
+<div id="page-tickets" class="page">
+        <div class="sec-header">
+          <div><div class="sec-title">Tickets</div><div class="sec-sub">Employee requests and communications</div></div>
+          <button class="btn btn-primary" onclick="window.location.href='/app/ticketmanagement.html'">🎫 Open Ticket Manager →</button>
+        </div>
+        <div class="stats-row" style="grid-template-columns:repeat(3,1fr);max-width:520px;margin-bottom:20px;">
+          <div class="stat-card" data-icon="🔵"><div class="stat-label">Open</div><div class="stat-value" id="tov-open">0</div></div>
+          <div class="stat-card" data-icon="🟡"><div class="stat-label">In Progress</div><div class="stat-value" id="tov-progress">0</div></div>
+          <div class="stat-card" data-icon="🔴"><div class="stat-label">Overdue</div><div class="stat-value" id="tov-overdue" style="color:var(--red);">0</div></div>
+        </div>
+        <div class="card">
+          <div class="card-label">🕐 Recent Tickets</div>
+          <ul id="tov-recent" style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.845rem;"><li style="color:var(--text-muted);">No tickets yet.</li></ul>
+        </div>
+      </div>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account | Competent Management</title>
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="afb1c59e-b6d6-4236-8b5a-1e2d1a4c902b"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f2f5fb;
+      --bg2:      #e8edf7;
+      --white:    #ffffff;
+      --border:   #dae0ef;
+      --border2:  #c2cce0;
+      --text:     #0b1526;
+      --text2:    #374160;
+      --text3:    #7e8aa6;
+      --navy:     #0d2151;
+      --navy2:    #162e6e;
+      --blue:     #1e56c4;
+      --blue-lt:  #e4ecfb;
+      --green:    #0ea86e;
+      --green-bg: #e5f8f1;
+      --red:      #cc2b2b;
+      --shadow:   0 4px 20px rgba(13,33,81,.08), 0 1px 4px rgba(13,33,81,.05);
+      --shadow-lg:0 20px 60px rgba(13,33,81,.13), 0 4px 16px rgba(13,33,81,.07);
+    }
+    html { height: 100%; }
+    body { min-height: 100vh; font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; display: flex; }
+
+    .page-wrapper { display: flex; width: 100%; min-height: 100vh; }
+
+    /* BRAND SIDE */
+    .brand-side {
+      width: 44%; background: linear-gradient(160deg, var(--navy) 0%, #162e6e 55%, #1a3d8a 100%);
+      position: relative; overflow: hidden; display: flex; flex-direction: column;
+      padding: 48px 56px; min-height: 100vh;
+    }
+    .brand-side::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+    .brand-orb { position: absolute; bottom: -80px; right: -80px; pointer-events: none; }
+    .orb-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.07); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    .orb-ring:nth-child(1) { width: 500px; height: 500px; }
+    .orb-ring:nth-child(2) { width: 360px; height: 360px; border-style: dashed; opacity: .5; transform: translate(-50%,-50%) rotate(20deg); }
+    .orb-ring:nth-child(3) { width: 220px; height: 220px; border-width: 2px; opacity: .15; }
+
+    .brand-content { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; }
+
+    .logo-wrap { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+    .logo-hex { width: 36px; height: 36px; }
+    .logo-text-block { display: flex; flex-direction: column; line-height: 1; }
+    .logo-top { font-size: .9rem; font-weight: 900; color: white; letter-spacing: .09em; text-transform: uppercase; }
+    .logo-bot { font-size: .56rem; font-weight: 500; color: rgba(255,255,255,.5); letter-spacing: .22em; text-transform: uppercase; margin-top: 2px; }
+
+    .brand-hero { margin: auto 0; padding: 40px 0; }
+    .brand-hero h1 { font-size: clamp(2.2rem, 3vw, 2.9rem); font-weight: 900; color: white; letter-spacing: -.04em; line-height: 1.1; margin-bottom: 16px; }
+    .brand-hero h1 em { color: #7eb4f8; font-style: normal; }
+    .brand-hero p { font-size: .92rem; color: rgba(255,255,255,.65); line-height: 1.72; margin-bottom: 36px; max-width: 340px; }
+
+    .proof-pills { display: flex; flex-direction: column; gap: 12px; }
+    .proof-pill { display: flex; align-items: center; gap: 10px; font-size: .85rem; color: rgba(255,255,255,.75); }
+    .proof-pill i { color: #7eb4f8; width: 16px; }
+
+    .brand-foot { position: relative; z-index: 2; font-size: .75rem; color: rgba(255,255,255,.3); margin-top: 48px; }
+
+    /* FORM SIDE */
+    .form-side {
+      flex: 1; background: var(--bg); display: flex; align-items: center;
+      justify-content: center; padding: 48px 40px; min-height: 100vh; overflow-y: auto;
+    }
+    .form-card { width: 100%; max-width: 460px; }
+    .form-header { margin-bottom: 28px; }
+    .form-header h2 { font-size: 1.8rem; font-weight: 900; color: var(--navy); letter-spacing: -.03em; margin-bottom: 6px; }
+    .form-header p { font-size: .88rem; color: var(--text3); }
+
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--text); margin-bottom: 7px; }
+    .field input, .field select {
+      width: 100%; padding: 12px 14px; background: var(--white);
+      border: 1px solid var(--border2); border-radius: 10px;
+      font-family: 'Outfit', sans-serif; font-size: .92rem; color: var(--text);
+      transition: border-color .15s, box-shadow .15s; outline: none;
+    }
+    .field input:focus, .field select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,86,196,.1); }
+    .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237e8aa6' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-color: var(--white); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .submit-btn {
+      width: 100%; padding: 14px; background: var(--navy); color: white;
+      border: none; border-radius: 10px; font-family: 'Outfit', sans-serif;
+      font-size: .95rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(13,33,81,.28); transition: all .15s; margin-top: 8px;
+    }
+    .submit-btn:hover { background: var(--navy2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(13,33,81,.38); }
+
+    .bottom-link { text-align: center; font-size: .85rem; color: var(--text3); margin-top: 20px; }
+    .bottom-link a { color: var(--blue); text-decoration: none; font-weight: 600; }
+    .bottom-link a:hover { text-decoration: underline; }
+
+    .status-msg { padding: 12px 16px; border-radius: 8px; font-size: .85rem; margin-top: 14px; display: none; }
+    .status-msg.error { background: #fef2f2; border: 1px solid #fecaca; color: var(--red); }
+    .status-msg.success { background: var(--green-bg); border: 1px solid #a7f3d0; color: var(--green); }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,33,81,.7); backdrop-filter: blur(6px); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: white; padding: 40px; border-radius: 20px; max-width: 560px; width: 90%; max-height: 85vh; overflow-y: auto; }
+    .modal-box h2 { font-size: 1.4rem; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
+    .modal-box p { font-size: .88rem; color: var(--text3); margin-bottom: 16px; }
+    .legal-scroll { border: 1px solid var(--border); border-radius: 10px; padding: 16px; height: 200px; overflow-y: scroll; font-size: .82rem; color: var(--text2); line-height: 1.65; background: var(--bg); margin-bottom: 24px; }
+    .modal-agree-btn { width: 100%; padding: 14px; background: var(--navy); color: white; border: none; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: .95rem; font-weight: 700; cursor: pointer; margin-bottom: 10px; transition: background .15s; }
+    .modal-agree-btn:hover { background: var(--navy2); }
+    .modal-back-btn { width: 100%; padding: 10px; background: none; border: none; color: var(--text3); font-family: 'Outfit', sans-serif; font-size: .88rem; cursor: pointer; }
+    .modal-back-btn:hover { color: var(--text2); }
+
+    @media (max-width: 900px) {
+      .brand-side { display: none; }
+      .form-side { padding: 40px 24px; }
+    }
+    @media (max-width: 400px) { .row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- BRAND SIDE -->
+  <div class="brand-side">
+    <div class="brand-orb">
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+    </div>
+    <div class="brand-content">
+      <a href="index.html" class="logo-wrap">
+        <svg class="logo-hex" viewBox="0 0 48 48" fill="none">
+          <defs>
+            <linearGradient id="hg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
+            <linearGradient id="fg" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
+          </defs>
+          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hg)" opacity=".18"/>
+          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hg)" stroke-width="1.5"/>
+          <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#fg)" opacity=".85"/>
+          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
+          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
+          <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
+        </svg>
+        <div class="logo-text-block">
+          <span class="logo-top">Competent</span>
+          <span class="logo-bot">Management</span>
+        </div>
+      </a>
+
+      <div class="brand-hero">
+        <h1>Organize the<br><em>Chaos.</em></h1>
+        <p>Stop drowning in spreadsheets. One platform for scheduling, time tracking, and payroll-ready records.</p>
+        <div class="proof-pills">
+          <div class="proof-pill"><i class="fas fa-check"></i> 14-day free trial, no credit card</div>
+          <div class="proof-pill"><i class="fas fa-check"></i> Set up in under 10 minutes</div>
+          <div class="proof-pill"><i class="fas fa-check"></i> Cancel anytime</div>
+          <div class="proof-pill"><i class="fas fa-check"></i> Payroll-ready exports included</div>
+        </div>
+      </div>
+
+      <div class="brand-foot">© 2025 Competent Management. Built for Business.</div>
+    </div>
+  </div>
+
+  <!-- FORM SIDE -->
+  <div class="form-side">
+    <div class="form-card">
+      <div class="form-header">
+        <h2>Get Started</h2>
+        <p>Create your owner account in seconds.</p>
+      </div>
+
+      <form id="signup-form">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="fullname" placeholder="Jane Smith" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label>Company Name</label>
+          <input type="text" id="companyname" placeholder="Acme Corp" required>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>City</label>
+            <input type="text" id="city" placeholder="City" required>
+          </div>
+          <div class="field">
+            <label>State</label>
+            <input type="text" id="state" placeholder="State" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@company.com" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Min 6 characters" required autocomplete="new-password">
+        </div>
+        <button type="button" class="submit-btn" id="openModalBtn">
+          Continue to Agreement &nbsp;<i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="status-msg" id="message"></div>
+      <div class="bottom-link">Already have an account? <a href="login.html">Log in →</a></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- AGREEMENT MODAL -->
+<div id="legalModal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>Review & Accept</h2>
+    <p>Please review our terms before finalizing your account.</p>
+    <div class="legal-scroll">
+      <strong>Terms of Service</strong><br>
+      Effective Date: March 9, 2025<br><br>
+      Payroll estimates are for operational planning purposes only and are not a substitute for a licensed payroll processor or accountant. You are solely responsible for labor law compliance.<br><br>
+      <strong>Privacy Policy</strong><br>
+      We collect account and employee data to provide our workforce management services. We do not sell your personal information to third parties. Data is stored securely using industry-standard encryption. You may request deletion of your account data at any time by contacting support.<br><br>
+      By creating an account you agree to these terms and confirm you are authorized to manage employees at your organization.
+    </div>
+    <button id="finalAgreeBtn" class="modal-agree-btn">I Agree &amp; Finish <i class="fas fa-check"></i></button>
+    <button id="closeModalBtn" class="modal-back-btn">← Go Back</button>
+  </div>
+</div>
+
+<script type="module" src="js/signup.js"></script>
+<script>
+  document.getElementById('openModalBtn').addEventListener('click', () => {
+    const form = document.getElementById('signup-form');
+    if (form.checkValidity()) {
+      document.getElementById('legalModal').classList.add('open');
+    } else {
+      form.reportValidity();
+    }
+  });
+  document.getElementById('closeModalBtn').addEventListener('click', () => {
+    document.getElementById('legalModal').classList.remove('open');
+  });
+  document.getElementById('legalModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+</script>
+</body>
+</html>

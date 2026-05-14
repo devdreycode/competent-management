@@ -1,0 +1,80 @@
+<div id="page-dashboard" class="page">
+        <div class="sec-header" style="margin-bottom:16px;">
+          <div>
+            <div class="sec-title">Dashboard</div>
+            <div class="sec-sub" id="dash-date-sub">Overview · Today</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card" data-icon="⏱">
+            <div class="stat-label">On Floor Now</div>
+            <div class="stat-value" id="employeeCount">0</div>
+            <div class="stat-delta up">clocked in</div>
+          </div>
+          <div class="stat-card" data-icon="🎫">
+            <div class="stat-label">Open Tickets</div>
+            <div class="stat-value" id="ticketOpen">0</div>
+            <div class="stat-delta">
+              <span id="ticketProgress">0</span> in progress ·
+              <span id="ticketOverdue" style="color:var(--red);">0</span> overdue
+            </div>
+          </div>
+          <div class="stat-card" data-icon="💵">
+            <div class="stat-label">Est. Payroll (Wk)</div>
+            <div class="stat-value">$<span id="payrollTotal">0.00</span></div>
+            <div class="stat-delta">this week</div>
+          </div>
+        </div>
+        <div class="dash-grid">
+          <div class="dash-col">
+            <div class="card">
+              <div class="card-label">📊 Today's Coverage</div>
+              <div id="insightValue">
+                <div style="font-size:1rem;font-weight:800;color:#16a34a;margin-bottom:10px;">Looking Good</div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <div style="display:flex;align-items:flex-start;gap:8px;font-size:.82rem;font-weight:600;color:#64748b;background:#64748b18;border:1px solid #64748b33;border-radius:8px;padding:7px 10px;line-height:1.4;">
+                    <span style="font-size:.95rem;flex-shrink:0;">ℹ️</span>
+                    <span>No schedule found for this week yet.</span>
+                  </div>
+                </div>
+                <div style="margin-top:10px;font-size:.75rem;color:#94a3b8;">Based on today's schedule</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-label">⚡ Recent Activity</div>
+              <ul id="activityFeed" style="list-style:none;"></ul>
+            </div>
+            <div class="card">
+              <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>🎫 Recent Tickets</span>
+                <button class="btn btn-ghost btn-sm" onclick="goToTickets()">View All →</button>
+              </div>
+              <ul id="ticketRecent" style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:.845rem;"></ul>
+            </div>
+          </div>
+          <div class="dash-col">
+            <div class="card">
+              <div class="card-label">⚡ Quick Actions</div>
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="openNewTab()">🕐 Open Time Clock</button>
+                <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="goTo('schedule',null)">📅 View Schedule</button>
+                <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="goTo('tickets',null)">🎫 View Tickets</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-label">📌 Reminders</div>
+              <ul id="remindersList"></ul>
+              <div class="reminder-input-row">
+                <input type="text" id="reminderInput" placeholder="Add a reminder..." onkeydown="if(event.key==='Enter')addReminder()">
+                <button class="btn btn-primary btn-sm" onclick="addReminder()">Add</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;">
+                <span id="sidebarName" style="font-size:.8rem;font-weight:700;color:var(--text);">User</span>
+                <div class="user-uid" id="displayUID" style="font-size:.68rem;color:var(--text-light);font-family:'Space Mono',monospace;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

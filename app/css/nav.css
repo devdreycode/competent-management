@@ -1,0 +1,133 @@
+/* ═══════════════════════════════════════════
+   css/nav.css — Bottom Navigation
+═══════════════════════════════════════════ */
+
+/* 1. The Container */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-h, 64px);
+  z-index: 300;
+  display: flex;
+  align-items: stretch;
+
+  /* Light mode glassmorphism */
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.7) inset, 0 -4px 18px rgba(15, 23, 42, 0.06);
+}
+
+/* Dark mode override */
+.dark-mode .bottom-nav {
+  background: rgba(16, 21, 30, 0.96);
+  border-top: 1px solid var(--chrome-border);
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05) inset, 0 -12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Top edge shimmer */
+.bottom-nav::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,.15) 30%,
+    var(--accent) 50%,
+    rgba(255,255,255,.15) 70%,
+    transparent 100%);
+  opacity: .7;
+  pointer-events: none;
+}
+
+/* 2. The Individual Links */
+.bottom-nav a.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: all .2s;
+  padding: 8px 4px;
+  color: var(--text-light);
+  font-family: 'DM Sans', sans-serif;
+  text-decoration: none; /* Bulletproof fix: removes underline */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav a.nav-item:hover {
+  color: var(--text-muted);
+}
+
+/* 3. The Active State */
+.bottom-nav a.nav-item.active {
+  color: var(--accent);
+}
+
+/* Top active indicator bar */
+.bottom-nav a.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 32px; height: 2px;
+  background: var(--accent);
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 0 0 1px rgba(8, 145, 178, 0.15);
+}
+
+/* 4. Icons and Labels */
+.nav-icon-wrap {
+  position: relative;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.nav-icon-wrap i {
+  font-size: 1rem;
+  transition: transform .2s;
+}
+
+.bottom-nav a.nav-item.active .nav-icon-wrap i {
+  transform: translateY(-1px);
+}
+
+/* Glow circle under active icon */
+.bottom-nav a.nav-item.active .nav-icon-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(8, 145, 178, 0.2) 0%, transparent 70%);
+}
+
+.nav-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* 5. Notification Badges */
+.nav-badge {
+  position: absolute;
+  top: 4px; right: calc(50% - 18px);
+  background: var(--red);
+  color: white;
+  font-size: 0.5rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 2px 5px;
+  min-width: 14px;
+  text-align: center;
+  line-height: 1.2;
+  border: 1px solid var(--bg);
+}
