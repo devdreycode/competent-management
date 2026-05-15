@@ -105,13 +105,12 @@ function listenTicketKPIs() {
 function listenTickets() {
   if (_ticketsUnsub) _ticketsUnsub();
 
-  const q = query(
-    collection(db, "companies", companyId, "tickets"),
-    orderBy("createdAt", "desc")
-  );
-if (status === "open") open++;
-if (status === "resolved") progress++;
-  _ticketsUnsub = onSnapshot(q, async (snap) => {
+ const q = query(
+  collection(db, "companies", companyId, "tickets"),
+  orderBy("createdAt", "desc")
+);
+
+_ticketsUnsub = onSnapshot(q, async (snap) => {
     // Detect new employee-submitted tickets and push manager notifications
     if (_notifInitialized) {
       snap.docChanges().forEach(change => {
@@ -220,7 +219,71 @@ async function createNotification(title, message, type = "general") {
     console.error("createNotification:", err);
   }
 }
-/* orphaned overdue check removed — handled inside listenTickets */
+window.createTicketAction = async function(data) {
+  if (!companyId) return;
+
+  try {
+
+    const employeeSnap = await getDoc(
+      doc(db, "companies", companyId, "employees", data.empId)
+    );
+
+    const employee = employeeSnap.data();
+
+    const ticketRef = await addDoc(
+      collection(db, "companies", companyId, "tickets"),
+      {
+        employeeId: data.empId,
+        employeeName: employee?.fullName || employee?.name || "Unknown",
+
+        type: data.reason,
+        reason: data.reason,
+
+        shift: data.shift,
+
+        note: data.note || "",
+
+        startDate: data.startDate || null,
+        endDate: data.endDate || null,
+        swapDate: data.swapDate || null,
+
+        status: "open",
+        archived: false,
+
+        unreadManager: false,
+        unreadEmployee: true,
+
+        submittedByEmployee: false,
+
+        createdAt: serverTimestamp(),
+        lastMessageAt: serverTimestamp()
+      }
+    );
+
+    // Optional starter message
+    if (data.note?.trim()) {
+      await addDoc(
+        collection(
+          db,
+          "companies",
+          companyId,
+          "tickets",
+          ticketRef.id,
+          "messages"
+        ),
+        {
+          text: data.note.trim(),
+          senderRole: "manager",
+          senderName: "Manager",
+          createdAt: serverTimestamp()
+        }
+      );
+    }
+
+  } catch (err) {
+    console.error("createTicketAction:", err);
+  }
+};
 /* ═══════════════════════════════════════════════
    LISTEN MESSAGES — live chat for active ticket
 ═══════════════════════════════════════════════ */
@@ -393,6 +456,7 @@ window.approveTimeOffAction = async function(ticketId) {
       status:       "approved",
       ticketId,
       approvedAt:   serverTimestamp()
+      
     });
 
     // Update the ticket itself

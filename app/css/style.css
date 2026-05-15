@@ -881,36 +881,7 @@ html.dark-mode body {
     #0d1117;
 }
 /* ── OPTION A: Clean white header (Stripe/Linear style) ── */
-.top-header {
-  background: #ffffff;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-}
- 
-/* Text colors need to flip since bg is now white */
-.brand-name   { color: #0f172a; }
-.brand-tag    { color: #64748b; }
-.header-title { color: #0f172a; }
-#welcome-msg  { color: #475569; }
- 
-/* ── OR OPTION B: Committed dark header (full enterprise) ── */
-.top-header {
-  background: #0f172a;          /* deep slate, not translucent */
-  backdrop-filter: none;
-  border-bottom: 1px solid #1e293b;
-  box-shadow: 0 1px 8px rgba(0,0,0,.4);
-}
- 
-/* ── Stat cards — replace the dark gradient chrome look ── */
-.stat-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-top: 3px solid var(--accent);   /* single color accent line */
-  box-shadow: 0 1px 4px rgba(0,0,0,.05);
-  border-radius: var(--radius);
-}
+
  
 /* ── Page background — warmer white instead of cold gray ── */
 :root {
@@ -925,11 +896,6 @@ html.dark-mode body {
 }
  
 /* Fix text colors so they're visible on white */
-.top-header .brand-name,
-.top-header .header-title { color: #0f172a; }
- 
-.top-header .brand-tag,
-.top-header #welcome-msg  { color: #64748b; }
  
 /* Fix the search input */
 .header-search {

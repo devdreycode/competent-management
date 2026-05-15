@@ -146,7 +146,7 @@
 
 /* --- The Table (Sleek Data View) --- */
 .table-wrap {
-  background: rgba(15, 23, 42, 0.4);
+
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   overflow: hidden;
@@ -186,9 +186,7 @@ tbody tr {
   transition: background 0.2s ease;
 }
 
-tbody tr:hover {
-  background: rgba(8, 145, 178, 0.05); /* Very subtle neon hover state */
-}
+
 
 tbody tr:last-child td {
   border-bottom: none;
@@ -234,3 +232,14 @@ input[type="checkbox"] {
     .btn-small.btn-danger:hover { background: #7f1d1d; color: white; }
     .hidden { display: none !important; }
     .locked { opacity: .5; cursor: not-allowed; }
+    .table-wrap {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(15,23,42,0.06);
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+t

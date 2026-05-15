@@ -13,6 +13,167 @@
   <link rel="stylesheet" href="../css/top-header.css">
   <link rel="stylesheet" href="../css/nav.css">
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Modal Overlay ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(15, 23, 42, 0.35);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.hidden { display: none; }
+
+    /* ── Modal Card ── */
+    .modal-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      width: 100%; max-width: 460px;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.06);
+    }
+    .modal-card::-webkit-scrollbar { width: 4px; }
+    .modal-card::-webkit-scrollbar-track { background: transparent; }
+    .modal-card::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    /* ── Modal Header ── */
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .modal-title {
+      font-weight: 700; font-size: .95rem;
+      color: #0f172a; letter-spacing: -0.01em;
+    }
+    .modal-close {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #94a3b8;
+      font-size: .75rem;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .modal-close:hover {
+      background: #f1f5f9;
+      color: #475569;
+      border-color: #cbd5e1;
+    }
+
+    /* ── Modal Body ── */
+    .modal-body { padding: 18px 20px; }
+
+    /* ── Modal Footer ── */
+    .modal-footer {
+      display: flex; justify-content: flex-end; gap: 8px;
+      padding-top: 14px; margin-top: 6px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    /* ── Form Groups ── */
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 13px; }
+    .form-group label {
+      font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .05em;
+      color: #64748b;
+    }
+    .form-group input,
+    .form-group select {
+      padding: 8px 11px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      background: #f8fafc;
+      color: #0f172a;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s, background .15s;
+    }
+    .form-group input::placeholder { color: #94a3b8; }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #0891b2;
+      box-shadow: 0 0 0 3px rgba(8,145,178,0.1);
+      background: #fff;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* ── Employee Card Profile ── */
+    .card-profile {
+      display: flex; gap: 14px; align-items: center;
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    .card-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, #0891b2, #0e7490);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.1rem; flex-shrink: 0;
+    }
+    .card-name {
+      font-size: 1rem; font-weight: 700;
+      color: #0f172a; margin-bottom: 6px;
+    }
+    .card-meta {
+      display: flex; flex-direction: column; gap: 3px;
+      font-size: .8rem; color: #64748b;
+    }
+    .card-meta span { display: flex; gap: 4px; align-items: center; }
+    .card-meta strong { color: #334155; }
+
+    /* ── Table action buttons ── */
+    .btn-action {
+      padding: 4px 10px; border-radius: 7px;
+      font-size: .72rem; font-weight: 600;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569; cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-action:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .btn-action.danger {
+      background: #fef2f2;
+      color: #ef4444;
+      border-color: #fecaca;
+    }
+    .btn-action.danger:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
+
+    /* ── Status badges ── */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: .72rem; font-weight: 700; letter-spacing: .02em;
+    }
+    .status-badge.on {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+    .status-badge.on::before {
+      content:''; width:6px; height:6px; border-radius:50%;
+      background: #22c55e;
+    }
+    .status-badge.off {
+      background: #f8fafc;
+      color: #94a3b8;
+      border: 1px solid #e2e8f0;
+    }
+  </style>
+    <link rel="stylesheet" href="../css/darkmode.css">
 </head>
 <body>
  
@@ -96,7 +257,138 @@
       </div>
   </div>
 
-   <nav class="bottom-nav">
+   <!-- ===== ADD EMPLOYEE MODAL ===== -->
+  <div id="addEmployeeModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Add Employee</span>
+        <button class="modal-close" id="closeAddEmpBtn"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="employeeForm" class="modal-body">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="empName" placeholder="Jane Smith" required>
+        </div>
+        <div class="form-group">
+          <label>Position</label>
+          <select id="empRole"><option value="">Select position...</option></select>
+        </div>
+        <div class="form-group">
+          <label>Shift</label>
+          <select id="empShift">
+            <option value="Morning">Morning</option>
+            <option value="Evening">Evening</option>
+            <option value="Night">Night</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>PIN</label>
+            <input type="text" id="empPin" placeholder="1234" maxlength="6">
+          </div>
+          <div class="form-group">
+            <label>Hourly Rate ($)</label>
+            <input type="number" id="empPay" placeholder="0.00" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Date of Birth</label>
+          <input type="date" id="empDob">
+        </div>
+        <div class="form-group">
+          <label>Certifications</label>
+          <div id="addCertsContainer" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Add Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== VIEW EMPLOYEE CARD MODAL ===== -->
+  <div id="employeeCardModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Employee Profile</span>
+        <button class="modal-close" id="closeCardBtn"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="card-profile">
+          <div class="card-avatar"><i class="fas fa-user"></i></div>
+          <div class="card-info">
+            <div class="card-name" id="cardName">—</div>
+            <div class="card-meta">
+              <span>PIN: <strong id="cardPin">—</strong></span>
+              <span>Pay: <strong id="cardPay">—</strong></span>
+              <span>Shift: <strong id="cardShift">—</strong></span>
+              <span>Status: <strong id="cardStatus">—</strong></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="justify-content:flex-end;gap:8px;">
+          <button class="btn btn-ghost btn-sm" id="closeCardBtn2" onclick="document.getElementById('employeeCardModal').classList.add('hidden')">Close</button>
+          <button class="btn btn-primary btn-sm" id="editFromViewBtn">Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EDIT EMPLOYEE MODAL ===== -->
+  <div id="editEmployeeModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Edit Employee</span>
+        <button class="modal-close" id="cancelEditEmp"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="editFullName" placeholder="Full name" required>
+        </div>
+        <div class="form-group">
+          <label>Position</label>
+          <select id="editPosition"><option value="">Select position...</option></select>
+        </div>
+        <div class="form-group">
+          <label>Shift</label>
+          <select id="editShift">
+            <option value="Morning">Morning</option>
+            <option value="Evening">Evening</option>
+            <option value="Night">Night</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>PIN</label>
+            <input type="text" id="editPin" placeholder="1234" maxlength="6">
+          </div>
+          <div class="form-group">
+            <label>Hourly Rate ($)</label>
+            <input type="number" id="editRate" placeholder="0.00" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Date of Birth</label>
+          <input type="date" id="editDob">
+        </div>
+        <div class="form-group">
+          <label>Certifications</label>
+          <div id="editCertsContainer" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+        <div class="form-group" style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="editActive" style="width:auto;">
+          <label for="editActive" style="margin:0;">Active Employee</label>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost btn-sm" id="cancelEditEmp2" onclick="document.getElementById('editEmployeeModal').classList.add('hidden')">Cancel</button>
+          <button class="btn btn-primary" id="saveEditEmp">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
     <a href="index.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
       <span class="nav-label">Home</span>
