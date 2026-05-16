@@ -161,7 +161,7 @@ _ticketsUnsub = onSnapshot(q, async (snap) => {
           id: d.id,
           employee: data.employeeName || "Unknown",
           employeeId: data.employeeId || "",
-          reason: data.type || data.reason || "General",
+         reason: data.reason || data.type || "General",
           shift: data.shift || data.defaultShift || "—",
           status: data.status || "open",
           archived: data.archived || false,
@@ -212,6 +212,7 @@ async function createNotification(title, message, type = "general") {
       title,
       message,
       type,
+      target: "manager",
       read: false,
       createdAt: serverTimestamp()
     });
@@ -527,10 +528,7 @@ window.declineTimeOffAction = async function(ticketId) {
   }
 };
 
-/* ═══════════════════════════════════════════════
-   APPROVE SHIFT SWAP
-   — Writes to shift_swaps (read by schedule.js in autoGenerate)
-═══════════════════════════════════════════════ */
+
 window.approveSwapAction = async function(ticketId) {
   if (!ticketId) return;
   try {
@@ -538,7 +536,6 @@ window.approveSwapAction = async function(ticketId) {
     const data = ticketSnap.data();
     if (!data) throw new Error("Ticket not found");
 
-    // Write to shift_swaps collection — schedule.js reads this to apply swap overrides
     await addDoc(collection(db, "companies", companyId, "shift_swaps"), {
       requesterId:   data.employeeId,
       requesterName: data.employeeName,
@@ -551,36 +548,41 @@ window.approveSwapAction = async function(ticketId) {
     });
 
     await updateDoc(doc(db, "companies", companyId, "tickets", ticketId), {
-      status: "resolved",
-      swapApproved: true,
-      resolvedAt: serverTimestamp(),
-      unreadEmployee: true
+      status: "resolved", swapApproved: true,
+      resolvedAt: serverTimestamp(), unreadEmployee: true
     });
 
-    await addDoc(
-      collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-      {
-        text: "✅ Your shift swap has been approved. The schedule will reflect this change on the specified date.",
-        senderRole: "system",
-        senderName: "System",
-        createdAt: serverTimestamp()
-      }
-    );
+    await addDoc(collection(db, "companies", companyId, "tickets", ticketId, "messages"), {
+      text: "✅ Your shift swap has been approved. The schedule will reflect this change on the specified date.",
+      senderRole: "system", senderName: "System", createdAt: serverTimestamp()
+    });
 
-    await createNotification(
-      "🔄 Shift Swap Approved",
-      `${data.employeeName}'s shift swap request has been approved.`,
-      "swap_approved"
-    );
+    // ── Notify the requester (employee 1) ──
+    await addDoc(collection(db, "companies", companyId, "notifications"), {
+      employeeId: data.employeeId,
+      title: "✅ Swap Approved",
+      message: `Your swap request has been approved by the manager.`,
+      status: "unread", type: "info", createdAt: serverTimestamp()
+    });
+
+    // ── Notify the target (employee 2) ──
+    if (data.swapTargetId) {
+      await addDoc(collection(db, "companies", companyId, "notifications"), {
+        employeeId: data.swapTargetId,
+        title: "✅ Swap Approved",
+        message: `Your swap with ${data.employeeName} has been approved by the manager.`,
+        status: "unread", type: "info", createdAt: serverTimestamp()
+      });
+    }
+
+    // ── Manager dashboard notification ──
+    await createNotification("🔄 Shift Swap Approved", `${data.employeeName}'s shift swap has been approved.`, "swap_approved");
   } catch (err) {
     console.error("approveSwapAction:", err);
     throw err;
   }
 };
 
-/* ═══════════════════════════════════════════════
-   DECLINE SHIFT SWAP
-═══════════════════════════════════════════════ */
 window.declineSwapAction = async function(ticketId) {
   if (!ticketId) return;
   try {
@@ -588,27 +590,34 @@ window.declineSwapAction = async function(ticketId) {
     const data = ticketSnap.data();
 
     await updateDoc(doc(db, "companies", companyId, "tickets", ticketId), {
-      status: "resolved",
-      swapApproved: false,
-      resolvedAt: serverTimestamp(),
-      unreadEmployee: true
+      status: "resolved", swapApproved: false,
+      resolvedAt: serverTimestamp(), unreadEmployee: true
     });
 
-    await addDoc(
-      collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-      {
-        text: "❌ Your shift swap request has been declined.",
-        senderRole: "system",
-        senderName: "System",
-        createdAt: serverTimestamp()
-      }
-    );
+    await addDoc(collection(db, "companies", companyId, "tickets", ticketId, "messages"), {
+      text: "❌ Your shift swap request has been declined.",
+      senderRole: "system", senderName: "System", createdAt: serverTimestamp()
+    });
 
-    await createNotification(
-      "❌ Shift Swap Declined",
-      `${data?.employeeName || "Employee"}'s shift swap request was declined.`,
-      "swap_declined"
-    );
+    // ── Notify the requester (employee 1) ──
+    await addDoc(collection(db, "companies", companyId, "notifications"), {
+      employeeId: data.employeeId,
+      title: "❌ Swap Declined",
+      message: `Your swap request was declined by the manager.`,
+      status: "unread", type: "info", createdAt: serverTimestamp()
+    });
+
+    // ── Notify the target (employee 2) ──
+    if (data.swapTargetId) {
+      await addDoc(collection(db, "companies", companyId, "notifications"), {
+        employeeId: data.swapTargetId,
+        title: "❌ Swap Declined",
+        message: `Your swap with ${data.employeeName} was declined by the manager.`,
+        status: "unread", type: "info", createdAt: serverTimestamp()
+      });
+    }
+
+    await createNotification("❌ Shift Swap Declined", `${data?.employeeName || "Employee"}'s shift swap was declined.`, "swap_declined");
   } catch (err) {
     console.error("declineSwapAction:", err);
     throw err;

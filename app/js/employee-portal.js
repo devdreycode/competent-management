@@ -129,19 +129,20 @@ window.confirmSwap = async (notifId) => {
     if (!notifSnap.exists()) return;
     const n = notifSnap.data();
 
-    // 1. Create the ticket for the manager
-    await addDoc(collection(db, "companies", companyId, "tickets"), {
-      type: "shift_swap",
-      employeeId: n.requesterId,
-      employeeName: n.requesterName,
-      targetEmployeeId: verifiedEmployee.id,
-      targetEmployeeName: verifiedEmployee.fullName,
-      date: n.date,
-      status: "open",
-      reason: "Shift Swap Request (Approved by Coworker)",
-      createdAt: serverTimestamp()
-    });
-
+   await addDoc(collection(db, "companies", companyId, "tickets"), {
+  type: "shift_swap",
+  reason: "Swap Request",                          // ← fixed
+  employeeId:       n.requesterId,
+  employeeName:     n.requesterName,
+  swapTargetId:     verifiedEmployee.id,           // ← was targetEmployeeId (wrong field name)
+  swapTargetName:   verifiedEmployee.fullName,     // ← was targetEmployeeName (wrong field name)
+  swapDate:         n.date,
+  status: "open",
+  submittedByEmployee: true,
+  unreadManager: true,
+  unreadEmployee: false,
+  createdAt: serverTimestamp()
+});
     // 2. Send "Good News" back to the requester
     await addDoc(collection(db, "companies", companyId, "notifications"), {
       employeeId: n.requesterId, // Sent to the person who started the swap
@@ -191,56 +192,68 @@ window.declineSwap = async (notifId) => {
 // The Final Sync: Pushes to Calendar
 
 
-
-
 async function loadEmployeeNotifications() {
+ 
   const list = $("notifList");
-  // Only get notifications for THIS employee that are unread
   const q = query(
-  collection(db, "companies", companyId, "notifications"),
+    collection(db, "companies", companyId, "notifications"),
     where("employeeId", "==", verifiedEmployee.id),
     where("status", "==", "unread")
   );
 
- onSnapshot(q, (snap) => {
-  list.innerHTML = snap.empty ? "<p>All caught up!</p>" : "";
-  snap.forEach(docSnap => {
-    const n = docSnap.data();
-    const div = document.createElement("div");
-    div.className = "stat-card";
-    div.id = `notif-${docSnap.id}`; // needed for instant dismiss
+  onSnapshot(q, (snap) => {
+    list.innerHTML = snap.empty
+      ? `<div class="empty-state"><i class="fas fa-bell"></i><p>You're all caught up!</p></div>`
+      : "";
 
-div.innerHTML = `
-  <div style="flex:1;">
-    <strong>${n.title || "Notification"}</strong>
-    <p style="font-size:0.8rem; margin:5px 0; color:#6b7280;">${n.message || ""}</p>
-  </div>
-  ${n.type === "swap_request" ? `
-    <div style="display:flex; gap:5px; align-items:flex-start;">
-      <button onclick="confirmSwap('${docSnap.id}')"
-              style="background:#16a34a; color:white; border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:600; font-size:0.8rem;">
-        Accept
-      </button>
-      <button onclick="declineSwap('${docSnap.id}')"
-              style="background:#dc2626; color:white; border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:600; font-size:0.8rem;">
-        Decline
-      </button>
-    </div>
-  ` : `
-    <button onclick="markAsRead('${docSnap.id}')"
-            style="background:transparent; color:#9ca3af; border:1px solid #e5e7eb; border-radius:6px;
-                   padding:5px 10px; cursor:pointer; font-size:0.75rem; font-weight:600;
-                   transition:all 0.15s; white-space:nowrap;"
-            onmouseover="this.style.background='#f3f4f6';this.style.color='#374151';"
-            onmouseout="this.style.background='transparent';this.style.color='#9ca3af';">
-      ✕ Dismiss
-    </button>
-  `}
-`;
-    list.appendChild(div);
+    snap.forEach(docSnap => {
+      const n = docSnap.data();
+      const div = document.createElement("div");
+      div.className = "notif-item unread";
+      div.id = `notif-${docSnap.id}`;
+
+      div.innerHTML = `
+        <div class="notif-dot"></div>
+        <div class="notif-body">
+          <div class="notif-msg"><strong>${n.title || "Notification"}</strong> — ${n.message || ""}</div>
+          <div class="notif-time">${n.createdAt?.toDate?.().toLocaleString() || ""}</div>
+        </div>
+        ${n.type === "swap_request" ? `
+          <div style="display:flex; gap:5px; align-items:flex-start;">
+            <button onclick="confirmSwap('${docSnap.id}')"
+                    style="background:#16a34a; color:white; border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:600; font-size:0.8rem;">
+              Accept
+            </button>
+            <button onclick="declineSwap('${docSnap.id}')"
+                    style="background:#dc2626; color:white; border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:600; font-size:0.8rem;">
+              Decline
+            </button>
+          </div>
+        ` : `
+          <button onclick="markAsRead('${docSnap.id}')"
+                  style="background:transparent; color:#9ca3af; border:1px solid #e5e7eb; border-radius:6px;
+                         padding:5px 10px; cursor:pointer; font-size:0.75rem; font-weight:600;
+                         transition:all 0.15s; white-space:nowrap;"
+                  onmouseover="this.style.background='#f3f4f6';this.style.color='#374151';"
+                  onmouseout="this.style.background='transparent';this.style.color='#9ca3af';">
+            ✕ Dismiss
+          </button>
+        `}
+      `;
+
+      list.appendChild(div);
+    });
+
+    // ── Badge update — OUTSIDE the innerHTML string ──
+    const badge = document.getElementById("notifBadge");
+    if (badge) {
+      badge.textContent = snap.size;
+      badge.style.display = snap.size > 0 ? "inline-block" : "none";
+    }
   });
-});
 }
+
+
 // --- PIN VERIFICATION ---
 $("verifyPinBtn").onclick = async () => {
   const pin = $("employeePin").value;
@@ -279,32 +292,16 @@ localStorage.setItem("employeeSession", JSON.stringify(verifiedEmployee));
 
 // --- DATA LOADING ---
 async function loadHoursAndPay() {
-  const nameEl = $("empNameDisplay");
-  if (nameEl) nameEl.innerText = verifiedEmployee.fullName || "Employee";
-
   $("payDisplay").innerText = `$${verifiedEmployee.hourlyRate || '0.00'}`;
-  // Absences: re-fetch live from Firestore so it's always current
-  try {
-    const empSnap = await getDoc(doc(db, "companies", companyId, "employees", verifiedEmployee.id));
-    if (empSnap.exists()) {
-      const fresh = empSnap.data();
-      verifiedEmployee = { ...verifiedEmployee, ...fresh }; // refresh cached data too
-      $("absDisplay").innerText = fresh.absences ?? '0';
-    } else {
-      $("absDisplay").innerText = verifiedEmployee.absences ?? '0';
-    }
-  } catch (_) {
-    $("absDisplay").innerText = verifiedEmployee.absences ?? '0';
-  }
-  
+
   const now = new Date();
   const windowStart = startOfWeek(now);
 
   const q = query(
-   collection(db, "companies", companyId, "punchLogs"),
+    collection(db, "companies", companyId, "punchLogs"),
     where("companyId", "==", companyId),
     where("employeeId", "==", verifiedEmployee.id),
-    orderBy("ts", "asc") 
+    orderBy("ts", "asc")
   );
 
   const snap = await getDocs(q);
@@ -334,28 +331,49 @@ async function loadHoursAndPay() {
   }
 
   const hours = totalMinutes / 60;
+
   const hoursEl = $("empTotalHours");
   if (hoursEl) hoursEl.textContent = hours.toFixed(2);
 
-  const logList = $("punchLogList");
-  logList.innerHTML = snap.empty ? "No recent activity found." : "";
+  // ── Est. Earnings ──
+  const rate   = parseFloat(verifiedEmployee.hourlyRate) || 0;
+  const estEl  = $("estEarnings");
+  if (estEl) estEl.textContent = "$" + (hours * rate).toFixed(2);
 
+  // ── Punch log list ──
+  const logList = $("punchLogList");
+  if (!logList) return;
+
+  if (snap.empty) {
+    logList.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-clock"></i>
+        <p>No punches recorded this week.</p>
+      </div>`;
+    return;
+  }
+
+  logList.innerHTML = "";
   snap.docs
     .map(d => d.data())
     .sort((a, b) => (b.ts?.seconds || 0) - (a.ts?.seconds || 0))
     .forEach(p => {
-      const date = p.ts ? p.ts.toDate().toLocaleString() : "Processing...";
+      const isIn   = p.eventType === "punch_in";
+      const isOut  = p.eventType === "punch_out";
+      const date   = p.ts ? p.ts.toDate().toLocaleString() : "Processing...";
+      const label  = p.eventType.replace(/_/g, " ").toUpperCase();
+      const dotCls = isIn ? "punch-in-dot" : isOut ? "punch-out-dot" : "";
+
       const div = document.createElement("div");
-      div.className = "stat-card";
-      div.style.fontSize = "0.85rem";
-      div.innerHTML = `<span>${p.eventType.replace('_', ' ').toUpperCase()}</span><span style='color:#6b7280;'>${date}</span>`;
+      div.className = "punch-row";
+      div.innerHTML = `
+        <div class="punch-dot ${dotCls}"></div>
+        <span class="punch-label">${label}</span>
+        <span class="punch-time">${date}</span>
+      `;
       logList.appendChild(div);
     });
-
-  // Load published schedule into scheduleContainer
-  await loadPublishedSchedule();
 }
-
 // ── Published Schedule Viewer ────────────────────────────────────────────────
 async function loadPublishedSchedule() {
   const container = $("scheduleContainer");
@@ -631,7 +649,6 @@ option.textContent = `${data.fullName} (${data.position || 'Staff'})`;
 
 
 
-// --- REQUESTS SUBMISSION ---
 window._portalSubmitRequest = async function({ type, start, end, swap, notes }) {
   if (!verifiedEmployee) return;
   const startDate = start;
@@ -639,25 +656,46 @@ window._portalSubmitRequest = async function({ type, start, end, swap, notes }) 
   try {
     /* ================= CALL OUT ================= */
     if (type === "call_out") {
+      // Tell the manager
       await addDoc(collection(db, "companies", companyId, "notifications"), {
         companyId,
         title: "⚠️ Employee Call-Out",
         message: `${verifiedEmployee.fullName} called out for ${startDate}`,
         read: false,
+        target: "manager",
         type: "call_out",
+        createdAt: serverTimestamp()
+      });
+      // Tell the employee it was sent
+      await addDoc(collection(db, "companies", companyId, "notifications"), {
+        employeeId: verifiedEmployee.id,
+        title: "✅ Call-Out Submitted",
+        message: `Your call-out for ${startDate} was sent to your manager.`,
+        status: "unread",
+        type: "info",
         createdAt: serverTimestamp()
       });
     }
 
     /* ================= RUNNING LATE ================= */
     if (type === "running_late") {
+      // Tell the manager
       await addDoc(collection(db, "companies", companyId, "notifications"), {
         companyId,
         title: "⏰ Running Late",
         message: `${verifiedEmployee.fullName} is running late for ${startDate}`,
-        employeeId: verifiedEmployee.id,
         read: false,
+        target: "manager",
         type: "running_late",
+        createdAt: serverTimestamp()
+      });
+      // Tell the employee it was sent
+      await addDoc(collection(db, "companies", companyId, "notifications"), {
+        employeeId: verifiedEmployee.id,
+        title: "✅ Manager Notified",
+        message: `Your manager has been notified that you're running late for ${startDate}.`,
+        status: "unread",
+        type: "info",
         createdAt: serverTimestamp()
       });
     }
@@ -677,16 +715,18 @@ window._portalSubmitRequest = async function({ type, start, end, swap, notes }) 
         createdAt: serverTimestamp()
       });
 
+      // Tell the manager
       await addDoc(collection(db, "companies", companyId, "notifications"), {
         companyId,
         title: "📅 Time Off Request",
         message: `${verifiedEmployee.fullName} requested time off: ${startDate}`,
         read: false,
+        target: "manager",
         type: "time_off_request",
         createdAt: serverTimestamp()
       });
 
-      // Create a ticket so the manager can chat back
+      // Create ticket
       const ticketRef = await addDoc(collection(db, "companies", companyId, "tickets"), {
         companyId,
         employeeId: verifiedEmployee.id,
@@ -710,6 +750,16 @@ window._portalSubmitRequest = async function({ type, start, end, swap, notes }) 
           createdAt: serverTimestamp()
         });
       }
+
+      // Tell the employee it was sent
+      await addDoc(collection(db, "companies", companyId, "notifications"), {
+        employeeId: verifiedEmployee.id,
+        title: "✅ Time Off Requested",
+        message: `Your time off request for ${startDate} was submitted. Check back for manager approval.`,
+        status: "unread",
+        type: "info",
+        createdAt: serverTimestamp()
+      });
     }
 
     /* ================= SHIFT SWAP ================= */
@@ -840,65 +890,22 @@ async function loadHomeDashboard() {
   if (!verifiedEmployee?.id) return;
 
   // ── 1. Hours this week ───────────────────────────────────────────────────
-  try {
-    const now         = new Date();
-    const windowStart = startOfWeek(now);
+ // ── 2. Open ticket count ─────────────────────────────────────────────────
+try {
+  const ticketEl = document.getElementById("statTickets");
 
-    const punchQ = query(
-      collection(db, "companies", companyId, "punchLogs"),
-      where("companyId",  "==", companyId),
-      where("employeeId", "==", verifiedEmployee.id),
-      orderBy("ts", "asc")
-    );
+  const [openSnap, progressSnap] = await Promise.all([
+    getDocs(query(collection(db, "companies", companyId, "tickets"),
+      where("employeeId", "==", verifiedEmployee.id), where("status", "==", "open"))),
+    getDocs(query(collection(db, "companies", companyId, "tickets"),
+      where("employeeId", "==", verifiedEmployee.id), where("status", "==", "in_progress")))
+  ]);
 
-    const punchSnap = await getDocs(punchQ);
-    let totalMinutes    = 0;
-    let activeShiftStart = null;
-    let activeBreakStart = null;
-
-    const logs = punchSnap.docs
-      .map(d => d.data())
-      .filter(l => l.ts && typeof l.ts.seconds === "number")
-      .map(l => ({ ...l, time: l.ts.toDate() }))
-      .filter(l => l.time >= windowStart && l.time <= now);
-
-    for (const log of logs) {
-      const t = log.time;
-      if (log.eventType === "punch_in")                              activeShiftStart = t;
-      if (log.eventType === "break_start" && activeShiftStart)       activeBreakStart = t;
-      if (log.eventType === "break_end"   && activeBreakStart) {
-        totalMinutes -= (t - activeBreakStart) / 60000;
-        activeBreakStart = null;
-      }
-      if (log.eventType === "punch_out"   && activeShiftStart) {
-        totalMinutes += (t - activeShiftStart) / 60000;
-        activeShiftStart = null;
-        activeBreakStart = null;
-      }
-    }
-
-    const hours   = totalMinutes / 60;
-    const hoursEl = document.getElementById("statHours");
-    const subEl   = document.getElementById("statHoursSub");
-    if (hoursEl) hoursEl.textContent = hours.toFixed(1);
-    if (subEl)   subEl.textContent   = `hrs worked`;
-  } catch (e) {
-    console.warn("loadHomeDashboard — hours:", e);
+  if (ticketEl) ticketEl.textContent = openSnap.size + progressSnap.size;
+} catch (e) {
+  console.warn("loadHomeDashboard — tickets:", e);
   }
 
-  // ── 2. Open ticket count ─────────────────────────────────────────────────
-  try {
-    const tQ = query(
-      collection(db, "companies", companyId, "tickets"),
-      where("employeeId", "==", verifiedEmployee.id),
-      where("status",     "==", "open")
-    );
-    const tSnap = await getDocs(tQ);
-    const ticketEl = document.getElementById("statTickets");
-    if (ticketEl) ticketEl.textContent = tSnap.size;
-  } catch (e) {
-    console.warn("loadHomeDashboard — tickets:", e);
-  }
 
   // ── 3. Schedule: next shift + weekly strip ───────────────────────────────
   try {

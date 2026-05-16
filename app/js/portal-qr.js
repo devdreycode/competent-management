@@ -103,18 +103,36 @@ function initUI() {
 let qrBuilt = false;
 
 function hookPortalTab(initialPath) {
-  const originalSetStab = window.setStab;
-  window.setStab = function(id, btn) {
-    if (typeof originalSetStab === "function") originalSetStab(id, btn);
-    if (id === "portal" && !qrBuilt && companyId) {
-      // Small timeout so the tab section is visible before QRCode renders
-      setTimeout(() => {
-        const path = document.getElementById("portalPathInput")?.value?.trim() || initialPath;
-        buildQR(path);
-        qrBuilt = true;
-      }, 80);
+  // Try immediately in case portal tab is already visible
+  setTimeout(() => {
+    const portalSection = document.getElementById("stab-portal") 
+      || document.querySelector('[data-stab="portal"]')
+      || document.getElementById("portal");
+    if (portalSection && portalSection.style.display !== "none" && !qrBuilt && companyId) {
+      buildQR(initialPath);
+      qrBuilt = true;
     }
+  }, 300);
+
+  // Also wrap setStab for when the tab is clicked later
+  const tryHook = () => {
+    if (typeof window.setStab !== "function") {
+      setTimeout(tryHook, 100); // keep trying until it exists
+      return;
+    }
+    const originalSetStab = window.setStab;
+    window.setStab = function(id, btn) {
+      originalSetStab(id, btn);
+      if (id === "portal" && !qrBuilt && companyId) {
+        setTimeout(() => {
+          const path = document.getElementById("portalPathInput")?.value?.trim() || initialPath;
+          buildQR(path);
+          qrBuilt = true;
+        }, 150);
+      }
+    };
   };
+  tryHook();
 }
 
 /* ─── Build / rebuild QR ─────────────────────────────────── */

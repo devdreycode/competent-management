@@ -16,6 +16,9 @@ import {
   writeBatch,
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// Sync dark mode from localStorage on every page load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
 
 const $ = (id) => document.getElementById(id);
 
