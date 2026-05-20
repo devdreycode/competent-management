@@ -7,7 +7,7 @@
 //   Login → auth-share.js pulls Firestore settings → merges into localStorage
 //   Settings page → user changes toggle/save → writes localStorage + Firestore
 
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   doc,
   setDoc,
@@ -17,7 +17,10 @@ import {
 
 /* ─── Storage key ────────────────────────────────────────── */
 const KEY = "appSettings";
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 /* ─── Helpers ───────────────────────────────────────────── */
 const $  = (id) => document.getElementById(id);
 const gv = (id) => $(id)?.value;

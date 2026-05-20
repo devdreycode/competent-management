@@ -6,6 +6,10 @@
   <title>Scheduling Settings | Competent Management</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <script>
+  if (localStorage.getItem("dark-mode") === "true")
+    document.documentElement.classList.add("dark-mode");
+</script>
   <style>
     /* ═══════════════════════════════════════════════
        DESIGN TOKENS — LIGHT
@@ -527,8 +531,8 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"><span class="toast-dot">●</span><span id="toastMsg"></span></div>
-
-<script type="module" src="../js/auth-share.js"></script>
+<script type="module" src="/app/js/core/firebase.js"></script>
+<script type="module" src="/app/js/core/auth-share.js"></script>
 <script type="module" src="../js/scheduling_settings.js"></script>
 </body>
 </html>

@@ -21,5 +21,16 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      await navigator.serviceWorker.register('/sw.js');
+      console.log('SW registered');
+    } catch (err) {
+      console.error('SW failed', err);
+    }
+  });
+}
+
 export const auth = getAuth(app);
 export const db   = getFirestore(app);

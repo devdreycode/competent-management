@@ -9,10 +9,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+  if (localStorage.getItem("dark-mode") === "true")
+    document.documentElement.classList.add("dark-mode");
+</script>
   <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/nav.css">
+<link rel="stylesheet" href="../css/top-header.css">
+<link rel="stylesheet" href="../css/nav.css">
+  <link rel="stylesheet" href="../css/darkmode.css">
+   <link rel="stylesheet" href="../css/punchin-payroll.css"
 </head>
-<body>
+
+  
  
 <div class="app-shell">
   <header class="top-header">
@@ -49,15 +57,43 @@
       </button>
     </div>
   </header>
- 
   <div class="main-area">
     <div class="page-body">
-      
+      <div id="page-punchlogs" class="page active">
+        <div class="sec-header">
+          <div><div class="sec-title">Punch Logs</div><div class="sec-sub">Full clock-in/out history</div></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="openNewTab()">🕐 Open Kiosk</button>
+            <input type="date" id="punchLogDate" style="padding:7px 11px;border:1px solid var(--chrome-border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:.845rem;background:var(--surface);color:var(--text);outline:none;">
+          </div>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-btn active" id="btn-shiftLogs" onclick="switchTab('shiftLogs')">⏱ Shift Events</button>
+          <button class="tab-btn" id="btn-breakLogs" onclick="switchTab('breakLogs')">☕ Break Events</button>
+        </div>
+        <div id="shiftLogs" class="tab-content active">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Employee</th><th>Event</th><th>Date &amp; Time</th><th>Source</th><th>Duration</th><th>Actions</th></tr></thead>
+              <tbody id="shiftBody"><tr class="empty-row"><td colspan="6">No activity found.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="breakLogs" class="tab-content">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Employee</th><th>Event</th><th>Date &amp; Time</th><th>Source</th><th>Duration</th><th>Actions</th></tr></thead>
+              <tbody id="breakBody"><tr class="empty-row"><td colspan="6">No activity found.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       </div>
   </div>
 
    <nav class="bottom-nav">
-    <a href="index.html" class="nav-item active">
+    <a href="index.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
       <span class="nav-label">Home</span>
     </a>
@@ -69,7 +105,7 @@
       <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
       <span class="nav-label">Schedule</span>
     </a>
-    <a href="punchin.html" class="nav-item">
+    <a href="punchin.html" class="nav-item active">
       <div class="nav-icon-wrap"><i class="fas fa-clock"></i></div>
       <span class="nav-label">Punch In</span>
     </a>
@@ -84,10 +120,9 @@
   </nav>
 
 </div>
-
-<script type="module" src="../js/firebase.js"></script>
-<script type="module" src="../js/auth-share.js"></script>
+<script type="module" src="/app/js/core/firebase.js"></script>
+<script type="module" src="/app/js/core/auth-share.js"></script>
 <script type="module" src="../js/main.js"></script>
-
+<script type="module" src="../js/punchlogs.js"></script>
 </body>
 </html>

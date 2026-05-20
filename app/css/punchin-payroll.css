@@ -1,0 +1,326 @@
+/* ═══════════════════════════════════════════
+   punchin-payroll.css
+   Shared styles for punchin.html & payroll.html
+   Uses CSS variables — works in light + dark mode
+═══════════════════════════════════════════ */
+
+/* ── Tab Bar ─────────────────────────────── */
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--surface2);
+  border: 1px solid var(--chrome-border);
+  border-radius: 10px;
+  padding: 4px;
+  width: fit-content;
+}
+
+.tab-btn {
+  padding: 7px 16px;
+  border-radius: 7px;
+  font-size: .8rem;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all .15s;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 2px 8px var(--chrome-glow);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── Table (shared) ──────────────────────── */
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--chrome-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+thead {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--chrome-border);
+}
+
+th {
+  padding: 10px 16px;
+  color: var(--text-muted);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 13px 16px;
+  font-size: .85rem;
+  color: var(--text);
+  border-bottom: 1px solid var(--chrome-border);
+  vertical-align: middle;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+tbody tr {
+  transition: background .15s;
+}
+
+tbody tr:hover { background: var(--surface2); }
+
+.empty-row td {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-light);
+  font-style: italic;
+  font-size: .9rem;
+}
+
+/* ── Period Nav (payroll) ────────────────── */
+.period-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.period-label {
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 0 8px;
+}
+
+/* ── Card ────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--chrome-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.card-label {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* ── Form Fields ─────────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.field label {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+}
+
+.form-input {
+  padding: 7px 11px;
+  background: var(--surface2);
+  border: 1px solid var(--chrome-border);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .845rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--chrome-glow);
+}
+
+/* ── Divider ─────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--chrome-border);
+  margin: 14px 0;
+}
+
+/* ── Message Container ───────────────────── */
+#messageContainer {
+  margin-bottom: 12px;
+}
+
+#messageContainer:empty { display: none; }
+
+/* ── Employee Detail Modal ───────────────── */
+#empModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 700;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+#empModal.open { display: flex; }
+
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--chrome-border);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 500px;
+  margin: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  overflow: hidden;
+  animation: modalIn .15s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--chrome-border);
+  background: var(--surface2);
+}
+
+.modal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.btn-modal-close {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: all .12s;
+  line-height: 1;
+}
+
+.btn-modal-close:hover {
+  background: var(--chrome-border);
+  color: var(--text);
+}
+
+.modal-body {
+  padding: 16px 20px;
+}
+
+/* Mini stat chips inside emp modal */
+#empModalStats > div {
+  background: var(--surface2);
+  border: 1px solid var(--chrome-border);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+#empModalStats .stat-val {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+}
+
+#empModalStats .stat-key {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+/* ── Buttons (shared) ────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-family: inherit;
+  border: none;
+}
+
+.btn-sm { padding: 6px 12px; font-size: .8rem; }
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+  padding: 8px 16px;
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 12px var(--chrome-glow);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--chrome-border);
+}
+.btn-ghost:hover {
+  background: var(--surface2);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--chrome-border);
+}
+.btn-secondary:hover { border-color: var(--border-strong); }
+
+.btn-secondary:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  pointer-events: none;
+}#payrollBody .empty-row td {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-style: italic;
+}

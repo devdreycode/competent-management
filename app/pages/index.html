@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+  if (localStorage.getItem("dark-mode") === "true")
+    document.documentElement.classList.add("dark-mode");
+</script>
   <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/top-header.css">
 <link rel="stylesheet" href="../css/nav.css">
@@ -35,6 +39,32 @@
         <i class="fas fa-bell" style="font-size:.9rem;"></i>
         <span id="notifCount" style="display:none;">0</span>
       </div>
+      <div class="notif-wrapper" style="position:relative;">
+  <div id="ticketPanelBell" onclick="toggleTicketPanel(event)" title="Tickets"
+       style="position:relative;display:flex;align-items:center;justify-content:center;
+              width:32px;height:32px;border-radius:8px;cursor:pointer;background:transparent;">
+    <i class="fas fa-ticket" style="font-size:.9rem;"></i>
+    <span id="ticketPanelCount" style="display:none;position:absolute;top:-4px;right:-4px;
+          background:var(--red,#ef4444);color:#fff;font-size:.6rem;font-weight:700;
+          min-width:16px;height:16px;border-radius:99px;
+          align-items:center;justify-content:center;padding:0 3px;
+          border:2px solid var(--bg,#fff);line-height:1;">0</span>
+  </div>
+  <div id="ticketPanel" style="display:none;position:absolute;right:0;top:calc(100% + 8px);
+       width:320px;max-height:420px;overflow-y:auto;
+       background:var(--surface,#fff);border:1px solid var(--chrome-border,#e2e8f0);
+       border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:999;">
+    <div style="display:flex;align-items:center;justify-content:space-between;
+                padding:12px 14px 10px;border-bottom:1px solid var(--chrome-border,#e2e8f0);
+                position:sticky;top:0;background:var(--surface,#fff);z-index:1;">
+      <span style="font-size:.8rem;font-weight:700;">🎫 Recent Tickets</span>
+      <button onclick="window.location.href='ticketmanagement.html'"
+              style="font-size:.7rem;font-weight:600;color:var(--accent,#0891b2);background:none;border:none;cursor:pointer;">View All →</button>
+    </div>
+    <div id="ticketPanelList" style="padding:6px 0;"></div>
+    <div id="ticketPanelEmpty" style="display:block;text-align:center;padding:24px 14px;font-size:.8rem;color:#94a3b8;">No tickets yet 🎉</div>
+  </div>
+</div>
       <div id="notifPanel" style="display:none;">
         <div class="notif-header">
           <span class="notif-header-title">Notifications</span>
@@ -104,7 +134,7 @@
             <div class="card">
               <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;">
                 <span>🎫 Recent Tickets</span>
-                <button class="btn btn-ghost btn-sm" onclick="window.location.href='tickets.html'">View All →</button>
+                <button class="btn btn-ghost btn-sm" onclick="window.location.href='ticketmanagement.html'">View All →</button>
               </div>
               <ul id="ticketRecent" style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:.845rem;"></ul>
             </div>
@@ -116,20 +146,6 @@
                 <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="openNewTab()">🕐 Open Time Clock</button>
                 <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="window.location.href='schedule.html'">📅 View Schedule</button>
                 <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="window.location.href='ticketmanagement.html'">🎫 View Tickets</button>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-label">📌 Reminders</div>
-              <ul id="remindersList"></ul>
-              <div class="reminder-input-row">
-                <input type="text" id="reminderInput" placeholder="Add a reminder..." onkeydown="if(event.key==='Enter')addReminder()">
-                <button class="btn btn-primary btn-sm" onclick="addReminder()">Add</button>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;">
-                <span id="sidebarName" style="font-size:.8rem;font-weight:700;color:var(--text);">User</span>
-                <div class="user-uid" id="displayUID" style="font-size:.68rem;color:var(--text-light);font-family:'Space Mono',monospace;"></div>
               </div>
             </div>
           </div>
@@ -151,6 +167,14 @@
       <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
       <span class="nav-label">Schedule</span>
     </a>
+    <a href="punchin.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-clock"></i></div>
+      <span class="nav-label">Punch In</span>
+    </a>
+    <a href="payroll.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-dollar-sign"></i></div>
+      <span class="nav-label">Payroll</span>
+    </a>
     <a href="settings.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
       <span class="nav-label">Settings</span>
@@ -158,12 +182,11 @@
   </nav>
 
 </div>
-
-<script type="module" src="../js/firebase.js"></script>
-<script type="module" src="../js/auth-share.js"></script>
-<script type="module" src="../js/main.js"></script>
-<script type="module" src="../js/dashboard.js"></script>
-<script type="module" src="../js/dashboard-notifications.js"></script>
-
+<script type="module" src="/app/js/core/firebase.js"></script>
+<script type="module" src="/app/js/core/auth-share.js"></script>
+<script type="module" src="/app/js/main.js"></script>
+<script type="module" src="/app/js/dashboard.js"></script>
+<script type="module" src="/app/js/dashboard-notifications.js"></script>
+<script type="module" src="/app/js/dashboard-tickets-panel.js"></script>
 </body>
 </html>

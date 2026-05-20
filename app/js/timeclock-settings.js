@@ -1,17 +1,13 @@
-// js/timeclock-settings.js
-// Handles load/save for timeclock-settings.html.
-// Two-layer pattern:
-//   - localStorage("appSettings") → fast read cache for the kiosk
-//   - Firestore companies/{companyId}/settings/config → source of truth
-// Only touches timeclock keys — never wipes other settings.
-
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   doc,
   setDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 /* ─── Helpers ────────────────────────────────────────────── */
 const KEY = "appSettings";
 const $   = (id) => document.getElementById(id);

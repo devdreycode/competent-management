@@ -12,7 +12,7 @@
  * Requires qrcodejs (already in index.html <head>):
  *   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
  */
-
+import { auth, db } from "./core/firebase.js";
 const LS_KEY = "portalPagePath";
 
 let companyId  = null;

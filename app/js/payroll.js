@@ -1,3 +1,4 @@
+import { auth, db } from "./core/firebase.js";
 import {
   collection,
   query,
@@ -9,7 +10,7 @@ import {
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { db, auth } from "../js/auth-share.js";
+;
 
 const $ = (id) => document.getElementById(id);
 let companyId = null;
@@ -346,7 +347,7 @@ if (term) {
   }).join("");
 
   if (!tbody.innerHTML.trim()) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#6b7280;">No punch data for this period.</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">No punch data for this period.</td></tr>`;
   }
 
   // Wire row clicks to open modal

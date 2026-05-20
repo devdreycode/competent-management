@@ -1,7 +1,7 @@
 // js/login.js
 // All imports pinned to 10.7.1 — must match firebase.js exactly.
 
-import { auth, db } from "./firebase.js";
+import { auth ,db } from "../app/js/core/firebase.js";
 import {
   signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";

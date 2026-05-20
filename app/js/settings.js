@@ -4,14 +4,17 @@
  * to index.html (already done). No other changes required.
  */
 
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   collection,
   doc,
   getDoc,
   getDocs,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 /* ─── Constants ─────────────────────────────────────────── */
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

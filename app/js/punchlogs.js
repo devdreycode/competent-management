@@ -1,5 +1,5 @@
 // js/punchlogs.js
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   collection,
   query,
@@ -12,7 +12,10 @@ import {
   Timestamp,
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 /* ─────────────────────────────────────────
    STATE
 ───────────────────────────────────────── */
@@ -225,7 +228,9 @@ function renderTable(tbodyId, logs) {
     </tr>`;
   }).join("");
 }
-
+window.openNewTab = function() {
+  window.open("./pages/kiosk.html", "_blank");
+};
 /* ─────────────────────────────────────────
    SEARCH — exposed so index.html's oninput
    can call window._filterLogsImpl

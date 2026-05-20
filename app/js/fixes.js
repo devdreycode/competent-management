@@ -14,8 +14,7 @@
  *  6. Upgrade button → modal
  *  7. filterLogs bridge (punchlogs._filterLogsImpl → window.filterLogs)
  */
-
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   collection, doc, query, where,
   orderBy, getDocs, addDoc, updateDoc,

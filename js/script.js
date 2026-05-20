@@ -1,7 +1,7 @@
 // js/script.js — Signup handler
 // Pinned to firebase 10.7.1 to match firebase.js
+import { auth ,db } from "../app/js/core/firebase.js";
 
-import { auth, db } from "./firebase.js";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification

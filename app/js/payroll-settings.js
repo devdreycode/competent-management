@@ -1,10 +1,11 @@
+import { auth, db } from "./core/firebase.js";
 import {
   doc,
   getDoc,
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-import { db } from "../js/auth-share.js";
+
 
 const $ = (id) => document.getElementById(id);
 
@@ -54,7 +55,10 @@ async function loadPayrollSettings() {
     console.error("Failed loading payroll settings:", err);
   }
 }
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 function syncUI() {
 
   $("settingOvertimeThreshold").value =

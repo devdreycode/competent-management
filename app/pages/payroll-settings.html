@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+  if (localStorage.getItem("dark-mode") === "true")
+    document.documentElement.classList.add("dark-mode");
+</script>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/nav.css">
   <link rel="stylesheet" href="../css/top-header.css">
@@ -139,10 +143,10 @@
 
 </div>
 
-<script type="module" src="../js/firebase.js"></script>
-<script type="module" src="../js/auth-share.js"></script>
-<script type="module" src="../js/main.js"></script>
-<script type="module" src="../js/payroll-settings.js"></script>
+<script type="module" src="/app/js/core/firebase.js"></script>
+<script type="module" src="/app/js/core/auth-share.js"></script>
+<script type="module" src="/app/js/main.js"></script>
+<script type="module" src="/app/js/payroll-settings.js"></script>
 
 </body>
 </html>

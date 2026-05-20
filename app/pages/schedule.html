@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+  if (localStorage.getItem("dark-mode") === "true")
+    document.documentElement.classList.add("dark-mode");
+</script>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/nav.css">
    <link rel="stylesheet" href="../css/top-header.css">
@@ -22,7 +26,7 @@
       <div class="brand-tag">Workforce Manager</div>
     </div>
     <div style="width:1px;height:22px;background:var(--chrome-border);margin:0 4px;flex-shrink:0;"></div>
-    <span class="header-title" id="headerTitle">Page Title</span>
+    <span class="header-title" id="headerTitle">Schedule</span>
     <div id="upgradeBtn">⚡ Upgrade</div>
     <div class="header-spacer"></div>
     <div id="welcome-msg">Welcome, User</div>
@@ -79,7 +83,7 @@
           <div class="sh-kpi" data-icon="🔄"><div class="sh-kpi-label">Rest</div><div class="sh-kpi-val green" id="restStatus">OK</div><div class="sh-kpi-sub">compliance</div></div>
         </div>
         <div id="scheduleSettingsWarning" class="hidden" style="margin-bottom:12px;">
-          ⚠️ No coverage rules set. <a href="scheduling-settings.html" style="color:var(--yellow);font-weight:700;">Configure →</a>
+          ⚠️ No coverage rules set. <a href="schedule-settings.html" style="color:var(--yellow);font-weight:700;">Configure →</a>
         </div>
         <div id="coverageStrip" style="margin-bottom:8px;"></div>
         <div id="coverageAlerts" style="margin-bottom:8px;"></div>
@@ -100,16 +104,7 @@
             </div>
           </div>
           <div class="sh-col-side">
-            <div class="sh-card">
-              <div class="sh-card-head"><span class="sh-card-title">🌓 Shift Mix</span></div>
-              <div class="sh-card-body">
-                <div class="sh-shift-bars">
-                  <div class="sh-bar-row"><span class="sh-bar-name" style="color:#92400e;">Morning</span><div class="sh-bar-track"><div class="sh-bar-fill morning" id="shBarMorning" style="width:0%"></div></div><span class="sh-bar-count" id="shCntMorning">0</span></div>
-                  <div class="sh-bar-row"><span class="sh-bar-name" style="color:#5b21b6;">Evening</span><div class="sh-bar-track"><div class="sh-bar-fill evening" id="shBarEvening" style="width:0%"></div></div><span class="sh-bar-count" id="shCntEvening">0</span></div>
-                  <div class="sh-bar-row"><span class="sh-bar-name" style="color:#94a3b8;">Night</span><div class="sh-bar-track"><div class="sh-bar-fill night" id="shBarNight" style="width:0%"></div></div><span class="sh-bar-count" id="shCntNight">0</span></div>
-                </div>
-              </div>
-            </div>
+            
             <div class="sh-card">
               <div class="sh-card-head"><span class="sh-card-title">✅ Compliance</span></div>
               <div class="sh-card-body">
@@ -132,7 +127,7 @@
     </div><!-- /.page-body -->
   </div><!-- /.main-area -->
 
-  <nav class="bottom-nav">
+ <nav class="bottom-nav">
     <a href="index.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
       <span class="nav-label">Home</span>
@@ -145,6 +140,14 @@
       <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
       <span class="nav-label">Schedule</span>
     </a>
+    <a href="punchin.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-clock"></i></div>
+      <span class="nav-label">Punch In</span>
+    </a>
+    <a href="payroll.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-dollar-sign"></i></div>
+      <span class="nav-label">Payroll</span>
+    </a>
     <a href="settings.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
       <span class="nav-label">Settings</span>
@@ -152,9 +155,11 @@
   </nav>
 
 </div>
+<script type="module" src="/app/js/core/firebase.js"></script>
+<script type="module" src="/app/js/core/auth-share.js"></script>
 <script type="module" src="../js/dashboard-notifications.js"></script>
-<script type="module" src="../js/firebase.js"></script>
-<script type="module" src="../js/auth-share.js"></script>
+
+
 <script type="module" src="../js/main.js"></script>
 
 <!-- ADD this -->

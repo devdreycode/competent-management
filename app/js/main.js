@@ -1,5 +1,5 @@
 // js/main.js
-import { db, auth } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   collection, addDoc, deleteDoc, onSnapshot,

@@ -1,4 +1,68 @@
-<div id="page-payroll" class="page">
+
+      <!DOCTYPE html>
+<html lang="en" style="--accent:#0891b2;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkForce Manager</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+  if (localStorage.getItem("dark-mode") === "true")
+    document.documentElement.classList.add("dark-mode");
+</script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ 
+  <link rel="stylesheet" href="../css/punchin-payroll.css">
+  <link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/top-header.css">
+<link rel="stylesheet" href="../css/nav.css">
+  <link rel="stylesheet" href="../css/darkmode.css">
+
+</head>
+<body>
+ 
+<div class="app-shell">
+  <header class="top-header">
+    <div class="brand-mark" id="brandMark">⚡</div>
+    <div style="display:flex;flex-direction:column;line-height:1.1;">
+      <div class="brand-name" id="companyNameDisplay">Company</div>
+      <div class="brand-tag">Workforce Manager</div>
+    </div>
+    <div style="width:1px;height:22px;background:var(--chrome-border);margin:0 4px;flex-shrink:0;"></div>
+    <span class="header-title" id="headerTitle">Page Title</span>
+    <div id="upgradeBtn">⚡ Upgrade</div>
+    <div class="header-spacer"></div>
+    <div id="welcome-msg">Welcome, User</div>
+ 
+    <div class="notif-wrapper">
+      <div id="notifBell" onclick="toggleNotifPanel(event)" title="Notifications">
+        <i class="fas fa-bell" style="font-size:.9rem;"></i>
+        <span id="notifCount" style="display:none;">0</span>
+      </div>
+      <div id="notifPanel" style="display:none;">
+        <div class="notif-header">
+          <span class="notif-header-title">Notifications</span>
+          <button id="notifMarkAll" onclick="markAllRead(event)" disabled>All caught up</button>
+        </div>
+        <div id="notifList"></div>
+        <div id="notifEmpty" style="display:block;">You're all caught up! 🎉</div>
+      </div>
+    </div>
+ 
+    <div style="display:flex;align-items:center;gap:8px;margin-left:4px;">
+      <div class="user-avatar" id="sidebarAvatar" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;" title="Account">A</div>
+      <button class="btn-signout" id="logoutBtn" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="main-area">
+    <div class="page-body">
+      <div id="page-payroll" class="page active">
         <div class="sec-header">
           <div><div class="sec-title">Payroll Estimator</div><div class="sec-sub">Wages estimated from punch log data</div></div>
           <div style="display:flex;gap:8px;">
@@ -40,14 +104,14 @@
         <div class="table-wrap" style="margin-bottom:16px;">
           <table>
             <thead><tr><th>Employee</th><th>Position</th><th>Rate</th><th>Reg Hours</th><th>OT Hours</th><th>Gross</th></tr></thead>
-            <tbody id="payrollBody"><tr><td colspan="7" style="text-align:center;padding:30px;color:#6b7280;">No punch data for this period.</td></tr></tbody>
+            <tbody id="payrollBody"><tr class="empty-row"><td colspan="7">No punch data for this period.</td></tr></tbody>
           </table>
         </div>
         <div style="display:flex;justify-content:flex-end;align-items:center;gap:14px;padding:12px 0;">
           <span style="font-size:.855rem;color:var(--text-muted);">Estimated Total:</span>
           <span style="font-size:1.4rem;font-weight:700;font-family:'Space Mono',monospace;color:var(--green);" id="payrollGrandTotal">$0.00</span>
         </div>
-        <div id="empModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:700;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+        <div id="empModal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:700;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
           <div class="modal-box" style="max-width:500px;">
             <div class="modal-head">
               <div><div class="modal-title" id="empModalName">Employee</div><div style="font-size:.78rem;color:var(--text-muted);margin-top:3px;" id="empModalRole"></div></div>
@@ -62,3 +126,43 @@
           </div>
         </div>
       </div>
+
+
+      </div>
+  </div>
+
+   <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
+      <span class="nav-label">Home</span>
+    </a>
+    <a href="employees.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-users"></i></div>
+      <span class="nav-label">Staff</span>
+    </a>
+    <a href="schedule.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
+      <span class="nav-label">Schedule</span>
+    </a>
+    <a href="punchin.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-clock"></i></div>
+      <span class="nav-label">Punch In</span>
+    </a>
+    <a href="payroll.html" class="nav-item active">
+      <div class="nav-icon-wrap"><i class="fas fa-dollar-sign"></i></div>
+      <span class="nav-label">Payroll</span>
+    </a>
+    <a href="settings.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
+      <span class="nav-label">Settings</span>
+    </a>
+  </nav>
+
+</div>
+
+<script type="module" src="/app/js/core/firebase.js"></script>
+<script type="module" src="/app/js/core/auth-share.js"></script>
+<script type="module" src="/app/js/main.js"></script>
+<script type="module" src="/app/js/payroll.js"></script>
+</body>
+</html>

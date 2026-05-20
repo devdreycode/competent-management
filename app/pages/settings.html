@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+  if (localStorage.getItem("dark-mode") === "true")
+    document.documentElement.classList.add("dark-mode");
+</script>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/nav.css">
   <link rel="stylesheet" href="../css/top-header.css">
@@ -195,7 +199,7 @@
     </div>
   </div>
 
-  <nav class="bottom-nav">
+ <nav class="bottom-nav">
     <a href="index.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
       <span class="nav-label">Home</span>
@@ -208,6 +212,14 @@
       <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
       <span class="nav-label">Schedule</span>
     </a>
+    <a href="punchin.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-clock"></i></div>
+      <span class="nav-label">Punch In</span>
+    </a>
+    <a href="payroll.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-dollar-sign"></i></div>
+      <span class="nav-label">Payroll</span>
+    </a>
     <a href="settings.html" class="nav-item active">
       <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
       <span class="nav-label">Settings</span>
@@ -216,8 +228,8 @@
 
 </div>
 <script type="module" src="../js/dashboard-notifications.js"></script>
-<script type="module" src="../js/firebase.js"></script>
-<script type="module" src="../js/auth-share.js"></script>
+<script type="module" src="/app/js/core/firebase.js"></script>
+<script type="module" src="/app/js/core/auth-share.js"></script>
 <script type="module" src="../js/main.js"></script>
 <script type="module" src="../js/settings-app.js"></script>
 

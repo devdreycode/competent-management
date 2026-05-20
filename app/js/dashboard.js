@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   collection,
   doc,
@@ -46,13 +46,13 @@ window.addEventListener("authReady", (e) => {
     welcome.textContent = `Welcome, ${data.displayName || "User"}`;
   }
 
-  // 🚀 UPGRADE BUTTON LOGIC
+
   const upgradeBtn = document.getElementById("upgradeBtn");
   if (upgradeBtn) {
     if (tier === "free") {
       upgradeBtn.classList.remove("hidden");
       upgradeBtn.onclick = () => {
-        window.location.href = "/app/upgrade.html";
+        window.location.href = "upgrade.html";
       };
     } else {
       upgradeBtn.classList.add("hidden");
@@ -653,7 +653,7 @@ window.goToTickets = function () {
     alert("Missing company ID.");
     return;
   }
-  window.location.href = `/ticketManagement.html?companyId=${companyId}`;
+  window.location.href = `/ticketmanagement.html?companyId=${companyId}`;
 };
 
 function initTicketOverview() {
@@ -693,7 +693,7 @@ function initTicketOverview() {
         li.innerHTML = `<strong>${data.reason}</strong> – ${data.employeeName}`;
         li.style.cursor = "pointer";
         li.onclick = () => {
-          window.location.href = `/ticketManagement.html?companyId=${window.companyId}&ticketId=${doc.id}`;
+          window.location.href = `/ticketmanagement.html?companyId=${window.companyId}&ticketId=${doc.id}`;
         };
         recentList.appendChild(li);
       }

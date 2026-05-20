@@ -4,7 +4,7 @@
  * Reads/writes to: companies/{companyId}/schedule_settings/config → masterCerts[]
  */
 
-import { auth, db } from "./firebase.js";
+import { auth ,db } from "./core/firebase.js";
 import {
   doc,
   getDoc,

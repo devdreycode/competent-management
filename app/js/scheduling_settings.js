@@ -1,6 +1,6 @@
 const $ = (id) => document.getElementById(id);
 
-import { auth, db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   doc, getDoc, setDoc,
   collection, addDoc,
@@ -10,7 +10,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 let uid = null;
 let companyId = null;
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

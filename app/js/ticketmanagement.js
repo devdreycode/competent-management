@@ -1,10 +1,13 @@
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   collection, query, where, orderBy,
   onSnapshot, addDoc, updateDoc, doc,
   serverTimestamp, getDocs, getDoc, increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 let companyId = null;
 let _ticketsUnsub = null;
 let _activeMessageUnsub = null;
@@ -83,9 +86,12 @@ function listenTicketKPIs() {
     });
 
     // DASHBOARD KPI
-    document.getElementById("ticketOpen").textContent = open;
-    document.getElementById("ticketProgress").textContent = progress;
-    document.getElementById("ticketOverdue").textContent = overdue;
+   const elOpen = document.getElementById("ticketOpen");
+const elProgress = document.getElementById("ticketProgress");
+const elOverdue = document.getElementById("ticketOverdue");
+if (elOpen) elOpen.textContent = open;
+if (elProgress) elProgress.textContent = progress;
+if (elOverdue) elOverdue.textContent = overdue;
 
     // TICKET PAGE KPI
     const tovOpen = document.getElementById("tov-open");
@@ -105,13 +111,12 @@ function listenTicketKPIs() {
 function listenTickets() {
   if (_ticketsUnsub) _ticketsUnsub();
 
- const q = query(
-  collection(db, "companies", companyId, "tickets"),
-  orderBy("createdAt", "desc")
-);
+  const q = query(
+    collection(db, "companies", companyId, "tickets"),
+    orderBy("createdAt", "desc")
+  );
 
-_ticketsUnsub = onSnapshot(q, async (snap) => {
-    // Detect new employee-submitted tickets and push manager notifications
+  _ticketsUnsub = onSnapshot(q, async (snap) => {
     if (_notifInitialized) {
       snap.docChanges().forEach(change => {
         if (change.type === "added") {
@@ -129,59 +134,30 @@ _ticketsUnsub = onSnapshot(q, async (snap) => {
     }
     _notifInitialized = true;
 
-    const tickets = await Promise.all(
-      snap.docs.map(async (d) => {
-        const data = d.data();
-
-        let messages = [];
-        try {
-          const msgSnap = await getDocs(
-            query(
-              collection(db, "companies", companyId, "tickets", d.id, "messages"),
-              orderBy("createdAt", "asc")
-            )
-          );
-          messages = msgSnap.docs.map(m => {
-            const md = m.data();
-            return {
-              sender: md.senderRole || "employee",
-              name: md.senderName || "",
-              text: md.text || "",
-              isSystem: md.senderRole === "system",
-              timestamp: md.createdAt
-                ? new Date(md.createdAt.seconds * 1000).toLocaleTimeString([], {
-                    hour: "2-digit", minute: "2-digit"
-                  })
-                : ""
-            };
-          });
-        } catch (_) {}
-
-        return {
-          id: d.id,
-          employee: data.employeeName || "Unknown",
-          employeeId: data.employeeId || "",
-         reason: data.reason || data.type || "General",
-          shift: data.shift || data.defaultShift || "—",
-          status: data.status || "open",
-          archived: data.archived || false,
-          unread: data.unreadManager || false,
-          mgrNotes: data.mgrNotes || "",
-          warnings: data.warnings || 0,
-          createdAt: data.createdAt || null,
-          // Time off specific
-          startDate: data.startDate || null,
-          endDate: data.endDate || null,
-          timeOffApproved: data.timeOffApproved ?? null,
-          // Swap specific
-          swapTargetId: data.swapTargetId || null,
-          swapTargetName: data.swapTargetName || null,
-          swapDate: data.swapDate || null,
-          swapApproved: data.swapApproved || false,
-          messages
-        };
-      })
-    );
+    const tickets = snap.docs.map((d) => {
+      const data = d.data();
+      return {
+        id: d.id,
+        employee: data.employeeName || "Unknown",
+        employeeId: data.employeeId || "",
+        reason: data.reason || data.type || "General",
+        shift: data.shift || data.defaultShift || "—",
+        status: data.status || "open",
+        archived: data.archived || false,
+        unread: data.unreadManager || false,
+        mgrNotes: data.mgrNotes || "",
+        warnings: data.warnings || 0,
+        createdAt: data.createdAt || null,
+        startDate: data.startDate || null,
+        endDate: data.endDate || null,
+        timeOffApproved: data.timeOffApproved ?? null,
+        swapTargetId: data.swapTargetId || null,
+        swapTargetName: data.swapTargetName || null,
+        swapDate: data.swapDate || null,
+        swapApproved: data.swapApproved || false,
+        messages: []
+      };
+    });
 
     if (typeof window.ticketUI?.setTickets === "function") {
       window.ticketUI.setTickets(tickets);
@@ -288,8 +264,15 @@ window.createTicketAction = async function(data) {
 /* ═══════════════════════════════════════════════
    LISTEN MESSAGES — live chat for active ticket
 ═══════════════════════════════════════════════ */
-window.listenTicketMessages = function(ticketId, onUpdate) {
-  if (_activeMessageUnsub) _activeMessageUnsub();
+/* ═══════════════════════════════════════════════
+   LISTEN TICKET MESSAGES — real-time per ticket
+═══════════════════════════════════════════════ */
+window.listenTicketMessages = function(ticketId, callback) {
+  // Tear down previous listener
+  if (_activeMessageUnsub) {
+    _activeMessageUnsub();
+    _activeMessageUnsub = null;
+  }
 
   const q = query(
     collection(db, "companies", companyId, "tickets", ticketId, "messages"),
@@ -297,13 +280,13 @@ window.listenTicketMessages = function(ticketId, onUpdate) {
   );
 
   _activeMessageUnsub = onSnapshot(q, (snap) => {
-    const messages = snap.docs.map(m => {
+    const msgs = snap.docs.map(m => {
       const md = m.data();
       return {
-        sender: md.senderRole || "employee",
-        name: md.senderName || "",
-        text: md.text || "",
-        isSystem: md.senderRole === "system",
+        sender:    md.senderRole || "employee",
+        name:      md.senderName || "",
+        text:      md.text || "",
+        isSystem:  md.senderRole === "system",
         timestamp: md.createdAt
           ? new Date(md.createdAt.seconds * 1000).toLocaleTimeString([], {
               hour: "2-digit", minute: "2-digit"
@@ -311,25 +294,24 @@ window.listenTicketMessages = function(ticketId, onUpdate) {
           : ""
       };
     });
-    if (typeof onUpdate === "function") onUpdate(messages);
+    callback(msgs);
   });
 };
-
 /* ═══════════════════════════════════════════════
    SEND MESSAGE
 ═══════════════════════════════════════════════ */
 window.sendTicketMessage = async function(ticketId, text) {
   if (!ticketId || !text?.trim()) return;
   try {
-    await addDoc(
-      collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-      {
-        text: text.trim(),
-        senderRole: "manager",
-        senderName: "Manager",
-        createdAt: serverTimestamp()
-      }
-    );
+  await addDoc(
+  collection(db, "companies", companyId, "tickets", ticketId, "messages"),
+  {
+    text: text.trim(),
+    senderRole: "manager",
+    senderName: "Manager",
+    createdAt: serverTimestamp()
+  }
+);
     await updateDoc(doc(db, "companies", companyId, "tickets", ticketId), {
       unreadEmployee: true,
       unreadManager: false,
@@ -419,9 +401,9 @@ window.issueWarningAction = async function(ticketId) {
     // System message in chat
     await addDoc(
       collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-      {
-        text: "⚠️ A formal warning has been issued for this incident.",
-        senderRole: "system",
+   {
+        body: "⚠️ A formal warning has been issued for this incident.",
+        senderId: "system",
         senderName: "System",
         createdAt: serverTimestamp()
       }
@@ -472,8 +454,8 @@ window.approveTimeOffAction = async function(ticketId) {
     await addDoc(
       collection(db, "companies", companyId, "tickets", ticketId, "messages"),
       {
-        text: "✅ Your time off request has been approved. It will automatically block out your schedule for those days.",
-        senderRole: "system",
+        body: "✅ Your time off request has been approved. It will automatically block out your schedule for those days.",
+        senderId: "system",
         senderName: "System",
         createdAt: serverTimestamp()
       }
@@ -509,9 +491,9 @@ window.declineTimeOffAction = async function(ticketId) {
 
     await addDoc(
       collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-      {
-        text: "❌ Your time off request has been declined. Please contact your manager if you have questions.",
-        senderRole: "system",
+     {
+        body: "❌ Your time off request has been declined. Please contact your manager if you have questions.",
+        senderId: "system",
         senderName: "System",
         createdAt: serverTimestamp()
       }

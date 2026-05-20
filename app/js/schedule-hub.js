@@ -2,8 +2,7 @@
 // Powers schedule.html (Schedule Hub) — read-only summary view.
 // Does NOT handle the editor grid, ctxMenu, autoGenerate, or save logic.
 // Those all live in schedule-editor.js (formerly schedule.js).
-
-import { auth, db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   doc, getDoc, getDocs, setDoc,
   collection, query, where,
@@ -11,7 +10,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { onAuthStateChanged } from
   "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 /* ─── Constants ──────────────────────────────────────────── */
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

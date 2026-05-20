@@ -7,172 +7,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <script>
+  if (localStorage.getItem("dark-mode") === "true")
+    document.documentElement.classList.add("dark-mode");
+</script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="../css/employees.css">
   <link rel="stylesheet" href="../css/top-header.css">
   <link rel="stylesheet" href="../css/nav.css">
   <link rel="stylesheet" href="../css/style.css">
  <link rel="stylesheet" href="../css/darkmode.css">
-<style>
-  /* ── Modal Overlay ── */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 1000;
-    background: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
-    padding: 16px;
-  }
-  .modal-overlay.hidden { display: none; }
-
-  /* ── Modal Card ── */
-  .modal-card {
-    background: var(--surface);
-    border: 1px solid var(--chrome-border);
-    border-radius: 14px;
-    width: 100%; max-width: 460px;
-    max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 8px 32px rgba(15,23,42,0.18), 0 2px 8px rgba(15,23,42,0.08);
-  }
-  .modal-card::-webkit-scrollbar { width: 4px; }
-  .modal-card::-webkit-scrollbar-track { background: transparent; }
-  .modal-card::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
-
-  /* ── Modal Header ── */
-  .modal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 20px 14px;
-    border-bottom: 1px solid var(--border-light);
-  }
-  .modal-title {
-    font-weight: 700; font-size: .95rem;
-    color: var(--text); letter-spacing: -0.01em;
-  }
-  .modal-close {
-    background: var(--surface2);
-    border: 1px solid var(--chrome-border);
-    border-radius: 8px;
-    cursor: pointer;
-    color: var(--text-light);
-    font-size: .75rem;
-    width: 28px; height: 28px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .15s;
-  }
-  .modal-close:hover {
-    background: var(--border);
-    color: var(--text-muted);
-    border-color: var(--border-strong);
-  }
-
-  /* ── Modal Body ── */
-  .modal-body { padding: 18px 20px; }
-
-  /* ── Modal Footer ── */
-  .modal-footer {
-    display: flex; justify-content: flex-end; gap: 8px;
-    padding-top: 14px; margin-top: 6px;
-    border-top: 1px solid var(--border-light);
-  }
-
-  /* ── Form Groups ── */
-  .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 13px; }
-  .form-group label {
-    font-size: .72rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .05em;
-    color: var(--text-muted);
-  }
-  .form-group input,
-  .form-group select {
-    padding: 8px 11px;
-    border: 1px solid var(--chrome-border);
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: .85rem;
-    background: var(--surface2);
-    color: var(--text);
-    outline: none;
-    transition: border-color .15s, box-shadow .15s, background .15s;
-  }
-  .form-group input::placeholder { color: var(--text-light); }
-  .form-group input:focus,
-  .form-group select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--chrome-glow);
-    background: var(--surface);
-  }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-  /* ── Employee Card Profile ── */
-  .card-profile {
-    display: flex; gap: 14px; align-items: center;
-    padding: 14px;
-    background: var(--surface2);
-    border: 1px solid var(--chrome-border);
-    border-radius: 10px;
-    margin-bottom: 16px;
-  }
-  .card-avatar {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 1.1rem; flex-shrink: 0;
-  }
-  .card-name {
-    font-size: 1rem; font-weight: 700;
-    color: var(--text); margin-bottom: 6px;
-  }
-  .card-meta {
-    display: flex; flex-direction: column; gap: 3px;
-    font-size: .8rem; color: var(--text-muted);
-  }
-  .card-meta span { display: flex; gap: 4px; align-items: center; }
-  .card-meta strong { color: var(--text); }
-
-  /* ── Table action buttons ── */
-  .btn-action {
-    padding: 4px 10px; border-radius: 7px;
-    font-size: .72rem; font-weight: 600;
-    border: 1px solid var(--chrome-border);
-    background: var(--surface2);
-    color: var(--text-muted); cursor: pointer;
-    transition: all .15s;
-  }
-  .btn-action:hover {
-    background: var(--border);
-    border-color: var(--border-strong);
-    color: var(--text);
-  }
-  .btn-action.danger {
-    background: var(--red-bg);
-    color: var(--red);
-    border-color: var(--red-border);
-  }
-  .btn-action.danger:hover {
-    filter: brightness(1.1);
-  }
-
-  /* ── Status badges ── */
-  .status-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 9px; border-radius: 20px;
-    font-size: .72rem; font-weight: 700; letter-spacing: .02em;
-  }
-  .status-badge.on {
-    background: var(--green-bg);
-    color: var(--green);
-    border: 1px solid var(--green-border);
-  }
-  .status-badge.on::before {
-    content:''; width:6px; height:6px; border-radius:50%;
-    background: var(--green);
-  }
-  .status-badge.off {
-    background: var(--surface2);
-    color: var(--text-light);
-    border: 1px solid var(--chrome-border);
-  }
-</style>
+<link rel="stylesheet" href="../css/employees.css">
  
 </head>
 <body>
@@ -389,7 +234,7 @@
   </div>
 
   <nav class="bottom-nav">
-    <a href="index.html" class="nav-item">
+    <a href="index.html" class="nav-item ">
       <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
       <span class="nav-label">Home</span>
     </a>
@@ -401,6 +246,14 @@
       <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
       <span class="nav-label">Schedule</span>
     </a>
+    <a href="punchin.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-clock"></i></div>
+      <span class="nav-label">Punch In</span>
+    </a>
+    <a href="payroll.html" class="nav-item">
+      <div class="nav-icon-wrap"><i class="fas fa-dollar-sign"></i></div>
+      <span class="nav-label">Payroll</span>
+    </a>
     <a href="settings.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
       <span class="nav-label">Settings</span>
@@ -409,11 +262,11 @@
 
 </div>
 
-<script type="module" src="../js/firebase.js"></script>
+<script type="module" src="/app/js/core/firebase.js"></script>
 <script type="module" src="../js/dashboard-notifications.js"></script>
 <script type="module" src="../js/main.js"></script>
 <script type="module" src="../js/employees.js"></script>
-<script type="module" src="../js/auth-share.js"></script>
+<script type="module" src="/app/js/core/auth-share.js"></script>
 
 </body>
 </html>

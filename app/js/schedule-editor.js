@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   collection,
   getDocs,
@@ -14,7 +14,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { onAuthStateChanged } from
   "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
+// Sync dark mode on load
+if (localStorage.getItem("dark-mode") === "true") {
+  document.documentElement.classList.add("dark-mode");
+}
 /* ===================== HELPERS ===================== */
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -37,7 +40,7 @@ function calculateAge(birthDate) {
 const confirmBox = document.getElementById("confirmClearBox");
 const confirmYes = document.getElementById("confirmYes");
 const confirmNo = document.getElementById("confirmNo");
-
+const EMPTY_WEEK = () => ["", "", "", "", "", "", ""];
 
 /* =====================
    DATE HELPERS
@@ -74,13 +77,10 @@ function dayIndexFromDate(weekStartStr, dateStr) {
   return diffDays; // 0..6 where 0 is Monday
 }
 
-function canWork(emp, dayIndex) {
+function canAssignManually(emp, dayIndex) {
   if (!emp) return false;
-  // Note: detailed time-off blocking happens inside autoGenerate via isEmployeeOff().
-  // This module-level version is only used for manual cell edits.
   return true;
 }
-
 function scheduleDocId(companyId, weekStart) {
   return `${companyId}_${toISODate(weekStart)}`;
 }
@@ -332,14 +332,14 @@ function setCellValue(empId, dayIndex, inputEl, value) {
     scheduleCache[empId] = ["","","","","","",""];
   }
 
-const emp = employees.find(e => e.id === empId);
+const emp = employeeMap[empId];
 
 if (!emp) {
   console.error("Employee not found:", empId);
   return;
 }
   // block time-off scheduling
-  if (!canWork(emp, dayIndex)) {
+  if (!canAssignManually(emp, dayIndex)) {
     alert("Cannot assign On-Call or shifts on requested time off.");
     return;
   }
@@ -461,6 +461,7 @@ function setCell(empId, dayIndex, value) {
 
 let companyId = null;
 let employees = [];
+let employeeMap = {};
 let selectedWeekStart = mondayOf(new Date());
 let scheduleCache = {};
 let activePositionFilter = "";
@@ -479,37 +480,36 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-const snap = await getDoc(doc(db, "app_user", user.uid));
-const userData = snap.data();
+  const snap = await getDoc(doc(db, "app_user", user.uid));
 
-companyId = userData?.companyId;
+  if (!snap.exists()) {
+    alert("User profile not found.");
+    return;
+  }
 
-// 🔥 SET COMPANY NAME FROM app_user
-const display = document.getElementById("companyNameDisplay");
-if (display) display.textContent = userData?.companyName || "Company";
+  const userData = snap.data();
+companyId = userData.companyId;
 
-const printDisplay = document.getElementById("displayCompanyName");
-if (printDisplay) printDisplay.textContent = userData?.companyName || "Company";
-// 🔥 Pull company name from companies collection
-const companySnap = await getDoc(doc(db, "companies", companyId));
+  if (!companyId) {
+    alert("No company assigned.");
+    return;
+  }
 
-if (companySnap.exists()) {
+  // company first (critical dependency)
+  const companySnap = await getDoc(doc(db, "companies", companyId));
+
+  if (!companySnap.exists()) {
+    alert("Company not found.");
+    return;
+  }
+
   const companyName = companySnap.data().name || "Company";
 
   const display = document.getElementById("companyNameDisplay");
   if (display) display.textContent = companyName;
 
-  const printDisplay = document.getElementById("displayCompanyName");
-  if (printDisplay) printDisplay.textContent = companyName;
-}
-  if (!companyId) {
-    alert("No company found.");
-    return;
-  }
-
-  await loadEmployeesAndSchedule();
+  await loadEmployeesAndSchedule(companyId);
 });
-
 /* ===================== DATA LOADERS ===================== */
 
 async function loadScheduleSettings(forceRefresh = false) {
@@ -768,7 +768,7 @@ function renderGrid(data = {}) {
       const scheduled = employees.filter(emp => {
         if (normalizePositionName(emp.position || "") !== posName) return false;
         const shift = (data[emp.id] || [])[i] || "";
-        return shift && shift.toUpperCase() !== "OFF" && shift !== "oncall";
+        return shift && String(shift).toUpperCase() !== "OFF" && shift !== "oncall";
       }).length;
 
       if (totalNeeded === 0) {
@@ -910,7 +910,7 @@ ctxMenu.addEventListener("click", (e) => {
   const { empId, dayIndex, input } = ctxCell;
 
  if (action === "normal") {
-const emp = employees.find(e => e.id === empId);
+const emp = employeeMap[empId];
 
 if (!emp) {
   console.error("Employee not found:", empId);
@@ -966,6 +966,11 @@ checkScheduleSettings(settings);
   certifications: Array.isArray(d.certifications) ? d.certifications : []
 };
   });
+  employeeMap = {};
+
+employees.forEach(emp => {
+  employeeMap[emp.id] = emp;
+});
   const weekId = scheduleDocId(companyId, selectedWeekStart);
 const schedSnap = await getDoc(doc(db, "weekly_schedules", weekId));
 
@@ -978,7 +983,7 @@ if (schedSnap.exists()) {
 
 // ensure each employee has a 7-day array
 employees.forEach(emp => {
-  if (!scheduleCache[emp.id]) scheduleCache[emp.id] = ["", "", "", "", "", "", ""];
+  if (!scheduleCache[emp.id]) scheduleCache[emp.id] = EMPTY_WEEK();
 });
 
 
@@ -1000,7 +1005,7 @@ if (posSelect) {
 
  employees.forEach(emp => {
   if (!scheduleCache[emp.id]) {
-    scheduleCache[emp.id] = ["", "", "", "", "", "", ""];
+    scheduleCache[emp.id] = EMPTY_WEEK();
   }
 });
 
@@ -1343,7 +1348,7 @@ document.getElementById("printScheduleBtn")?.addEventListener("click", () => {
 $("saveScheduleBtn")?.addEventListener("click", saveSchedule);
 $("publishScheduleBtn")?.addEventListener("click", publishSchedule);
 $("autoGenerateBtn")?.addEventListener("click", autoGenerate);
-$("clearAllBtn")?.addEventListener("click", () => renderGrid({}));
+
 $("btnGoWeek")?.addEventListener("click", goToWeek);
 $("positionFilter")?.addEventListener("change", (e) => {
   activePositionFilter = e.target.value ? normalizePositionName(e.target.value) : "";
@@ -1400,7 +1405,7 @@ function updateWeekSummary() {
 
   employees.forEach(emp => {
     (scheduleCache[emp.id] || []).forEach((shift, dayIndex) => {
-      if (shift && shift.toUpperCase() !== "OFF") {
+      if (shift && String(shift).toUpperCase() !== "OFF") {
         totalHours += getHoursFromShift(shift);
 
         if (hasInsufficientRest(emp.id, dayIndex, shift, scheduleCache)) {
@@ -1421,7 +1426,7 @@ function updateWeekSummary() {
           const need = Number(posRules[shift]?.[dayLabel]) || 0;
           totalRequired += need;
           const have = employees.filter(emp =>
-            String(emp.position || "").trim() === pos &&
+            normalizePositionName(emp.position || "") === normalizePositionName(pos) &&
             scheduleCache[emp.id]?.[i] &&
             scheduleCache[emp.id][i].toUpperCase() !== "OFF" &&
             shiftToBucket(scheduleCache[emp.id][i]) === shiftToBucket(shift)
@@ -1432,7 +1437,7 @@ function updateWeekSummary() {
         const need = Number(posRules[dayLabel]) || 0;
         totalRequired += need;
         const have = employees.filter(emp =>
-          String(emp.position || "").trim() === pos &&
+          normalizePositionName(emp.position || "") === normalizePositionName(pos) &&
           scheduleCache[emp.id]?.[i] &&
           scheduleCache[emp.id][i].toUpperCase() !== "OFF"
         ).length;
@@ -1550,7 +1555,7 @@ const limitedBurnout = burnoutWarnings.slice(0, MAX_WARNINGS);
     if (!counts[pos]) counts[pos] = [0,0,0,0,0,0,0];
 
     (scheduleCache[emp.id] || []).forEach((shift, day) => {
-      if (shift && shift.toUpperCase() !== "OFF") {
+      if (shift && String(shift).toUpperCase() !== "OFF") {
         counts[pos][day]++;
       }
     });
@@ -1568,7 +1573,7 @@ const limitedBurnout = burnoutWarnings.slice(0, MAX_WARNINGS);
       posKeys.forEach(shift => {
         const need = Number(posRules[shift]?.[day]) || 0;
         const have = employees.filter(emp =>
-          String(emp.position || "").trim() === pos &&
+          normalizePositionName(emp.position || "") === normalizePositionName(pos) &&
           scheduleCache[emp.id]?.[i] &&
           scheduleCache[emp.id][i].toUpperCase() !== "OFF" &&
           shiftToBucket(scheduleCache[emp.id][i]) === shiftToBucket(shift)
@@ -1578,7 +1583,7 @@ const limitedBurnout = burnoutWarnings.slice(0, MAX_WARNINGS);
     } else {
       const need = Number(posRules[day]) || 0;
       const have = employees.filter(emp =>
-        String(emp.position || "").trim() === pos &&
+        normalizePositionName(emp.position || "") === normalizePositionName(pos) &&
         scheduleCache[emp.id]?.[i] &&
         scheduleCache[emp.id][i].toUpperCase() !== "OFF"
       ).length;
@@ -1608,7 +1613,7 @@ const limitedBurnout = burnoutWarnings.slice(0, MAX_WARNINGS);
 document.querySelectorAll(".shift-input").forEach(input => {
   const empId = input.dataset.emp;
   const dayIndex = Number(input.dataset.day);
-const emp = employees.find(e => e.id === empId);
+const emp = employeeMap[empId];
 
 if (!emp) {
   console.error("Employee not found:", empId);
@@ -1682,7 +1687,7 @@ function showCoverageDetails(dayName, dayIndex, rules, counts) {
       shifts.forEach(shift => {
         const need = Number(posRules[shift]?.[dayName]) || 0;
         const have = employees.filter(emp =>
-          String(emp.position || "").trim() === pos &&
+          normalizePositionName(emp.position || "") === normalizePositionName(pos) &&
           shiftToBucket(scheduleCache[emp.id]?.[dayIndex] || "") === shiftToBucket(shift)
         ).length;
         if (have < need) {
@@ -1732,7 +1737,6 @@ const page = params.get("page");
 
 if (page) {
   const navItem = document.querySelector(`[onclick*="${page}"]`);
-  goTo(page, navItem);
 
 }
 async function loadScheduleForHub() {

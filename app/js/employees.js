@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 
 import {
   collection,
@@ -19,9 +19,9 @@ import {
 // Sync dark mode from localStorage on every page load
 if (localStorage.getItem("dark-mode") === "true") {
   document.documentElement.classList.add("dark-mode");
+}
 
 const $ = (id) => document.getElementById(id);
-
 /* ===================== TIER LIMITS ===================== */
 const TIER_LIMITS = {
   "free": 5,      

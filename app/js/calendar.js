@@ -4,7 +4,7 @@
  * to index.html (already done). No other changes required.
  */
 
-import { db } from "./firebase.js";
+import { auth, db } from "./core/firebase.js";
 import {
   collection,
   doc,
