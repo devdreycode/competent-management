@@ -1,4 +1,4 @@
-  /* ═══════════════════════════════════
+/* ═══════════════════════════════════
        DESIGN TOKENS
     ═══════════════════════════════════ */
     :root {
@@ -439,8 +439,4 @@
     .btn.secondary {
       background: transparent; border: 1px dashed var(--border); color: var(--muted);
     }
-    .btn.secondary:hover { background: rgba(148,163,184,.08); color: var(--text); }\
-    /* --- Trial banner offset --- */
-body {
-  padding-top: 60px; /* adjust this number to match your banner's height */
-}
+    .btn.secondary:hover { background: rgba(148,163,184,.08); color: var(--text); }

@@ -31,8 +31,9 @@ const TIER_LIMITS = {
 };
 
 function canImportEmployees() {
+  if (window.inTrialPeriod) return true;
   const tier = window.currentUserTier || "free";
-  return tier !== "free";
+  return ["starter", "pro", "enterprise"].includes(tier);
 }
 
 function calculateAge(birthDate) {
@@ -130,10 +131,21 @@ function getEmployeeShift(emp) {
 
 /* ===================== AUTH GATE ===================== */
 window.addEventListener("authReady", async (e) => {
+  console.log("Role:", e.detail.role);
   if (initialized) return;
 
   companyId = e.detail.companyId;
   window.currentUserTier = e.detail.tier || "free";
+
+  // Set trial status so the rest of the file can use it
+  const trialEndsAt = e.detail.trialEndsAt;
+  if (trialEndsAt) {
+    const trialEnd = trialEndsAt.toDate ? trialEndsAt.toDate() : new Date(trialEndsAt);
+    window.inTrialPeriod = trialEnd > new Date();
+    window.trialEndsAt = trialEnd;
+  } else {
+    window.inTrialPeriod = false;
+  }
 
   if (!companyId) return;
 
@@ -302,31 +314,34 @@ function render() {
     return matchesSearch && matchesShift && matchesFloor && matchesPos;
   });
 
-  tbody.innerHTML = filtered.map(emp => {
-    const isOnFloor = activePunches.has(emp.id);
-    const isCalledIn = calledInToday.has(emp.id);
+ tbody.innerHTML = filtered.map(emp => {
+  const isOnFloor = activePunches.has(emp.id);
+  const isCalledIn = calledInToday.has(emp.id);
+  const isGhost = window.currentUserTier === "free" && !window.inTrialPeriod;
 
-    let statusHtml = `<span class="status-badge off">Off Floor</span>`;
-    if (isCalledIn) {
-      statusHtml = `<span class="status-badge off">Called In</span>`;
-    } else if (isOnFloor) {
-      statusHtml = `<span class="status-badge on">On Floor</span>`;
-    }
+  let statusHtml = `<span class="status-badge off">Off Floor</span>`;
+  if (isGhost) {
+    statusHtml = `<span class="status-badge" style="background:#f1f5f9;color:#94a3b8;border:1px dashed #cbd5e1;">⚠ Trial Ended</span>`;
+  } else if (isCalledIn) {
+    statusHtml = `<span class="status-badge off">Called In</span>`;
+  } else if (isOnFloor) {
+    statusHtml = `<span class="status-badge on">On Floor</span>`;
+  }
 
-    return `
-      <tr>
-        <td><strong>${emp.fullName || "—"}</strong></td>
-        <td>${emp.position || emp.role || "—"}</td>
-        <td>${getEmployeeShift(emp) || "—"}</td>
-        <td>${emp.absences || 0}</td> 
-        <td>${statusHtml}</td>
-        <td>
-          <button class="btn-action ghost" data-view="${emp.id}">View</button>
-          <button class="btn-action danger" data-delete="${emp.id}">Delete</button>
-        </td>
-      </tr>
-    `;
-  }).join("") || `<tr><td colspan="6">No employees match filters</td></tr>`;
+  return `
+    <tr style="${isGhost ? 'opacity:0.4; pointer-events:none;' : ''}">
+      <td><strong>${emp.fullName || "—"}</strong>${isGhost ? ' <span title="Trial expired" style="font-size:.75rem;">👻</span>' : ''}</td>
+      <td>${emp.position || emp.role || "—"}</td>
+      <td>${getEmployeeShift(emp) || "—"}</td>
+      <td>${emp.absences || 0}</td>
+      <td>${statusHtml}</td>
+      <td>
+        <button class="btn-action ghost" data-view="${emp.id}" ${isGhost ? 'disabled' : ''}>View</button>
+        <button class="btn-action danger" data-delete="${emp.id}" ${isGhost ? 'disabled' : ''}>Delete</button>
+      </td>
+    </tr>
+  `;
+}).join("") || `<tr><td colspan="6">No employees match filters</td></tr>`;
 
   const userTier = window.currentUserTier || "free";
   const limit = TIER_LIMITS[userTier] || 7;
@@ -371,7 +386,10 @@ closeCardBtn?.addEventListener("click", () => {
   if (cardModal) cardModal.classList.add("hidden");
   viewingEmployee = null;
 });
-
+closeAddEmpBtn?.addEventListener("click", () => {
+  if (cardModal) cardModal.classList.add("hidden");
+  editingEmployeeId = null;
+});
 /* =====================
    EDIT FROM VIEW
 ===================== */
@@ -419,12 +437,18 @@ saveEditEmp?.addEventListener("click", async () => {
     if (editModal) editModal.classList.add("hidden");
     editingEmployeeId = null;
     await loadEmployees();
-  } catch (err) {
-    console.error("saveEditEmp failed:", err);
-    alert("Save failed: " + err.message);
-  }
-});
+} catch (err) {
+  console.error("saveEditEmp failed:", err);
+  console.error("Error code:", err.code);
+  console.error("Error message:", err.message);
 
+  alert(
+    "Save failed\n\n" +
+    "Code: " + err.code +
+    "\nMessage: " + err.message
+  );
+}
+});
 // Added Optional Chaining (?)
 cancelEditEmp?.addEventListener("click", () => {
   if (editModal) editModal.classList.add("hidden");
@@ -436,8 +460,18 @@ cancelEditEmp?.addEventListener("click", () => {
 ===================== */
 // Added Optional Chaining (?)
 openAddEmployeeBtn?.addEventListener("click", () => {
+  // Block adding employees if trial expired on free tier
+  if (window.currentUserTier === "free" && !window.inTrialPeriod) {
+    alert("Your 14-day free trial has expired.\n\nUpgrade your plan to add or manage employees.");
+    return;
+  }
+
   const tier = window.currentUserTier || "free";
-  const limit = TIER_LIMITS[tier] || 7;
+  let limit = TIER_LIMITS[tier] || 7;
+
+  if (window.inTrialPeriod) {
+    limit = 9999;
+  }
   
   if (employees.length >= limit) {
     alert(`Your ${tier} plan allows up to ${limit} employees.`);
@@ -453,42 +487,53 @@ openAddEmployeeBtn?.addEventListener("click", () => {
   render();
 
   if (empRole) loadPositionOptionsFromSettings(empRole);
+  // After loadPositionOptionsFromSettings is called in openAddEmployeeBtn handler,
+// add this listener (put it near the top of the file with your other listeners):
+
+empRole?.addEventListener("change", () => {
+  checkCertWarning("empRole", "addCertsContainer", "addCertWarning");
+});
+
+// Also wire the edit modal
+editPosition?.addEventListener("change", () => {
+  checkCertWarning("editPosition", "editCertsContainer", "editCertWarning");
+});
   loadCertsUI("addCertsContainer", []);
   if (addEmpModal) addEmpModal.classList.remove("hidden");
 });
-
-// Added Optional Chaining (?)
-closeAddEmpBtn?.addEventListener("click", () => {
-  if (addEmpModal) addEmpModal.classList.add("hidden");
-  if (empForm) empForm.reset();
-});
-
-// Added Optional Chaining (?)
+/* =====================
+   SUBMIT ADD EMPLOYEE FORM
+===================== */
 empForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const newEmployee = {
-    fullName: empName ? empName.value.trim() : "",
-    pin: empPin ? empPin.value.trim() : "",
-    hourlyRate: empPay ? Number(empPay.value || 0) : 0,
-    position: empRole ? empRole.value : "",
-    shiftType: normalizeShiftType(empShift?.value || "Morning"),
-    defaultShift: empShift?.value || "Morning",
-    certifications: Array.from(document.querySelectorAll('#addCertsContainer .cert-checkbox:checked')).map(cb => cb.value),
-    absences: 0,
-    isActive: true,
-    companyId,
-    createdAt: serverTimestamp()
-  };
+  const fullName = empName?.value.trim();
+  if (!fullName) { alert("Name is required."); return; }
 
-  await addDoc(collection(db, "companies", companyId, "employees"), newEmployee);
+  try {
+    await addDoc(collection(db, "companies", companyId, "employees"), {
+      fullName,
+      position: empRole?.value.trim() || "",
+      shiftType: normalizeShiftType(empShift?.value || "Morning"),
+      defaultShift: empShift?.value || "Morning",
+      pin: empPin?.value.trim() || "",
+      hourlyRate: Number(empPay?.value) || 0,
+      birthDate: empDob?.value || null,
+      certifications: Array.from(document.querySelectorAll('#addCertsContainer .cert-checkbox:checked')).map(cb => cb.value),
+      absences: 0,
+      isActive: true,
+      createdAt: serverTimestamp()
+    });
 
-  if (empForm) empForm.reset();
-  if (addEmpModal) addEmpModal.classList.add("hidden");
-  await loadEmployees();
-  await syncPositionsFromEmployees();
+    empForm.reset();
+    if (addEmpModal) addEmpModal.classList.add("hidden");
+    await syncPositionsFromEmployees();
+
+  } catch (err) {
+    console.error("Add employee failed:", err);
+    alert("Failed to add employee.\n\nCode: " + err.code + "\nMessage: " + err.message);
+  }
 });
-
 /* =====================
    DELETE EMPLOYEE
 ===================== */
@@ -631,7 +676,33 @@ async function syncPositionsFromEmployees() {
 
   await setDoc(ref, { positions }, { merge: true });
 }
+async function checkCertWarning(roleSelectId, certsContainerId, warningId) {
+  const posName = document.getElementById(roleSelectId)?.value;
+  const warning = document.getElementById(warningId);
+  if (!warning) return;
 
+  if (!posName) { warning.style.display = "none"; return; }
+
+  // Fetch required certs for this position from Firestore
+  const snap = await getDoc(doc(db, "companies", companyId, "schedule_settings", "config"));
+  const requiredCerts = snap.exists() ? (snap.data().requiredCerts?.[posName] || []) : [];
+
+  if (!requiredCerts.length) { warning.style.display = "none"; return; }
+
+  // Check which required certs are unchecked
+  const checked = Array.from(
+    document.querySelectorAll(`#${certsContainerId} .cert-checkbox:checked`)
+  ).map(cb => cb.value);
+
+  const missing = requiredCerts.filter(c => !checked.includes(c));
+
+  if (missing.length) {
+    warning.textContent = `⚠ ${posName} typically requires: ${missing.join(", ")}`;
+    warning.style.display = "block";
+  } else {
+    warning.style.display = "none";
+  }
+}
 /* ===================== FIXED CSV PARSER ===================== */
 function parseCsv(csvText) {
   const lines = csvText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);

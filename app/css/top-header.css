@@ -153,3 +153,13 @@
     #notifMarkAll { background: none; border: none; font-size: .75rem; color: var(--text-muted); cursor: pointer; }
     #notifList { max-height: 300px; overflow-y: auto; }
     #notifEmpty { padding: 20px; text-align: center; color: var(--text-muted); font-size: .82rem; }
+/* Remove the body padding-top at the bottom of top-header.css entirely */
+/* Replace with: */
+body {
+  padding-top: 0;
+}
+
+body.has-trial-banner .top-header {
+  top: 40px;
+}
+

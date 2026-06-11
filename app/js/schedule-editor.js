@@ -1517,14 +1517,13 @@ function checkBurnoutRisk() {
       warnings.push(`⚠ ${emp.name} scheduled ${maxStreak} days in a row`);
     }
 
-    // Warn once for overtime risk
-    if (weeklyHours >= 36 && weeklyHours < 40) {
-      warnings.push(`⚠ ${emp.name} approaching overtime (${weeklyHours.toFixed(1)}h)`);
-    }
-
-    if (weeklyHours >= 40) {
-      warnings.push(`🚨 ${emp.name} overtime risk (${weeklyHours.toFixed(1)}h)`);
-    }
+   const threshold = scheduleSettingsCache?.autoScheduler?.burnoutThreshold ?? 40;
+if (weeklyHours >= threshold * 0.9 && weeklyHours < threshold) {
+  warnings.push(`⚠ ${emp.name} approaching overtime (${weeklyHours.toFixed(1)}h)`);
+}
+if (weeklyHours >= threshold) {
+  warnings.push(`🚨 ${emp.name} overtime risk (${weeklyHours.toFixed(1)}h)`);
+}
 
   });
 
@@ -1758,3 +1757,16 @@ async function loadScheduleForHub() {
 
   buildScheduleHub(scheduleData, employees);
 }
+// ===================== CLEAR ALL =====================
+$("clearAllBtn")?.addEventListener("click", () => {
+  if (!employees.length) return;
+
+  const ok = confirm("Clear all shifts for this week? This cannot be undone until you save.");
+  if (!ok) return;
+
+  employees.forEach(emp => {
+    scheduleCache[emp.id] = ["", "", "", "", "", "", ""];
+  });
+
+  renderGrid(scheduleCache);
+});

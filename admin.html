@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Submissions | Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f2f5fb;
+      --bg2:      #e8edf7;
+      --white:    #ffffff;
+      --border:   #dae0ef;
+      --border2:  #c2cce0;
+      --text:     #0b1526;
+      --text2:    #374160;
+      --text3:    #7e8aa6;
+      --navy:     #0d2151;
+      --navy2:    #162e6e;
+      --blue:     #1e56c4;
+      --blue-lt:  #e4ecfb;
+      --steel:    #3d6db5;
+      --green:    #0ea86e;
+      --green-bg: #e5f8f1;
+      --amber:    #d98f00;
+      --amber-bg: #fff8e6;
+      --red:      #cc2b2b;
+      --red-bg:   #fff0f0;
+      --shadow:   0 4px 20px rgba(13,33,81,.08), 0 1px 4px rgba(13,33,81,.05);
+      --shadow-lg:0 20px 60px rgba(13,33,81,.13), 0 4px 16px rgba(13,33,81,.07);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      height: 64px; display: flex; align-items: center; padding: 0 32px;
+      background: var(--navy); border-bottom: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 2px 20px rgba(13,33,81,.3);
+    }
+    .logo-wrap { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+    .logo-hex { width: 32px; height: 32px; flex-shrink: 0; }
+    .logo-text-block { display: flex; flex-direction: column; line-height: 1; }
+    .logo-top { font-size: .85rem; font-weight: 900; color: white; letter-spacing: .09em; text-transform: uppercase; }
+    .logo-bot { font-size: .52rem; font-weight: 500; color: rgba(255,255,255,.45); letter-spacing: .22em; text-transform: uppercase; margin-top: 2px; }
+    .topbar-divider { width: 1px; height: 28px; background: rgba(255,255,255,.12); margin: 0 20px; }
+    .topbar-title { font-size: .78rem; font-weight: 700; color: rgba(255,255,255,.6); letter-spacing: .06em; text-transform: uppercase; }
+    .topbar-badge { margin-left: 10px; background: rgba(30,86,196,.5); border: 1px solid rgba(30,86,196,.7); color: rgba(200,220,255,.9); font-size: .6rem; font-weight: 800; padding: 2px 9px; border-radius: 100px; letter-spacing: .04em; text-transform: uppercase; }
+    .topbar-r { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+    .admin-chip { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 100px; padding: 5px 14px 5px 8px; }
+    .admin-av { width: 24px; height: 24px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: .58rem; font-weight: 800; color: white; }
+    .admin-name { font-size: .75rem; font-weight: 600; color: rgba(255,255,255,.8); }
+    .logout-btn { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.6); font-family: 'Outfit', sans-serif; font-size: .78rem; font-weight: 600; padding: 7px 14px; border-radius: 8px; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px; }
+    .logout-btn:hover { background: rgba(255,255,255,.13); color: white; }
+
+    /* ── LAYOUT ── */
+    .page { padding: 88px 32px 48px; max-width: 1200px; margin: 0 auto; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+    .page-header-left h1 { font-size: 1.6rem; font-weight: 900; color: var(--navy); letter-spacing: -.04em; margin-bottom: 4px; }
+    .page-header-left p { font-size: .82rem; color: var(--text3); }
+    .header-actions { display: flex; gap: 10px; }
+    .btn-refresh { background: var(--white); border: 1px solid var(--border2); color: var(--text2); font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 600; padding: 9px 16px; border-radius: 9px; cursor: pointer; display: flex; align-items: center; gap: 7px; box-shadow: var(--shadow); transition: all .15s; }
+    .btn-refresh:hover { border-color: var(--steel); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .btn-refresh.spinning i { animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── STAT CARDS ── */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; }
+    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; }
+    .stat-icon.blue { background: var(--blue-lt); color: var(--blue); }
+    .stat-icon.green { background: var(--green-bg); color: var(--green); }
+    .stat-icon.amber { background: var(--amber-bg); color: var(--amber); }
+    .stat-icon.navy { background: rgba(13,33,81,.07); color: var(--navy); }
+    .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--navy); font-family: 'JetBrains Mono', monospace; line-height: 1; margin-bottom: 2px; }
+    .stat-lbl { font-size: .7rem; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+
+    /* ── FILTERS ── */
+    .toolbar { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; box-shadow: var(--shadow); flex-wrap: wrap; }
+    .toolbar-label { font-size: .72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+    .filter-btn { padding: 6px 14px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg); font-family: 'Outfit', sans-serif; font-size: .78rem; font-weight: 600; color: var(--text2); cursor: pointer; transition: all .15s; }
+    .filter-btn:hover { border-color: var(--steel); color: var(--navy); }
+    .filter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+    .toolbar-search { margin-left: auto; position: relative; }
+    .toolbar-search input { padding: 7px 14px 7px 34px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: .82rem; color: var(--text); background: var(--bg); outline: none; width: 220px; transition: border-color .15s, box-shadow .15s; }
+    .toolbar-search input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,86,196,.1); background: var(--white); }
+    .toolbar-search i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: .75rem; }
+
+    /* ── TABLE ── */
+    .table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { background: var(--bg2); padding: 11px 16px; text-align: left; font-size: .65rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; cursor: pointer; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg); }
+    tbody td { padding: 14px 16px; font-size: .84rem; color: var(--text2); vertical-align: middle; }
+    .td-name { font-weight: 700; color: var(--navy); }
+    .td-email { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--text3); margin-top: 2px; }
+    .td-msg { max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text2); }
+    .td-date { font-family: 'JetBrains Mono', monospace; font-size: .72rem; white-space: nowrap; }
+    .td-size { font-size: .78rem; }
+
+    /* Status badges */
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: .65rem; font-weight: 800; letter-spacing: .03em; white-space: nowrap; }
+    .badge-new { background: var(--blue-lt); color: var(--blue); border: 1px solid rgba(30,86,196,.2); }
+    .badge-read { background: var(--green-bg); color: var(--green); border: 1px solid rgba(14,168,110,.2); }
+    .badge-archived { background: var(--bg2); color: var(--text3); border: 1px solid var(--border); }
+
+    .action-btn { background: none; border: 1px solid var(--border); border-radius: 7px; padding: 5px 10px; font-size: .72rem; font-family: 'Outfit', sans-serif; font-weight: 600; color: var(--text2); cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 5px; }
+    .action-btn:hover { border-color: var(--steel); color: var(--navy); background: var(--bg); }
+    .action-btn.danger:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── EMPTY / LOADING ── */
+    .empty-state { text-align: center; padding: 72px 24px; }
+    .empty-icon { font-size: 2.2rem; color: var(--border2); margin-bottom: 16px; }
+    .empty-title { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .empty-sub { font-size: .84rem; color: var(--text3); }
+    .loading-state { text-align: center; padding: 72px 24px; color: var(--text3); }
+    .loading-state i { font-size: 1.6rem; margin-bottom: 14px; display: block; animation: spin .8s linear infinite; color: var(--blue); }
+
+    /* ── DETAIL MODAL ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,33,81,.45); backdrop-filter: blur(4px); z-index: 500; align-items: center; justify-content: center; padding: 24px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 18px; box-shadow: var(--shadow-lg); width: 100%; max-width: 600px; overflow: hidden; animation: modalIn .2s ease; }
+    @keyframes modalIn { from { opacity:0; transform: scale(.96) translateY(8px); } to { opacity:1; transform: none; } }
+    .modal-header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .modal-header-left { display: flex; align-items: center; gap: 12px; }
+    .modal-av { width: 40px; height: 40px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 800; color: white; flex-shrink: 0; }
+    .modal-name { font-size: .95rem; font-weight: 800; color: var(--navy); }
+    .modal-email { font-size: .75rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+    .modal-close { background: none; border: 1px solid var(--border); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text3); transition: all .15s; }
+    .modal-close:hover { border-color: var(--red); color: var(--red); }
+    .modal-body { padding: 24px; }
+    .modal-field { margin-bottom: 20px; }
+    .modal-field-label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 6px; }
+    .modal-field-value { font-size: .88rem; color: var(--text); line-height: 1.65; }
+    .modal-field-value.mono { font-family: 'JetBrains Mono', monospace; font-size: .78rem; }
+    .modal-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 10px; padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg2); }
+    .modal-btn { flex: 1; padding: 10px; border-radius: 9px; font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--text2); transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+    .modal-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+    .modal-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+    .modal-btn.primary:hover { background: var(--navy2); }
+    .modal-btn.success { background: var(--green); color: white; border-color: var(--green); }
+    .modal-btn.danger { border-color: rgba(204,43,43,.3); color: var(--red); }
+    .modal-btn.danger:hover { background: var(--red-bg); border-color: var(--red); }
+
+    /* ── AUTH GATE ── */
+    #authGate { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .auth-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 48px; text-align: center; box-shadow: var(--shadow-lg); max-width: 360px; }
+    .auth-icon { font-size: 2rem; color: var(--blue); margin-bottom: 16px; }
+    .auth-title { font-size: 1.1rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+    .auth-sub { font-size: .84rem; color: var(--text3); }
+
+    #mainContent { display: none; }
+
+    @media(max-width: 900px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .topbar { padding: 0 20px; }
+      .page { padding: 80px 16px 40px; }
+      .toolbar-search { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH GATE (shown while checking auth) -->
+<div id="authGate">
+  <div class="auth-card">
+    <div class="auth-icon"><i class="fas fa-shield-halved"></i></div>
+    <div class="auth-title">Verifying access...</div>
+    <div class="auth-sub">Checking your admin credentials.</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT (shown after auth confirmed) -->
+<div id="mainContent">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a href="index.html" class="logo-wrap">
+      <svg class="logo-hex" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
+          <linearGradient id="fg" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
+        </defs>
+        <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hg)" opacity=".18"/>
+        <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hg)" stroke-width="1.5"/>
+        <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#fg)" opacity=".85"/>
+        <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
+        <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
+        <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
+      </svg>
+      <div class="logo-text-block">
+        <span class="logo-top">Competent</span>
+        <span class="logo-bot">Management</span>
+      </div>
+    </a>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">Admin</span>
+    <span class="topbar-badge">Owner</span>
+    <div class="topbar-r">
+      <div class="admin-chip">
+        <div class="admin-av" id="adminInitials">A</div>
+        <span class="admin-name" id="adminEmail">—</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn"><i class="fas fa-right-from-bracket"></i> Log out</button>
+    </div>
+  </div>
+
+  <!-- PAGE -->
+  <div class="page">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Contact Submissions</h1>
+        <p id="lastUpdated">Loading...</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-refresh" id="refreshBtn"><i class="fas fa-rotate-right"></i> Refresh</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-inbox"></i></div>
+        <div>
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber"><i class="fas fa-circle-dot"></i></div>
+        <div>
+          <div class="stat-val" id="statNew">—</div>
+          <div class="stat-lbl">New</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div>
+          <div class="stat-val" id="statRead">—</div>
+          <div class="stat-lbl">Read</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon navy"><i class="fas fa-box-archive"></i></div>
+        <div>
+          <div class="stat-val" id="statArchived">—</div>
+          <div class="stat-lbl">Archived</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <span class="toolbar-label">Filter</span>
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All</button>
+      <button class="filter-btn" data-filter="new" onclick="setFilter('new', this)">New</button>
+      <button class="filter-btn" data-filter="read" onclick="setFilter('read', this)">Read</button>
+      <button class="filter-btn" data-filter="archived" onclick="setFilter('archived', this)">Archived</button>
+      <div class="toolbar-search">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search name or email..." oninput="renderTable()">
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div id="loadingState" class="loading-state">
+        <i class="fas fa-spinner"></i>
+        Loading submissions...
+      </div>
+      <div id="emptyState" class="empty-state" style="display:none">
+        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+        <div class="empty-title">No submissions found</div>
+        <div class="empty-sub">No contact messages match your current filter.</div>
+      </div>
+      <table id="submissionsTable" style="display:none">
+        <thead>
+          <tr>
+            <th>Sender</th>
+            <th>Team Size</th>
+            <th>Message Preview</th>
+            <th>Status</th>
+            <th>Received</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-av" id="modalAv">?</div>
+        <div>
+          <div class="modal-name" id="modalName">—</div>
+          <div class="modal-email" id="modalEmail">—</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-meta">
+        <div class="modal-field">
+          <div class="modal-field-label">Team Size</div>
+          <div class="modal-field-value" id="modalSize">—</div>
+        </div>
+        <div class="modal-field">
+          <div class="modal-field-label">Received</div>
+          <div class="modal-field-value mono" id="modalDate">—</div>
+        </div>
+        <div class="modal-field">
+          <div class="modal-field-label">Status</div>
+          <div class="modal-field-value" id="modalStatus">—</div>
+        </div>
+        <div class="modal-field">
+          <div class="modal-field-label">Doc ID</div>
+          <div class="modal-field-value mono" id="modalId" style="font-size:.65rem; word-break:break-all">—</div>
+        </div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">Message</div>
+        <div class="modal-field-value" id="modalMessage" style="white-space: pre-wrap; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; padding: 14px; font-size: .85rem; line-height: 1.7;">—</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="modalMarkRead" onclick="markStatus('read')"><i class="fas fa-check"></i> Mark Read</button>
+      <button class="modal-btn" id="modalMarkNew" onclick="markStatus('new')"><i class="fas fa-circle-dot"></i> Mark New</button>
+      <button class="modal-btn" id="modalArchive" onclick="markStatus('archived')"><i class="fas fa-box-archive"></i> Archive</button>
+      <button class="modal-btn danger" onclick="deleteSubmission()"><i class="fas fa-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  // 1. Add the Auth imports
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAbiHersDtAntTb3oWqyN1zZDYW3bzwrDU",
+    authDomain: "competent-management.firebaseapp.com",
+    projectId: "competent-management",
+    storageBucket: "competent-management.firebasestorage.app",
+    messagingSenderId: "984767087244",
+    appId: "1:984767087244:web:47e86734d0e402878eb1a9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app); // 2. Initialize Auth
+
+  // 3. Add the Auth State Listener
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      try {
+        const token = await user.getIdTokenResult();
+        if (token.claims.admin) {
+          // User is a verified admin: Reveal the dashboard
+          document.getElementById('authGate').style.display = 'none';
+          document.getElementById('mainContent').style.display = 'block';
+          
+          // Optional: Update the topbar with the user's email/initials
+          document.getElementById('adminEmail').textContent = user.email;
+          document.getElementById('adminInitials').textContent = user.email.charAt(0).toUpperCase();
+       window.fetchSubmissions();
+        } else {
+          // Logged in, but not an admin: send back to login
+          window.location.href = "login.html"; 
+        }
+      } catch (error) {
+        console.error("Error fetching token:", error);
+        window.location.href = "login.html";
+      }
+    } else {
+      // Not logged in at all: send back to login
+      window.location.href = "login.html";
+    }
+  });
+
+ 
+  // Nav scroll
+  window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 30));
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Footer year
+ const yr = document.getElementById('yr');
+if (yr) {
+  yr.textContent = new Date().getFullYear();
+}
+
+  // FAQ toggle
+  window.toggleFaq = function(el) {
+    const wasOpen = el.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) el.classList.add('open');
+  };
+
+  // Today highlight
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const today = days[new Date().getDay()];
+  document.querySelectorAll('.hours-row').forEach(row => {
+    const dayEl = row.querySelector('.hours-day');
+    if (dayEl && dayEl.textContent.trim().startsWith(today)) {
+      row.classList.add('today');
+      dayEl.classList.add('today-label');
+      if (!row.querySelector('.hours-badge')) {
+        const badge = document.createElement('span');
+        badge.className = 'hours-badge'; badge.textContent = '● Open';
+        row.appendChild(badge);
+      }
+    } else {
+      row.classList.remove('today');
+      dayEl.classList.remove('today-label');
+    }
+  });
+// --- STATE VARIABLES ---
+  let currentFilter = 'all';
+  let allSubmissions = []; // This will hold the data from Firebase
+
+  // --- FETCH DATA FROM FIREBASE ---
+  window.fetchSubmissions = async function() {
+    const loading = document.getElementById('loadingState');
+    const empty = document.getElementById('emptyState');
+    const table = document.getElementById('submissionsTable');
+
+    loading.style.display = 'block';
+    empty.style.display = 'none';
+    table.style.display = 'none';
+
+    try {
+      // Pull all documents, ordered by newest first
+      const q = query(collection(db, 'contactSubmissions'), orderBy('submittedAt', 'desc'));
+      const querySnapshot = await getDocs(q);
+
+      allSubmissions = []; // Clear old data
+      
+      querySnapshot.forEach((doc) => {
+        allSubmissions.push({ id: doc.id, ...doc.data() });
+      });
+
+      window.renderTable(); // Draw the table with the new data
+    } catch (error) {
+      console.error("Error fetching submissions:", error);
+      loading.innerHTML = "Error loading data. Check console.";
+    }
+  };
+
+  // --- FILTER & SEARCH LOGIC ---
+  window.setFilter = function(filterType, buttonElement) {
+    currentFilter = filterType;
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    buttonElement.classList.add('active');
+    window.renderTable();
+  };
+
+  // --- BUILD THE HTML TABLE ---
+  window.renderTable = function() {
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = ''; // Clear the current table rows
+
+    // 1. Filter the data based on buttons and search bar
+    const filteredData = allSubmissions.filter(sub => {
+      const matchesFilter = currentFilter === 'all' || sub.status === currentFilter;
+      const searchString = `${sub.fname} ${sub.lname} ${sub.email}`.toLowerCase();
+      const matchesSearch = searchString.includes(searchQuery);
+      return matchesFilter && matchesSearch;
+    });
+
+    // 2. Handle empty state
+    if (filteredData.length === 0) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('submissionsTable').style.display = 'none';
+      return;
+    }
+
+    // 3. Build the rows
+    filteredData.forEach(sub => {
+      // Format the date safely
+      let dateStr = 'Just now';
+      if (sub.submittedAt && sub.submittedAt.toDate) {
+        dateStr = sub.submittedAt.toDate().toLocaleDateString();
+      }
+
+      // Format the status badge
+      let badgeHtml = '';
+      if (sub.status === 'new') badgeHtml = '<span class="badge badge-new"><i class="fas fa-circle-dot"></i> New</span>';
+      else if (sub.status === 'read') badgeHtml = '<span class="badge badge-read"><i class="fas fa-check"></i> Read</span>';
+      else badgeHtml = '<span class="badge badge-archived"><i class="fas fa-box-archive"></i> Archived</span>';
+
+      const tr = document.createElement('tr');
+      
+      tr.innerHTML = `
+        <td>
+          <div class="td-name">${sub.fname} ${sub.lname}</div>
+          <div class="td-email">${sub.email}</div>
+        </td>
+        <td class="td-size">${sub.teamsize || '-'}</td>
+        <td><div class="td-msg">${sub.message || ''}</div></td>
+        <td>${badgeHtml}</td>
+        <td class="td-date">${dateStr}</td>
+        <td>
+          <button class="action-btn">View</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Show the table
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('submissionsTable').style.display = 'table';
+  };
+ 
+  
+  // --- MODAL LOGIC ---
+  window.closeModal = function(event) {
+    // Only close if clicking the background overlay or the close button itself
+    if (event.target === document.getElementById('modalOverlay') || event.target.closest('.modal-close')) {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+  };
+
+  window.markStatus = function(newStatus) {
+    console.log("Updating document status to:", newStatus);
+    // TODO: Add Firestore update logic here
+    document.getElementById('modalOverlay').classList.remove('open');
+  };
+
+  window.deleteSubmission = function() {
+    if(confirm("Are you sure you want to delete this submission?")) {
+      console.log("Deleting document...");
+      // TODO: Add Firestore delete logic here
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+  };
+  
+</script>
+</body>
+</html>

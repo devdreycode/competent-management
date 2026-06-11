@@ -45,8 +45,27 @@ loginForm?.addEventListener("submit", async (e) => {
 
     // Read role from Firestore — never trust client-side checks for routing.
     // The hardcoded email check has been removed; role is the source of truth.
-    const snap = await getDoc(doc(db, "app_user", user.uid));
-    const role = snap.exists() ? (snap.data().role || "user") : "user";
+   const snap = await getDoc(doc(db, "app_user", user.uid));
+if (!snap.exists()) {
+  showError("Account not found. Please sign up.");
+  submitBtn.disabled  = false;
+  submitBtn.innerHTML = originalHTML;
+  return;
+}
+
+const data = snap.data();
+const role = data.role || "user";
+
+// Trial check
+if (data.trialEndsAt && data.tier === "free") {
+  const trialEnd = data.trialEndsAt.toDate();
+  if (trialEnd < new Date()) {
+    showError("Your 14-day free trial has expired. Please upgrade to continue.");
+    submitBtn.disabled  = false;
+    submitBtn.innerHTML = originalHTML;
+    return;
+  }
+}
 
     if (role === "super_admin") {
       window.location.href = "admin.html";

@@ -58,15 +58,19 @@ finalAgreeBtn?.addEventListener("click", async () => {
     await sendEmailVerification(user);
 
     // 3. Create company doc — Firestore generates the ID
-    const companyRef = await addDoc(collection(db, "companies"), {
-      name:       companyName,
-      ownerName:  fullName,
-      ownerUid:   user.uid,
-      city,
-      state,
-      tier:       "free",
-      createdAt:  serverTimestamp()
-    });
+  const trialEnd = new Date();
+trialEnd.setDate(trialEnd.getDate() + 14);
+
+const companyRef = await addDoc(collection(db, "companies"), {
+  name:         companyName,
+  ownerName:    fullName,
+  ownerUid:     user.uid,
+  city,
+  state,
+  tier:         "free",
+  trialEndsAt:  trialEnd,
+  createdAt:    serverTimestamp()
+});
 
     // 4. Create default settings doc for this company
     await setDoc(
@@ -106,16 +110,15 @@ finalAgreeBtn?.addEventListener("click", async () => {
       }
     );
 
-    // 5. Create user profile doc
-    await setDoc(doc(db, "app_user", user.uid), {
-      fullName,
-      email:       user.email,
-      companyId:   companyRef.id,
-      companyName,
-      role:        "owner",       // role lives in Firestore, not client code
-      tier:        "free",
-      createdAt:   serverTimestamp()
-    });
+   await setDoc(doc(db, "app_user", user.uid), {
+  fullName,
+  email:       user.email,
+  companyId:   companyRef.id,
+  companyName,
+  role:        "owner",
+  tier:        "free",
+  createdAt:   serverTimestamp()
+});
 
     legalModal?.classList.remove("open");
     showMsg("Account created! Check your email to verify, then sign in.", "success");

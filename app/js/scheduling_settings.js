@@ -197,6 +197,8 @@ if (!Object.keys(coverageState).length) {
 renderShiftTabs();
 renderDayList();
 renderCoveragePanel();
+loadCertManager();
+renderCertRequirements();
 renderCertRequirements();
   } catch (err) {
     console.error("loadSettings failed:", err);
@@ -310,7 +312,6 @@ function renderCertRequirements() {
   const empty = document.getElementById("certRequirementsEmpty");
   if (!list) return;
 
-  // Get master cert list from localStorage (saved by App Settings)
   let masterCerts = [];
   try {
     const appSettings = JSON.parse(localStorage.getItem("appSettings") || "{}");
@@ -328,57 +329,88 @@ function renderCertRequirements() {
   if (empty) empty.style.display = "none";
 
   positions.forEach(posName => {
-    const selected = requiredCertsState[posName] || [];
+    if (!requiredCertsState[posName]) requiredCertsState[posName] = [];
+    const assigned = requiredCertsState[posName];
+    const available = masterCerts.filter(c => !assigned.includes(c));
 
     const row = document.createElement("div");
-    row.style.cssText = "display:flex; flex-direction:column; gap:6px; padding:12px; background:var(--bg2,#f8fafc); border-radius:8px; border:1px solid var(--border,#e2e8f0);";
+    row.style.cssText = "padding:14px;background:var(--bg2,#f8fafc);border-radius:10px;border:1px solid var(--border,#e2e8f0);display:flex;flex-direction:column;gap:10px;";
 
-    const label = document.createElement("div");
-    label.style.cssText = "font-weight:700; font-size:.88rem;";
-    label.textContent = posName;
-    row.appendChild(label);
+    // Position name header
+    const header = document.createElement("div");
+    header.style.cssText = "font-weight:700;font-size:.88rem;color:var(--text);";
+    header.textContent = posName;
+    row.appendChild(header);
 
-    if (!masterCerts.length) {
-      const hint = document.createElement("div");
-      hint.style.cssText = "font-size:.78rem; color:var(--text-muted,#64748b); font-style:italic;";
-      hint.textContent = "No certifications defined yet. Add them in App Settings → Certifications.";
-      row.appendChild(hint);
-    } else {
-      const checkboxWrap = document.createElement("div");
-      checkboxWrap.style.cssText = "display:flex; gap:12px; flex-wrap:wrap;";
+    // Assigned cert chips
+    const chipWrap = document.createElement("div");
+    chipWrap.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;min-height:28px;";
 
-      masterCerts.forEach(cert => {
-        const lbl = document.createElement("label");
-        lbl.style.cssText = "display:flex; align-items:center; gap:5px; font-size:.83rem; cursor:pointer;";
-
-        const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.value = cert;
-        cb.dataset.pos = posName;
-        cb.className = "cert-req-checkbox";
-        cb.checked = selected.includes(cert);
-
-        cb.addEventListener("change", () => {
-          if (!requiredCertsState[posName]) requiredCertsState[posName] = [];
-          if (cb.checked) {
-            if (!requiredCertsState[posName].includes(cert)) {
-              requiredCertsState[posName].push(cert);
-            }
-          } else {
-            requiredCertsState[posName] = requiredCertsState[posName].filter(c => c !== cert);
-          }
+    function refreshChips() {
+      chipWrap.innerHTML = "";
+      if (!requiredCertsState[posName].length) {
+        chipWrap.innerHTML = `<span style="font-size:.78rem;color:var(--text-muted);font-style:italic;">No certs required.</span>`;
+        return;
+      }
+      requiredCertsState[posName].forEach(cert => {
+        const chip = document.createElement("span");
+        chip.style.cssText = "display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--accent-light);color:var(--accent);border:1px solid rgba(37,99,235,.2);border-radius:20px;font-size:.75rem;font-weight:600;";
+        chip.innerHTML = `${cert} <button style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:.9rem;padding:0;line-height:1;" title="Remove">×</button>`;
+        chip.querySelector("button").addEventListener("click", () => {
+          requiredCertsState[posName] = requiredCertsState[posName].filter(c => c !== cert);
+          refreshChips();
+          refreshSelect();
           markDirty();
         });
-
-        lbl.appendChild(cb);
-        lbl.appendChild(document.createTextNode(cert));
-        checkboxWrap.appendChild(lbl);
+        chipWrap.appendChild(chip);
       });
-
-      row.appendChild(checkboxWrap);
     }
 
+    row.appendChild(chipWrap);
+
+    // Add cert row — only show if there are unassigned certs
+    const addRow = document.createElement("div");
+    addRow.style.cssText = "display:flex;gap:8px;align-items:center;flex-wrap:wrap;";
+
+    const select = document.createElement("select");
+    select.style.cssText = "padding:6px 10px;border:1px solid var(--border2);border-radius:8px;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;";
+
+    function refreshSelect() {
+      const unassigned = masterCerts.filter(c => !requiredCertsState[posName].includes(c));
+      select.innerHTML = unassigned.length
+        ? `<option value="">Add cert...</option>` + unassigned.map(c => `<option value="${c}">${c}</option>`).join("")
+        : `<option value="">— All certs assigned —</option>`;
+      select.disabled = !unassigned.length;
+      addBtn.disabled = !unassigned.length;
+    }
+
+    const addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.textContent = "+ Add";
+    addBtn.style.cssText = "padding:6px 14px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;";
+    addBtn.addEventListener("click", () => {
+      const val = select.value;
+      if (!val) return;
+      if (!requiredCertsState[posName].includes(val)) {
+        requiredCertsState[posName].push(val);
+      }
+      refreshChips();
+      refreshSelect();
+      markDirty();
+    });
+
+    if (!masterCerts.length) {
+      addRow.innerHTML = `<span style="font-size:.78rem;color:var(--text-muted);font-style:italic;">No certifications defined yet. Add them in the Certifications section above.</span>`;
+    } else {
+      addRow.appendChild(select);
+      addRow.appendChild(addBtn);
+    }
+
+    row.appendChild(addRow);
     list.appendChild(row);
+
+    refreshChips();
+    refreshSelect();
   });
 }
 
@@ -437,8 +469,9 @@ $("saveBtn")?.addEventListener("click", async () => {
     document.querySelectorAll(".offday-check:checked")
   ).map(cb => cb.value);
 
-  const weeklyHours = parseInt($("weeklyHours")?.value || "40", 10);
 
+const weeklyHours = parseInt($("weeklyHours")?.value || "40", 10);
+const burnoutThreshold = parseInt($("burnoutThreshold")?.value || "40", 10); // ADD THIS
   const autoScheduler = {
     weekStart:         parseInt($("weekStart")?.value ?? "1", 10),
     respectAvail:      $("respectAvail")?.checked  ?? true,
@@ -447,6 +480,8 @@ $("saveBtn")?.addEventListener("click", async () => {
     autoFillPositions: $("autoFillPositions")?.checked ?? true,
     offDays,
     weeklyHours,
+    weeklyHours,
+  burnoutThreshold,
   };
 
   try {
@@ -826,9 +861,13 @@ async function loadAutoSchedulerSettings() {
   });
 
   // Load weekly hours
+  
   if ($("weeklyHours") && as.weeklyHours != null) {
-    $("weeklyHours").value = String(as.weeklyHours);
-  }
+  $("weeklyHours").value = String(as.weeklyHours);
+}
+if ($("burnoutThreshold") && as.burnoutThreshold != null) { // ADD THIS
+  $("burnoutThreshold").value = String(as.burnoutThreshold);
+}
 }
 
 
@@ -897,3 +936,66 @@ document.addEventListener("input", (e) => {
   });
   isBulkUpdating = false;
 })
+/* ===================== CERT MANAGER ===================== */
+let masterCertList = [];
+
+function loadCertManager() {
+  const appSettings = JSON.parse(localStorage.getItem("appSettings") || "{}");
+  masterCertList = (appSettings.availableCerts || "")
+    .split(",").map(s => s.trim()).filter(Boolean);
+  renderCertChips();
+}
+
+function saveCertList() {
+  const appSettings = JSON.parse(localStorage.getItem("appSettings") || "{}");
+  appSettings.availableCerts = masterCertList.join(",");
+  localStorage.setItem("appSettings", JSON.stringify(appSettings));
+  renderCertRequirements(); // refresh the requirements section below
+}
+
+function renderCertChips() {
+  const container = document.getElementById("certChipList");
+  if (!container) return;
+
+  if (!masterCertList.length) {
+    container.innerHTML = `<span style="font-size:.8rem;color:var(--text-muted);font-style:italic;">No certifications added yet.</span>`;
+    return;
+  }
+
+  container.innerHTML = masterCertList.map((cert, i) => `
+    <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;
+      background:var(--amber-bg);color:var(--amber);border:1px solid rgba(217,119,6,.25);
+      border-radius:20px;font-size:.78rem;font-weight:600;">
+      ${cert}
+      <button data-cert-index="${i}" style="background:none;border:none;cursor:pointer;
+        color:var(--amber);font-size:.85rem;padding:0;line-height:1;" title="Remove">×</button>
+    </span>
+  `).join("");
+}
+
+document.getElementById("addCertBtn")?.addEventListener("click", () => {
+  const input = document.getElementById("certInput");
+  const val = input?.value.trim();
+  if (!val) return;
+  if (masterCertList.includes(val)) {
+    input.value = "";
+    return;
+  }
+  masterCertList.push(val);
+  input.value = "";
+  renderCertChips();
+  saveCertList();
+});
+
+document.getElementById("certInput")?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("addCertBtn")?.click();
+});
+
+document.getElementById("certChipList")?.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-cert-index]");
+  if (!btn) return;
+  const i = parseInt(btn.dataset.certIndex);
+  masterCertList.splice(i, 1);
+  renderCertChips();
+  saveCertList();
+});

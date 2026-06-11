@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join Your Team | Competent Management</title>
+  <link rel="icon" type="image/png" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f2f5fb;
+      --bg2:      #e8edf7;
+      --white:    #ffffff;
+      --border:   #dae0ef;
+      --border2:  #c2cce0;
+      --text:     #0b1526;
+      --text2:    #374160;
+      --text3:    #7e8aa6;
+      --navy:     #0d2151;
+      --navy2:    #162e6e;
+      --blue:     #1e56c4;
+      --blue-lt:  #e4ecfb;
+      --green:    #0ea86e;
+      --green-bg: #e5f8f1;
+      --red:      #cc2b2b;
+      --shadow:   0 4px 20px rgba(13,33,81,.08), 0 1px 4px rgba(13,33,81,.05);
+      --shadow-lg:0 20px 60px rgba(13,33,81,.13), 0 4px 16px rgba(13,33,81,.07);
+    }
+    html { height: 100%; }
+    body { min-height: 100vh; font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; display: flex; }
+
+    .page-wrapper { display: flex; width: 100%; min-height: 100vh; }
+
+    /* BRAND SIDE */
+    .brand-side {
+      width: 44%; background: linear-gradient(160deg, var(--navy) 0%, #162e6e 55%, #1a3d8a 100%);
+      position: relative; overflow: hidden; display: flex; flex-direction: column;
+      padding: 48px 56px; min-height: 100vh;
+    }
+    .brand-side::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+    .brand-orb { position: absolute; bottom: -80px; right: -80px; pointer-events: none; }
+    .orb-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.07); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    .orb-ring:nth-child(1) { width: 500px; height: 500px; }
+    .orb-ring:nth-child(2) { width: 360px; height: 360px; border-style: dashed; opacity: .5; transform: translate(-50%,-50%) rotate(20deg); }
+    .orb-ring:nth-child(3) { width: 220px; height: 220px; border-width: 2px; opacity: .15; }
+
+    .brand-content { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; }
+
+    .logo-wrap { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+    .logo-text-block { display: flex; flex-direction: column; line-height: 1; }
+    .logo-top { font-size: .9rem; font-weight: 900; color: white; letter-spacing: .09em; text-transform: uppercase; }
+    .logo-bot { font-size: .56rem; font-weight: 500; color: rgba(255,255,255,.5); letter-spacing: .22em; text-transform: uppercase; margin-top: 2px; }
+
+    .brand-hero { margin: auto 0; padding: 40px 0; }
+    .brand-hero h1 { font-size: clamp(2.2rem, 3vw, 2.9rem); font-weight: 900; color: white; letter-spacing: -.04em; line-height: 1.1; margin-bottom: 16px; }
+    .brand-hero h1 em { color: #7eb4f8; font-style: normal; }
+    .brand-hero p { font-size: .92rem; color: rgba(255,255,255,.65); line-height: 1.72; margin-bottom: 36px; max-width: 340px; }
+
+    .proof-pills { display: flex; flex-direction: column; gap: 12px; }
+    .proof-pill { display: flex; align-items: center; gap: 10px; font-size: .85rem; color: rgba(255,255,255,.75); }
+    .proof-pill i { color: #7eb4f8; width: 16px; }
+
+    .brand-foot { position: relative; z-index: 2; font-size: .75rem; color: rgba(255,255,255,.3); margin-top: 48px; }
+
+    /* FORM SIDE */
+    .form-side {
+      flex: 1; background: var(--bg); display: flex; align-items: center;
+      justify-content: center; padding: 48px 40px; min-height: 100vh; overflow-y: auto;
+    }
+    .form-card { width: 100%; max-width: 460px; }
+    .form-header { margin-bottom: 28px; }
+    .form-header h2 { font-size: 1.8rem; font-weight: 900; color: var(--navy); letter-spacing: -.03em; margin-bottom: 6px; }
+    .form-header p { font-size: .88rem; color: var(--text3); }
+
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--text); margin-bottom: 7px; }
+    .field input {
+      width: 100%; padding: 12px 14px; background: var(--white);
+      border: 1px solid var(--border2); border-radius: 10px;
+      font-family: 'Outfit', sans-serif; font-size: .92rem; color: var(--text);
+      transition: border-color .15s, box-shadow .15s; outline: none;
+    }
+    .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,86,196,.1); }
+
+    .code-field input {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-size: .95rem;
+    }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 22px 0; color: var(--text3); font-size: .8rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .submit-btn {
+      width: 100%; padding: 14px; background: var(--navy); color: white;
+      border: none; border-radius: 10px; font-family: 'Outfit', sans-serif;
+      font-size: .95rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(13,33,81,.28); transition: all .15s; margin-top: 8px;
+    }
+    .submit-btn:hover { background: var(--navy2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(13,33,81,.38); }
+    .submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .bottom-link { text-align: center; font-size: .85rem; color: var(--text3); margin-top: 20px; }
+    .bottom-link a { color: var(--blue); text-decoration: none; font-weight: 600; }
+    .bottom-link a:hover { text-decoration: underline; }
+
+    .status-msg { padding: 12px 16px; border-radius: 8px; font-size: .85rem; margin-top: 14px; display: none; }
+    .status-msg.error { background: #fef2f2; border: 1px solid #fecaca; color: var(--red); }
+    .status-msg.success { background: var(--green-bg); border: 1px solid #a7f3d0; color: var(--green); }
+
+    .code-hint {
+      font-size: .78rem; color: var(--text3); margin-top: 6px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .code-hint i { font-size: .72rem; }
+
+    @media (max-width: 900px) {
+      .brand-side { display: none; }
+      .form-side { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- BRAND SIDE -->
+  <div class="brand-side">
+    <div class="brand-orb">
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+    </div>
+    <div class="brand-content">
+      <a href="/" class="logo-wrap">
+        <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="hgBg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#1e8fc4"/>
+              <stop offset="100%" stop-color="#0d2151"/>
+            </linearGradient>
+            <linearGradient id="hgSand" x1="12" y1="24" x2="36" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7de8ff"/>
+              <stop offset="100%" stop-color="#2ac8e8"/>
+            </linearGradient>
+            <linearGradient id="hgGlass" x1="12" y1="0" x2="36" y2="24" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/>
+              <stop offset="100%" stop-color="#a8d8f0" stop-opacity=".7"/>
+            </linearGradient>
+          </defs>
+          <rect width="48" height="48" rx="11" fill="url(#hgBg)"/>
+          <polygon points="10,8 38,8 28,23 20,23" fill="url(#hgGlass)" opacity=".9"/>
+          <rect x="9" y="6.5" width="30" height="4" rx="2" fill="white" opacity=".95"/>
+          <polygon points="20,25 28,25 38,40 10,40" fill="url(#hgGlass)" opacity=".75"/>
+          <polygon points="21,29 27,29 36,40 12,40" fill="url(#hgSand)" opacity=".85"/>
+          <rect x="9" y="37.5" width="30" height="4" rx="2" fill="white" opacity=".95"/>
+          <circle cx="24" cy="24" r="2.2" fill="white" opacity=".95"/>
+        </svg>
+        <div class="logo-text-block">
+          <span class="logo-top">Competent</span>
+          <span class="logo-bot">Management</span>
+        </div>
+      </a>
+
+      <div class="brand-hero">
+        <h1>You've Been<br><em>Invited.</em></h1>
+        <p>Your manager has added you to their team on Competent Management. Create your account to view your schedule, clock in, and more.</p>
+        <div class="proof-pills">
+          <div class="proof-pill"><i class="fas fa-calendar-alt"></i> View your schedule anytime</div>
+          <div class="proof-pill"><i class="fas fa-clock"></i> Clock in from your phone</div>
+          <div class="proof-pill"><i class="fas fa-exchange-alt"></i> Request shift swaps</div>
+          <div class="proof-pill"><i class="fas fa-bell"></i> Get notified instantly</div>
+        </div>
+      </div>
+
+      <div class="brand-foot">© 2025 Competent Management. Built for Business.</div>
+    </div>
+  </div>
+
+  <!-- FORM SIDE -->
+  <div class="form-side">
+    <div class="form-card">
+      <div class="form-header">
+        <h2>Join Your Team</h2>
+        <p>Enter your invite code and create your account.</p>
+      </div>
+
+      <form id="join-form">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="fullname" placeholder="Jane Smith" required autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@email.com" required autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Min 6 characters" required autocomplete="new-password">
+        </div>
+
+        <div class="divider">Your Invite Code</div>
+
+        <div class="field code-field">
+          <label>Invite Code</label>
+          <input type="text" id="inviteCode" placeholder="CM-XXXX-XXXX-XXXX" maxlength="20" required>
+          <div class="code-hint"><i class="fas fa-info-circle"></i> Get this from your manager</div>
+        </div>
+
+        <button type="button" class="submit-btn" id="joinBtn">
+          Create Account &nbsp;<i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="status-msg" id="joinMsg"></div>
+
+      <div class="bottom-link" style="margin-top:16px;">Already have an account? <a href="/login.html">Log in →</a></div>
+      <div class="bottom-link" style="margin-top:8px;">Are you a business owner? <a href="/signup.html">Sign up here →</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module" src="./js/core/firebase.js"></script>
+<script type="module" src="/js/join.js"></script>
+</body>
+</html>

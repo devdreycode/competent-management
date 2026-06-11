@@ -29,7 +29,7 @@
       <div class="brand-name" id="companyNameDisplay">Company</div>
       <div class="brand-tag">Workforce Manager</div>
     </div>
-    <div style="width:1px;height:22px;background:var(--chrome-border);margin:0 4px;flex-shrink:0;"></div>
+    <div style="width:1px;height:22px;background:var(--chrome-border);margin:0 4px;;"></div>
     <span class="header-title" id="headerTitle">Staff</span>
     <div id="upgradeBtn">⚡ Upgrade</div>
     <div class="header-spacer"></div>
@@ -69,7 +69,7 @@
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-ghost btn-sm" id="btnPrintEmp">🖨 Print</button>
             <button class="btn btn-ghost btn-sm" id="btnExportEmp">📥 Export</button>
-            <button class="btn btn-ghost btn-sm locked" id="btnImportEmp" title="Upgrade required">📤 Import</button>
+<button class="btn btn-ghost btn-sm" id="btnImportEmp">📤 Import</button>
             <button class="btn btn-secondary btn-sm hidden" id="bulkResetBtn">Reset Absences</button>
             <button class="btn btn-primary" id="openAddEmployeeBtn">＋ Add Employee</button>
           </div>
@@ -109,7 +109,7 @@
         <span class="modal-title">Add Employee</span>
         <button class="modal-close" id="closeAddEmpBtn"><i class="fas fa-times"></i></button>
       </div>
-      <form id="employeeForm" class="modal-body">
+      <form id="employeeForm" class="modal-form">
         <div class="form-group">
           <label>Full Name</label>
           <input type="text" id="empName" placeholder="Jane Smith" required>
@@ -144,6 +144,12 @@
           <label>Certifications</label>
           <div id="addCertsContainer" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
         </div>
+        <div id="addCertWarning" style="display:none;padding:8px 12px;background:var(--amber-bg,#fef3c7);
+  color:var(--amber,#d97706);border:1px solid rgba(217,119,6,.25);border-radius:8px;
+  font-size:.78rem;font-weight:600;"></div>
+  <div id="editCertWarning" style="display:none;padding:8px 12px;background:var(--amber-bg,#fef3c7);
+  color:var(--amber,#d97706);border:1px solid rgba(217,119,6,.25);border-radius:8px;
+  font-size:.78rem;font-weight:600;"></div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Add Employee</button>
         </div>

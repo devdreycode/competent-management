@@ -284,3 +284,150 @@ input[type="checkbox"] {
   height: 14px;
   cursor: pointer;
 }
+/* --- Modal Overlay --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 80px 16px 90px;
+  overflow-y: auto;
+}
+
+/* --- Modal Card --- */
+.modal-card {
+  width: 100%;
+  max-width: 520px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--chrome-border);
+  overflow: hidden;
+}
+
+/* --- Modal Header --- */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--chrome-border);
+}
+
+.modal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background .15s;
+}
+
+.modal-close:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+/* --- Modal Form/Body --- */
+.modal-form,
+.modal-body-inner {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* --- Modal Footer --- */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--chrome-border);
+}
+
+/* --- Form Groups --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.form-group input,
+.form-group select {
+  padding: 9px 12px;
+  border: 1px solid var(--chrome-border);
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--chrome-glow);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* --- Table Action Buttons --- */
+.btn-action {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+}
+
+.btn-action.ghost {
+  background: var(--accent-light, rgba(8,145,178,0.12));
+  color: var(--accent);
+  border: 1px solid transparent;
+}
+
+.btn-action.ghost:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px var(--chrome-glow);
+}
+
+.btn-action.danger {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--chrome-border);
+}
+
+.btn-action.danger:hover {
+  background: var(--red-bg, rgba(239,68,68,0.1));
+  color: var(--red, #ef4444);
+  border-color: var(--red-border, rgba(239,68,68,0.3));
+}

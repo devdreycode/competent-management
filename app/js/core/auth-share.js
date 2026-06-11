@@ -44,9 +44,27 @@ function showError(msg) {
   setTimeout(() => { box.style.display = "none"; }, 4000);
 }
 
+
+function showTrialBanner(daysLeft) {
+  const banner = document.createElement("div");
+  banner.id = "trialBanner";
+  banner.style.cssText = `
+    position: 0; top: 0; left: 0; right: 0; z-index: 9999;
+    background: #466fd1; color: white; text-align: center;
+    padding: 10px 16px; font-size: .85rem; font-family: 'DM Sans', sans-serif;
+    height: 40px; display: flex; align-items: center; justify-content: center;
+  `;
+  banner.innerHTML = `
+    ⏳ <strong>${daysLeft} day${daysLeft !== 1 ? "s" : ""} left</strong> on your free trial.
+    <a href="/pricing.html" style="color:#7eb4f8; margin-left:8px; font-weight:700;">Upgrade →</a>
+  `;
+  document.body.prepend(banner);
+
+  // Push the sticky header down so it clears the banner
+  const topHeader = document.querySelector(".top-header");
+  if (topHeader) topHeader.style.top = "40px";
+}
 /* ─── Settings sync ──────────────────────────────────────── */
-// Pull company settings from Firestore and merge into localStorage.
-// localStorage is still used as the fast read cache — Firestore is truth.
 async function syncSettingsFromFirestore(companyId) {
   try {
     const snap = await getDoc(
@@ -54,28 +72,27 @@ async function syncSettingsFromFirestore(companyId) {
     );
     if (snap.exists()) {
       const remote = snap.data();
-      // Merge remote over any local values so Firestore always wins
       const local = JSON.parse(localStorage.getItem("appSettings") || "{}");
       localStorage.setItem("appSettings", JSON.stringify({ ...local, ...remote }));
     }
   } catch (err) {
-    // Non-fatal — app still works with local settings
     console.warn("[auth-share] settings sync failed:", err);
   }
 }
 
 /* ─── Logout ─────────────────────────────────────────────── */
-function bindLogout() {
+async function bindLogout() {
   const btn = document.getElementById("logoutBtn");
   if (!btn || btn.dataset.bound) return;
+
   btn.dataset.bound = "true";
+
   btn.addEventListener("click", async () => {
     try {
-      // Clear sensitive cached data on logout
       localStorage.removeItem("uid");
       localStorage.removeItem("companyId");
       await signOut(auth);
-      window.location.href = "login.html";
+      window.location.href = "../../login.html";
     } catch (err) {
       console.error("Logout failed:", err);
       showError("Logout failed. Try again.");
@@ -96,8 +113,6 @@ onAuthStateChanged(auth, async (user) => {
   try {
     const uid = user.uid;
 
-    // ALWAYS read companyId and role from Firestore — never from URL or localStorage.
-    // This is the security boundary: client cannot spoof their company.
     const snap = await getDoc(doc(db, "app_user", uid));
 
     if (!snap.exists()) {
@@ -106,10 +121,11 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    const data       = snap.data() || {};
-    const companyId  = data.companyId || data.company_id || null;
-    const role       = data.role  || "user";
-    const tier       = data.tier  || "free";
+    const data        = snap.data() || {};
+    const companyId   = data.companyId || data.company_id || null;
+    const role        = data.role  || "user";
+    const tier        = data.tier  || "free";
+    const trialEndsAt = data.trialEndsAt || null;
 
     if (!companyId) {
       showError("No company assigned to this account.");
@@ -117,7 +133,6 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    // Role guard — only owner/manager can access the dashboard
     if (!["owner", "manager"].includes(role)) {
       showError("Access denied. Manager account required.");
       await signOut(auth);
@@ -128,23 +143,33 @@ onAuthStateChanged(auth, async (user) => {
     const displayName = data.fullName || user.email?.split("@")[0] || "Manager";
     const companyName = data.companyName || data.company_name || "";
 
-    // Cache uid only — companyId intentionally NOT written to localStorage
-    // so it cannot be tampered with. All reads go through auth state.
     localStorage.setItem("uid", uid);
 
-    // Expose on window for modules that need it (companyId comes from auth, not storage)
     window.appState = { uid, companyId, displayName, companyName, tier, role };
 
-    // Sync Firestore settings down before dispatching authReady
     await syncSettingsFromFirestore(companyId);
+
+    // Show trial banner if on free tier and trial is active
+    if (tier === "free" && trialEndsAt) {
+      const trialEnd = trialEndsAt.toDate ? trialEndsAt.toDate() : new Date(trialEndsAt);
+      const daysLeft = Math.ceil((trialEnd - new Date()) / (1000 * 60 * 60 * 24));
+      if (daysLeft > 0) {
+        showTrialBanner(daysLeft);
+      }
+    }
 
     dispatched = true;
 
     window.dispatchEvent(new CustomEvent("authReady", {
-      detail: { uid, companyId, displayName, companyName, tier, role }
+      detail: {
+        role,
+        companyId,
+        tier,
+        trialEndsAt: trialEndsAt || null
+      }
     }));
 
-    console.log("🔥 authReady dispatched", { uid, companyId, role });
+    console.log("🔥 authReady dispatched", { uid, companyId, role, tier });
 
   } catch (err) {
     console.error("[auth-share] failed:", err);

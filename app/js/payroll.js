@@ -332,18 +332,16 @@ if (term) {
       <td class="num"><strong>$${(gross - fica.total).toFixed(2)}</strong></td>
     ` : "";
 
-    return `
-      <tr data-emp-id="${emp.id}"${emp.openShift ? ' style="background:#fffbeb;"' : ""}>
-        <td>
-          <strong>${emp.fullName || emp.name || "Unknown"}</strong>${openBadge}${noRateBadge}
-          <br><small>${emp.position || "Staff"}</small>
-        </td>
-        <td class="num">$${emp.hourlyRate.toFixed(2)}</td>
-        <td class="num">${regH.toFixed(2)}</td>
-        <td class="num" style="${otH > 0 ? "color:#dc2626" : "color:#9ca3af"}">${otH > 0 ? otH.toFixed(2) : "—"}</td>
-        <td class="num"><strong>$${gross.toFixed(2)}</strong></td>
-        ${ficaCells}
-      </tr>`;
+     return `
+  <tr data-emp-id="${emp.id}"${emp.openShift ? ' style="background:#fffbeb;"' : ""}>
+    <td><strong>${emp.fullName || emp.name || "Unknown"}</strong>${openBadge}${noRateBadge}</td>
+    <td>${emp.position || "Staff"}</td>
+    <td class="num">$${emp.hourlyRate.toFixed(2)}</td>
+    <td class="num">${regH.toFixed(2)}</td>
+    <td class="num" style="${otH > 0 ? "color:#dc2626" : "color:#9ca3af"}">${otH > 0 ? otH.toFixed(2) : "—"}</td>
+    <td class="num"><strong>$${gross.toFixed(2)}</strong></td>
+    ${ficaCells}
+  </tr>`;
   }).join("");
 
   if (!tbody.innerHTML.trim()) {

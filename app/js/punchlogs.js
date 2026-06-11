@@ -40,6 +40,7 @@ const EVENT_META = {
 ───────────────────────────────────────── */
 window.addEventListener("authReady", async (e) => {
   companyId = e.detail?.companyId;
+   window.companyId = companyId; // expose for kiosk clock
   if (!companyId) return;
 
   await loadEmployeeMap();
@@ -228,8 +229,8 @@ function renderTable(tbodyId, logs) {
     </tr>`;
   }).join("");
 }
-window.openNewTab = function() {
-  window.open("./pages/kiosk.html", "_blank");
+ window.openNewTab = function() {
+  window.open("./kioskclock.html?companyId=" + window.companyId, "_blank");
 };
 /* ─────────────────────────────────────────
    SEARCH — exposed so index.html's oninput

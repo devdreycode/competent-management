@@ -338,6 +338,9 @@
       <a class="nav-item" href="#positions">
         <span class="nav-icon"><i class="fas fa-id-badge"></i></span>Positions & Coverage
       </a>
+      <a class="nav-item" href="#certManager">
+  <span class="nav-icon"><i class="fas fa-certificate"></i></span>Certifications
+</a>
     </nav>
     <div class="sidebar-footer">
       <a href="schedule-editor.html" class="back-btn">
@@ -490,6 +493,36 @@
   <p class="setting-hint">Used by auto-generate to avoid over-scheduling. Employees near this limit get OFF instead of extra shifts.</p>
 </div>
 
+<!-- ── Burnout / Overtime Threshold ───────────────────── -->
+<div class="setting-row" style="margin-top:18px;">
+  <label class="setting-label" for="burnoutThreshold">Overtime Warning Threshold (hours/week)</label>
+  <input type="number" id="burnoutThreshold" min="20" max="80" value="40"
+         style="width:90px; margin-top:6px;">
+  <p class="setting-hint">Employees at or above this many hours will trigger an overtime warning in the schedule editor. Default is 40.</p>
+</div>
+<!-- ── AVAILABLE CERTIFICATIONS ───────────────────── -->
+<div class="settings-section" id="certManager" style="margin-top:28px;">
+  <div class="section-head">
+    <div class="section-title">Available Certifications</div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon amber"><i class="fas fa-certificate"></i></div>
+      <div>
+        <div class="card-head-title">Manage Certifications</div>
+        <div class="card-head-sub">Define the certifications employees can hold. These appear on employee profiles and drive cert requirements below.</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="certChipList" style="display:flex;flex-wrap:wrap;gap:8px;min-height:36px;"></div>
+      <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;align-items:center;">
+        <input id="certInput" type="text" placeholder="e.g. Food Handler, Forklift..."
+          style="flex:1;min-width:160px;max-width:280px;padding:9px 12px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);outline:none;">
+        <button id="addCertBtn" type="button" class="add-position-btn">+ Add Cert</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- ── REQUIRED CERTIFICATIONS PER POSITION ───────── -->
 <div class="settings-section" id="certRequirements" style="margin-top:28px;">
   <div class="section-head">
