@@ -108,33 +108,23 @@ function pullUIValues() {
 }
 
 $("savePayroll")?.addEventListener("click", async () => {
-
   if (!companyId) {
     alert("Company not loaded yet. Try again in a second.");
     return;
   }
-
   try {
-
     pullUIValues();
 
+    // ✨ FIX: Added { merge: true } so pay period structures don't get wiped out!
     await setDoc(
-      doc(
-        db,
-        "companies",
-        companyId,
-        "payroll_settings",
-        "config"
-      ),
-      payrollSettings
+      doc(db, "companies", companyId, "payroll_settings", "config"),
+      payrollSettings,
+      { merge: true }
     );
 
     alert("Payroll settings saved.");
-
   } catch (err) {
-
     console.error(err);
-
     alert("Failed to save payroll settings.");
   }
 });

@@ -492,7 +492,13 @@
          style="width:90px; margin-top:6px;">
   <p class="setting-hint">Used by auto-generate to avoid over-scheduling. Employees near this limit get OFF instead of extra shifts.</p>
 </div>
-
+<div class="setting-row" style="margin-top:18px;">
+  <label class="setting-label" style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+    <input type="checkbox" id="onCallOvertimeRisk" style="width: auto; margin: 0;">
+    Count On-Call shifts as Overtime Risk
+  </label>
+  <p class="setting-hint">If checked, "oncall" assignments will count towards an employee's total weekly hours when evaluating burnout alerts and minor limitations.</p>
+</div>
 <!-- ── Burnout / Overtime Threshold ───────────────────── -->
 <div class="setting-row" style="margin-top:18px;">
   <label class="setting-label" for="burnoutThreshold">Overtime Warning Threshold (hours/week)</label>

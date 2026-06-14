@@ -105,6 +105,7 @@ if (elOverdue) elOverdue.textContent = overdue;
   });
 
 }
+
 /* ═══════════════════════════════════════════════
    LISTEN TICKETS — real-time list
 ═══════════════════════════════════════════════ */
@@ -261,14 +262,7 @@ window.createTicketAction = async function(data) {
     console.error("createTicketAction:", err);
   }
 };
-/* ═══════════════════════════════════════════════
-   LISTEN MESSAGES — live chat for active ticket
-═══════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════
-   LISTEN TICKET MESSAGES — real-time per ticket
-═══════════════════════════════════════════════ */
 window.listenTicketMessages = function(ticketId, callback) {
-  // Tear down previous listener
   if (_activeMessageUnsub) {
     _activeMessageUnsub();
     _activeMessageUnsub = null;
@@ -283,10 +277,11 @@ window.listenTicketMessages = function(ticketId, callback) {
     const msgs = snap.docs.map(m => {
       const md = m.data();
       return {
-        sender:    md.senderRole || "employee",
+        // 👇 FIX: Fallback to sender if senderRole isn't present, ensuring compatibility with your HTML template parser
+        sender:    md.senderRole || md.sender || "employee", 
         name:      md.senderName || "",
         text:      md.text || "",
-        isSystem:  md.senderRole === "system",
+        isSystem:  md.senderRole === "system" || md.sender === "system",
         timestamp: md.createdAt
           ? new Date(md.createdAt.seconds * 1000).toLocaleTimeString([], {
               hour: "2-digit", minute: "2-digit"
@@ -303,14 +298,26 @@ window.listenTicketMessages = function(ticketId, callback) {
 window.sendTicketMessage = async function(ticketId, text) {
   if (!ticketId || !text?.trim()) return;
   try {
+    const userSnap = await getDoc(
+  doc(db, "app_user", auth.currentUser.uid)
+);
+
+const role = userSnap.data()?.role || "manager";
+
+const roleLabel = {
+  owner: "Owner",
+  manager: "Manager",
+  shift_leader: "Shift Leader"
+}[role] || "Staff";
   await addDoc(
   collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-  {
-    text: text.trim(),
-    senderRole: "manager",
-    senderName: "Manager",
-    createdAt: serverTimestamp()
-  }
+  
+{
+  text: text.trim(),
+  senderRole: role,
+  senderName: roleLabel,
+  createdAt: serverTimestamp()
+}
 );
     await updateDoc(doc(db, "companies", companyId, "tickets", ticketId), {
       unreadEmployee: true,
@@ -321,11 +328,11 @@ window.sendTicketMessage = async function(ticketId, text) {
     // Notify dashboard of the reply activity
     const ticketSnap = await getDoc(doc(db, "companies", companyId, "tickets", ticketId));
     const data = ticketSnap.data();
-    await createNotification(
-      "💬 Reply Sent",
-      `Manager replied to ${data?.employeeName || "employee"}'s ${data?.type || "ticket"}.`,
-      "ticket_reply"
-    );
+   await createNotification(
+  "💬 Reply Sent",
+  `${roleLabel} replied to ${data?.employeeName || "employee"}'s ${data?.type || "ticket"}.`,
+  "ticket_reply"
+);
   } catch (err) {
     console.error("sendTicketMessage:", err);
   }
@@ -399,16 +406,17 @@ window.issueWarningAction = async function(ticketId) {
     }
 
     // System message in chat
-    await addDoc(
-      collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-   {
-        body: "⚠️ A formal warning has been issued for this incident.",
-        senderId: "system",
-        senderName: "System",
-        createdAt: serverTimestamp()
-      }
-    );
-
+   // 🔎 Locate this block inside window.issueWarningAction:
+await addDoc(
+  collection(db, "companies", companyId, "tickets", ticketId, "messages"),
+  {
+    text: "⚠️ A formal warning has been issued for this incident.", // 🌟 Fixed field name
+    senderRole: "system",                                         // 🌟 Fixed field name
+    senderName: "System",
+    createdAt: serverTimestamp()
+  }
+);
+  
     await createNotification(
       "⚠️ Warning Issued",
       `A formal warning was issued to ${empName}.`,
@@ -451,15 +459,16 @@ window.approveTimeOffAction = async function(ticketId) {
     });
 
     // Auto-post system message so employee sees the decision in chat
-    await addDoc(
-      collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-      {
-        body: "✅ Your time off request has been approved. It will automatically block out your schedule for those days.",
-        senderId: "system",
-        senderName: "System",
-        createdAt: serverTimestamp()
-      }
-    );
+    // 🔎 Locate this block inside window.approveTimeOffAction:
+await addDoc(
+  collection(db, "companies", companyId, "tickets", ticketId, "messages"),
+  {
+    text: "✅ Your time off request has been approved. It will automatically block out your schedule for those days.", // 🌟 Fixed
+    senderRole: "system",                                                                                             // 🌟 Fixed
+    senderName: "System",
+    createdAt: serverTimestamp()
+  }
+);
 
     await createNotification(
       "✅ Time Off Approved",
@@ -489,15 +498,16 @@ window.declineTimeOffAction = async function(ticketId) {
       unreadEmployee: true
     });
 
-    await addDoc(
-      collection(db, "companies", companyId, "tickets", ticketId, "messages"),
-     {
-        body: "❌ Your time off request has been declined. Please contact your manager if you have questions.",
-        senderId: "system",
-        senderName: "System",
-        createdAt: serverTimestamp()
-      }
-    );
+    // 🔎 Locate this block inside window.declineTimeOffAction:
+await addDoc(
+  collection(db, "companies", companyId, "tickets", ticketId, "messages"),
+  {
+    text: "❌ Your time off request has been declined. Please contact your manager if you have questions.", // 🌟 Fixed
+    senderRole: "system",                                                                                   // 🌟 Fixed
+    senderName: "System",
+    createdAt: serverTimestamp()
+  }
+);
 
     await createNotification(
       "❌ Time Off Declined",

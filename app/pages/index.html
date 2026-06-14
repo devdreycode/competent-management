@@ -13,10 +13,10 @@
   if (localStorage.getItem("dark-mode") === "true")
     document.documentElement.classList.add("dark-mode");
 </script>
-  <link rel="stylesheet" href="../css/style.css">
-<link rel="stylesheet" href="../css/top-header.css">
-<link rel="stylesheet" href="../css/nav.css">
-  <link rel="stylesheet" href="../css/darkmode.css">
+  <link rel="stylesheet" href="/app/css/style.css">
+<link rel="stylesheet" href="/app/css/top-header.css">
+<link rel="stylesheet" href="/app/css/nav.css">
+  <link rel="stylesheet" href="/app/css/darkmode.css">
 
 </head>
 <body>
@@ -41,8 +41,8 @@
       </div>
       <div class="notif-wrapper" style="position:relative;">
   <div id="ticketPanelBell" onclick="toggleTicketPanel(event)" title="Tickets"
-       style="position:relative;display:flex;align-items:center;justify-content:center;
-              width:32px;height:32px;border-radius:8px;cursor:pointer;background:transparent;">
+       style="position:relative;display:flex;align-items:center;;
+width:36px;height:36px;border-radius:8px;cursor:pointer;background:transparent;">
     <i class="fas fa-ticket" style="font-size:.9rem;"></i>
     <span id="ticketPanelCount" style="display:none;position:absolute;top:-4px;right:-4px;
           background:var(--red,#ef4444);color:#fff;font-size:.6rem;font-weight:700;
@@ -64,6 +64,7 @@
     <div id="ticketPanelList" style="padding:6px 0;"></div>
     <div id="ticketPanelEmpty" style="display:block;text-align:center;padding:24px 14px;font-size:.8rem;color:#94a3b8;">No tickets yet 🎉</div>
   </div>
+  <div style="width:1px;height:22px;background:var(--chrome-border);"></div>
 </div>
       <div id="notifPanel" style="display:none;">
         <div class="notif-header">
@@ -99,7 +100,7 @@
             <div class="stat-delta up">clocked in</div>
           </div>
           <div class="stat-card" data-icon="🎫">
-            <div class="stat-label">Open Tickets</div>
+            <div class="stat-label">Approval Center</div>
             <div class="stat-value" id="ticketOpen">0</div>
             <div class="stat-delta">
               <span id="ticketProgress">0</span> in progress ·
@@ -133,19 +134,18 @@
             </div>
             <div class="card">
               <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;">
-                <span>🎫 Recent Tickets</span>
-                <button class="btn btn-ghost btn-sm" onclick="window.location.href='ticketmanagement.html'">View All →</button>
+                <span>Recent Requests</span>
+                <button class="btn btn-ghost btn-sm" onclick="window.location.href='approvalCenter.html'">View All →</button>
               </div>
               <ul id="ticketRecent" style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:.845rem;"></ul>
             </div>
           </div>
           <div class="dash-col">
             <div class="card">
-              <div class="card-label">⚡ Quick Actions</div>
+              <div class="card-label">Timeclock 🕦</div>
               <div style="display:flex;flex-direction:column;gap:7px;">
-                <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="openNewTab()">🕐 Open Time Clock</button>
-                <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="window.location.href='schedule.html'">📅 View Schedule</button>
-                <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="window.location.href='ticketmanagement.html'">🎫 View Tickets</button>
+              
+     <button class="btn btn-secondary" style="justify-content:flex-start;font-size:.82rem;" onclick="openNewTab()">🎫 View Tickets</button>
               </div>
             </div>
           </div>
@@ -155,27 +155,27 @@
   </div>
 
   <nav class="bottom-nav">
-    <a href="index.html" class="nav-item active">
+    <a href="/app/pages/index.html" class="nav-item active">
       <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
       <span class="nav-label">Home</span>
     </a>
-    <a href="employees.html" class="nav-item">
+    <a href="/app/pages/employees.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-users"></i></div>
       <span class="nav-label">Staff</span>
     </a>
-    <a href="schedule.html" class="nav-item">
+    <a href="/app/pages/schedule.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-calendar-days"></i></div>
       <span class="nav-label">Schedule</span>
     </a>
-    <a href="punchin.html" class="nav-item">
+    <a href="/app/pages/punchin.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-clock"></i></div>
       <span class="nav-label">Punch In</span>
     </a>
-    <a href="payroll.html" class="nav-item">
+    <a href="/app/pages/payroll.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-dollar-sign"></i></div>
       <span class="nav-label">Payroll</span>
     </a>
-    <a href="settings.html" class="nav-item">
+    <a href="/app/pages/settings.html" class="nav-item">
       <div class="nav-icon-wrap"><i class="fas fa-gear"></i></div>
       <span class="nav-label">Settings</span>
     </a>

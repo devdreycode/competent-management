@@ -205,21 +205,24 @@ if (
   // Last resort: return the value itself so exact matches still work
   return s;
 }
-/* =====================
-   MINOR HOURS HELPERS
-===================== */
-
 function getHoursFromShift(shift) {
-  if (shift === "oncall") return 0;
-
+  // If shift is empty or explicitly OFF, it's 0 hours
   if (!shift || shift.toUpperCase() === "OFF") return 0;
+
+  // Handle On-Call logic based on settings toggle
+  if (shift.toLowerCase() === "oncall") {
+    const treatOnCallAsRisk = scheduleSettingsCache?.autoScheduler?.onCallOvertimeRisk ?? false;
+    
+    // IF YES (true): Treat as 8 hours toward overtime risk math
+    // IF NO (false): Treat as 0 hours so it won't impact warnings or scores
+    return treatOnCallAsRisk ? 8 : 0; 
+  }
 
   const parts = shift.split("-");
   if (parts.length !== 2) return 0;
 
   const parse = (t) => {
     t = t.toLowerCase().trim();
-
     const match = t.match(/(\d+)(?::(\d+))?(am|pm)/);
     if (!match) return 0;
 
@@ -1203,10 +1206,20 @@ async function autoGenerate() {
   });
 
   // Helper: can this employee be scheduled on this day?
+ // Helper: can this employee be scheduled on this day?
   const canWork = (emp, dayIndex) => {
     const dayLabel = DAYS[dayIndex];
     if (isEmployeeOff(emp.id, dayIndex, timeOffMap)) return false;
-    if (emp.normalSchedule && !worksThisDay(emp, dayLabel)) return false;
+    
+    // 1️⃣ Check employee-specific normal schedule bounds
+    if (emp.normalSchedule) {
+      if (!worksThisDay(emp, dayLabel)) return false;
+    } else {
+      // 2️⃣ FALLBACK: Check company-wide standard days off from settings configuration
+      const companyOffDays = settings?.autoScheduler?.offDays || [];
+      if (companyOffDays.includes(dayLabel)) return false;
+    }
+    
     return true;
   };
 
@@ -1286,11 +1299,17 @@ async function autoGenerate() {
             if (!isNested || !shift) return true;
             return shiftToBucket(emp.shiftType || emp.defaultShift || "") === shiftToBucket(shift);
           })
-          .sort((a, b) => {
-            const scoreA = getWeeklyHours(a.id, auto) + (1 - calculateReliability(a, auto)) * 10;
-            const scoreB = getWeeklyHours(b.id, auto) + (1 - calculateReliability(b, auto)) * 10;
-            return scoreA - scoreB;
-          });
+         .sort((a, b) => {
+  // Base deterministic operational score
+  const scoreA = getWeeklyHours(a.id, auto) + (1 - calculateReliability(a, auto)) * 10;
+  const scoreB = getWeeklyHours(b.id, auto) + (1 - calculateReliability(b, auto)) * 10;
+  
+  // Introduce a random tie-breaker variance (-5 to +5 hours of virtual weight)
+  // This shuffles candidates of similar reliability/hours on every single click
+  const randomFactor = (Math.random() - 0.5) * 10;
+  
+  return (scoreA - scoreB) + randomFactor;
+});
 
         for (const emp of candidates) {
           if (filled >= need) break;
@@ -1405,8 +1424,11 @@ function updateWeekSummary() {
 
   employees.forEach(emp => {
     (scheduleCache[emp.id] || []).forEach((shift, dayIndex) => {
-      if (shift && String(shift).toUpperCase() !== "OFF") {
-        totalHours += getHoursFromShift(shift);
+      // Use our updated hour calculator directly
+      const shiftHours = getHoursFromShift(shift);
+      
+      if (shiftHours > 0) {
+        totalHours += shiftHours;
 
         if (hasInsufficientRest(emp.id, dayIndex, shift, scheduleCache)) {
           restViolations++;
@@ -1491,40 +1513,43 @@ function checkBurnoutRisk() {
   const warnings = [];
 
   employees.forEach(emp => {
-
     const shifts = scheduleCache[emp.id] || [];
-
     let streak = 0;
     let maxStreak = 0;
     let weeklyHours = 0;
 
-    shifts.forEach((shift) => {
+    const treatOnCallAsRisk = scheduleSettingsCache?.autoScheduler?.onCallOvertimeRisk ?? false;
 
+    shifts.forEach((shift) => {
       const hours = getHoursFromShift(shift);
       weeklyHours += hours;
 
-      if (shift && shift !== "OFF") {
+      // Determine if this specific shift counts as a consecutive working day
+      let isWorkingDay = shift && shift.toUpperCase() !== "OFF";
+      if (shift.toLowerCase() === "oncall" && !treatOnCallAsRisk) {
+        isWorkingDay = false; // Ignore on-call for streaks if toggle is off
+      }
+
+      if (isWorkingDay) {
         streak++;
         maxStreak = Math.max(maxStreak, streak);
       } else {
         streak = 0;
       }
-
     });
 
-    // Warn once for burnout
+    // Warn once for burnout streaks
     if (maxStreak >= 5) {
       warnings.push(`⚠ ${emp.name} scheduled ${maxStreak} days in a row`);
     }
 
-   const threshold = scheduleSettingsCache?.autoScheduler?.burnoutThreshold ?? 40;
-if (weeklyHours >= threshold * 0.9 && weeklyHours < threshold) {
-  warnings.push(`⚠ ${emp.name} approaching overtime (${weeklyHours.toFixed(1)}h)`);
-}
-if (weeklyHours >= threshold) {
-  warnings.push(`🚨 ${emp.name} overtime risk (${weeklyHours.toFixed(1)}h)`);
-}
-
+    const threshold = scheduleSettingsCache?.autoScheduler?.burnoutThreshold ?? 40;
+    if (weeklyHours >= threshold * 0.9 && weeklyHours < threshold) {
+      warnings.push(`⚠ ${emp.name} approaching overtime (${weeklyHours.toFixed(1)}h)`);
+    }
+    if (weeklyHours >= threshold) {
+      warnings.push(`🚨 ${emp.name} overtime risk (${weeklyHours.toFixed(1)}h)`);
+    }
   });
 
   return warnings;
@@ -1633,45 +1658,97 @@ if (!emp) {
 });
 
   });
-  // 🔴 Minor Hour Warnings
-const alertBox = document.getElementById("coverageAlerts");
-alertBox.innerHTML = "";
+// 🔴 Minor Hour Warnings & Collapsible Header
+  const alertBox = document.getElementById("coverageAlerts");
+  if (!alertBox) return;
+  
+  alertBox.innerHTML = "";
 
-function buildGroup(title, items){
-  if(items.length === 0) return;
+  // Only render the warning frame if there are actual violations to show
+  if (limitedMinor.length === 0 && limitedBurnout.length === 0) {
+    alertBox.style.display = "none";
+    return;
+  }
 
-  const group = document.createElement("div");
-  group.className = "alert-group";
+  alertBox.style.display = "block";
 
-  const header = document.createElement("div");
-  header.className = "alert-header";
-  header.textContent = `${title} (${items.length})`;
+  // Create the main collapsible header row
+  const headerRow = document.createElement("div");
+  headerRow.className = "warnings-main-header";
+  headerRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(220, 38, 38, 0.2);";
+  
+  headerRow.innerHTML = `
+    <span style="font-weight: 800; font-size: 0.85rem; color: #dc2626; text-transform: uppercase; letter-spacing: 0.05em;">
+       Schedule Conflicts & Compliance Warnings
+    </span>
+    <button id="toggleWarningsBtn" type="button" style="background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.3); color: #dc2626; padding: 2px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; cursor: pointer;">
+      Minimize
+    </button>
+  `;
+  alertBox.appendChild(headerRow);
 
-  const list = document.createElement("div");
-  list.className = "alert-items";
+  // Wrapper for the collapsible alert items
+  const itemsContainer = document.createElement("div");
+  itemsContainer.id = "warningsItemsContainer";
+  
+  // Check localStorage to remember if the user preferred it minimized
+  if (localStorage.getItem("warnings-minimized") === "true") {
+    itemsContainer.style.display = "none";
+    headerRow.querySelector("#toggleWarningsBtn").textContent = "Expand";
+  } else {
+    itemsContainer.style.display = "block";
+  }
 
-  items.forEach(msg=>{
-    const div = document.createElement("div");
-    div.textContent = msg;
-    list.appendChild(div);
-  });
+  alertBox.appendChild(itemsContainer);
 
-  header.onclick = ()=>{
-    list.style.display =
-      list.style.display === "block" ? "none" : "block";
+  function buildGroup(title, items){
+    if(items.length === 0) return;
+
+    const group = document.createElement("div");
+    group.className = "alert-group";
+
+    const header = document.createElement("div");
+    header.className = "alert-header";
+    header.textContent = `${title} (${items.length})`;
+
+    const list = document.createElement("div");
+    list.className = "alert-items";
+
+    items.forEach(msg=>{
+      const div = document.createElement("div");
+      div.textContent = msg;
+      list.appendChild(div);
+    });
+
+    header.onclick = ()=>{
+      list.style.display =
+        list.style.display === "block" ? "none" : "block";
+    };
+
+    group.appendChild(header);
+    group.appendChild(list);
+    itemsContainer.appendChild(group); // 👈 Append to the wrapper container instead of the main box
   };
 
-  group.appendChild(header);
-  group.appendChild(list);
-  alertBox.appendChild(group);
-}
+  buildGroup("🚨 Minor Violations", limitedMinor);
+  buildGroup("⚠ Burnout Risk", limitedBurnout);
 
-buildGroup("🚨 Minor Violations", limitedMinor);
-buildGroup("⚠ Burnout Risk", limitedBurnout);
-};
+  // Wire up the minimize/expand toggle action
+  headerRow.querySelector("#toggleWarningsBtn").onclick = (e) => {
+    const btn = e.target;
+    if (itemsContainer.style.display === "none") {
+      itemsContainer.style.display = "block";
+      btn.textContent = "Minimize";
+      localStorage.setItem("warnings-minimized", "false");
+    } else {
+      itemsContainer.style.display = "none";
+      btn.textContent = "Expand";
+      localStorage.setItem("warnings-minimized", "true");
+    }
+  };
 // ===== UPDATE SUMMARY PANEL =====
 updateWeekSummary();
-
+}
 
 function showCoverageDetails(dayName, dayIndex, rules, counts) {
   let msg = `${dayName} coverage:\n\n`;

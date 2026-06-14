@@ -97,23 +97,44 @@ function estimateFICA(gross) {
 
 // ── Pay Period Config ────────────────────────────────────────────────────────
 
+// ── Pay Period Config ────────────────────────────────────────────────────────
+
 async function loadPayPeriodConfig() {
   try {
     const snap = await getDoc(doc(db, "companies", companyId, "payroll_settings", "config"));
     if (snap.exists()) {
       const saved = snap.data();
+      
       if (saved.startDay        !== undefined) saved.startDay        = parseInt(saved.startDay);
       if (saved.semimonthlyDay1 !== undefined) saved.semimonthlyDay1 = parseInt(saved.semimonthlyDay1);
       if (saved.semimonthlyDay2 !== undefined) saved.semimonthlyDay2 = parseInt(saved.semimonthlyDay2);
+      
+      // ✨ FIX: Map the payPeriod setting name over into the local view configuration format
+      if (saved.payPeriod !== undefined) {
+        saved.type = saved.payPeriod;
+      }
+
+      saved.overtimeThreshold  = saved.overtimeThreshold ?? 40;
+      saved.overtimeMultiplier = saved.overtimeMultiplier ?? 1.5;
+      saved.breaksCountAsHours = saved.breaksCountAsHours === true;
+      saved.roundPunches       = saved.roundPunches === true;
+
       payPeriodConfig = { ...payPeriodConfig, ...saved };
     }
-  } catch (_) {}
+  } catch (err) {
+    console.error("Error matching payload keys:", err);
+  }
   syncConfigUI();
 }
 
 async function savePayPeriodConfig() {
   try {
-    await setDoc(doc(db, "companies", companyId, "payroll_settings", "config"), payPeriodConfig);
+    // ✨ FIX: Added { merge: true } so labor rules don't get wiped out!
+    await setDoc(
+      doc(db, "companies", companyId, "payroll_settings", "config"), 
+      payPeriodConfig, 
+      { merge: true }
+    );
     showMessage("Pay period settings saved.", "success");
     periodOffset = 0;
     calculatePayroll();
@@ -178,7 +199,7 @@ async function calculatePayroll() {
     // 2. Load punch logs
     const q = query(
       collection(db, "companies", companyId, "punchLogs"),
-     where("ts", ">=", new Date(start.getTime() - 86400000)),
+      where("ts", ">=", new Date(start.getTime() - 86400000)),
       where("ts", "<=", end),
       orderBy("ts", "asc")
     );
@@ -191,7 +212,8 @@ async function calculatePayroll() {
       const emp = employees[log.employeeId];
       if (!emp) return;
 
-      const time = log.ts.toDate();
+      // ✨ PARAMETER ACCENT: Apply 15-min rounding logic to the log timestamp
+      const time = roundToQuarterHour(log.ts.toDate());
       const type = log.eventType?.toLowerCase();
 
       if (type === "punch_in") {
@@ -215,19 +237,22 @@ async function calculatePayroll() {
       } else if (type === "break_start") {
         activeBreaks[log.employeeId] = time;
 
-      } else if (!payPeriodConfig.breaksCountAsHours) {
-  emp.totalMinutes -=
-    (time - activeBreaks[log.employeeId]) / 60000;
-}
+      } else if (type === "break_end") {
+        // ✨ PARAMETER ACCENT: Only deduct break duration if breaks do NOT count as hours
+        if (!payPeriodConfig.breaksCountAsHours && activeBreaks[log.employeeId]) {
+          emp.totalMinutes -= (time - activeBreaks[log.employeeId]) / 60000;
+        }
+        delete activeBreaks[log.employeeId];
+      }
     });
 
-    // 3. Still clocked in — count to end of period
-   Object.entries(activeShifts).forEach(([empId, clockInTime]) => {
-  const emp = employees[empId];
-  if (!emp) return;
+    // 3. Still clocked in — apply rounding parameters to current time evaluations
+    Object.entries(activeShifts).forEach(([empId, clockInTime]) => {
+      const emp = employees[empId];
+      if (!emp) return;
 
-  const now = new Date();
-  emp.totalMinutes += (now - clockInTime) / 60000;
+      const now = roundToQuarterHour(new Date());
+      emp.totalMinutes += (now - clockInTime) / 60000;
       emp.shifts.push({ in: clockInTime, out: null });
       emp.openShift = true;
       warnings.push(`${emp.fullName || emp.name}: currently clocked in — hours counted through end of period.`);
@@ -270,7 +295,14 @@ async function calculatePayroll() {
     showMessage("Failed to calculate payroll. Check Firestore indexes.");
   }
 }
+// ── Punch Rounding Utility ──────────────────────────────────────────────────
 
+function roundToQuarterHour(dateObj) {
+  if (!payPeriodConfig.roundPunches) return dateObj; // Skip if toggle is No
+  
+  const ms = 1000 * 60 * 15; // 15 minutes in milliseconds
+  return new Date(Math.round(dateObj.getTime() / ms) * ms);
+}
 // ── Period Nav ───────────────────────────────────────────────────────────────
 
 function updatePeriodNav(start, end) {
@@ -309,6 +341,7 @@ if (term) {
 
     const regH  = otThreshold ? Math.min(hours, otThreshold) : hours;
     const otH   = otThreshold ? Math.max(0, hours - otThreshold) : 0;
+    
     const gross = (regH * emp.hourlyRate) + (otH * emp.hourlyRate * (payPeriodConfig.overtimeMultiplier || 1.5));
     const fica  = estimateFICA(gross);
 

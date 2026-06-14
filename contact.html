@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact | Competent Management</title>
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <meta name="description" content="Get in touch with the Competent Management team. We'd love to help you manage your workforce more effectively." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d2151">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="afb1c59e-b6d6-4236-8b5a-1e2d1a4c902b"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,102 +29,169 @@
       --steel:    #3d6db5;
       --green:    #0ea86e;
       --green-bg: #e5f8f1;
+      --amber:    #d98f00;
+      --red:      #cc2b2b;
+      --purple:   #6d3fc4;
+      --purple-bg:#f0ebfc;
       --shadow:   0 4px 20px rgba(13,33,81,.08), 0 1px 4px rgba(13,33,81,.05);
       --shadow-lg:0 20px 60px rgba(13,33,81,.13), 0 4px 16px rgba(13,33,81,.07);
     }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
-    /* NAV */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 300; height: 64px; display: flex; align-items: center; padding: 0 48px; background: rgba(242,245,251,.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: box-shadow .3s; }
+    /* ──────────────── NAV ──────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      height: 64px; display: flex; align-items: center; padding: 0 48px;
+      background: rgba(242,245,251,.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); transition: box-shadow .3s;
+    }
     nav.scrolled { box-shadow: 0 2px 20px rgba(13,33,81,.1); }
+
     .logo-wrap { display: flex; align-items: center; gap: 11px; text-decoration: none; }
     .logo-hex { width: 36px; height: 36px; flex-shrink: 0; }
     .logo-text-block { display: flex; flex-direction: column; line-height: 1; }
     .logo-top { font-size: .9rem; font-weight: 900; color: var(--navy); letter-spacing: .09em; text-transform: uppercase; }
     .logo-bot { font-size: .56rem; font-weight: 500; color: var(--text3); letter-spacing: .22em; text-transform: uppercase; margin-top: 2px; }
+
     .nav-links { display: flex; gap: 2px; list-style: none; margin-left: 32px; }
     .nav-links a { color: var(--text2); text-decoration: none; font-size: .86rem; font-weight: 500; padding: 7px 13px; border-radius: 8px; transition: background .15s, color .15s; }
-    .nav-links a:hover, .nav-links a.active { background: var(--bg2); color: var(--navy); }
+    .nav-links a:hover { background: var(--bg2); color: var(--navy); }
+    .nav-links a.active { background: var(--bg2); color: var(--navy); font-weight: 600; }
     .nav-r { margin-left: auto; display: flex; align-items: center; gap: 10px; }
     .nav-login { color: var(--text2); text-decoration: none; font-size: .86rem; font-weight: 500; padding: 7px 14px; border-radius: 8px; transition: background .15s; }
     .nav-login:hover { background: var(--bg2); }
     .nav-signup { background: var(--navy); color: white; text-decoration: none; font-size: .86rem; font-weight: 700; padding: 9px 20px; border-radius: 9px; box-shadow: 0 2px 10px rgba(13,33,81,.25); transition: all .15s; }
-    .nav-signup:hover { background: var(--navy2); transform: translateY(-1px); }
+    .nav-signup:hover { background: var(--navy2); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(13,33,81,.32); }
 
-    /* PAGE HERO */
-    .page-hero { padding: 140px 48px 80px; background: linear-gradient(160deg, var(--navy) 0%, #162e6e 60%, #1e3d8a 100%); position: relative; overflow: hidden; text-align: center; }
-    .page-hero::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 52px 52px; }
-    .page-hero-inner { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
-    .eyebrow-white { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.85); font-size: .72rem; font-weight: 700; padding: 5px 14px; border-radius: 100px; margin-bottom: 24px; letter-spacing: .06em; text-transform: uppercase; }
-    .page-hero h1 { font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 900; color: white; letter-spacing: -.04em; line-height: 1.1; margin-bottom: 20px; }
-    .page-hero h1 em { color: #7eb4f8; font-style: normal; }
-    .page-hero p { font-size: 1.05rem; color: rgba(255,255,255,.72); line-height: 1.72; max-width: 540px; margin: 0 auto; }
+    /* ──────────────── PAGE HERO ──────────────── */
+    .page-hero {
+      padding: 140px 48px 60px; position: relative; overflow: hidden;
+    }
+    .page-hero-bg-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(13,33,81,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(13,33,81,.05) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: radial-gradient(ellipse 85% 85% at 50% 0%, black 20%, transparent 100%);
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute; top: 0; left: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(ellipse, rgba(30,86,196,.07) 0%, transparent 65%);
+      pointer-events: none; z-index: 0;
+    }
+    .page-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 2; }
+    .eyebrow { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--blue); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .eyebrow::before { content: ''; display: inline-block; width: 20px; height: 2px; background: var(--blue); border-radius: 2px; }
+    .page-hero h1 { font-size: clamp(2.4rem, 4.5vw, 3.6rem); font-weight: 900; letter-spacing: -.05em; line-height: 1.06; color: var(--navy); margin-bottom: 16px; }
+    .page-hero h1 em { font-style: italic; color: var(--blue); }
+    .page-hero-sub { font-size: 1.05rem; color: var(--text2); line-height: 1.72; max-width: 540px; }
 
-    /* CONTACT SECTION */
-    .contact-section { padding: 96px 48px; }
-    .contact-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.3fr; gap: 72px; align-items: start; }
+    /* ──────────────── CONTACT SECTION ──────────────── */
+    .contact-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 48px 120px; position: relative; z-index: 2; }
+    .contact-grid {
+      display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px;
+      align-items: start;
+    }
 
-    /* LEFT SIDE */
-    .contact-info h2 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); font-weight: 900; color: var(--navy); letter-spacing: -.03em; line-height: 1.2; margin-bottom: 16px; }
-    .contact-info h2 em { color: var(--blue); font-style: normal; }
-    .contact-info p { font-size: .95rem; color: var(--text2); line-height: 1.75; margin-bottom: 36px; }
-    .contact-points { display: flex; flex-direction: column; gap: 20px; }
-    .contact-point { display: flex; align-items: flex-start; gap: 16px; }
-    .cp-icon { width: 42px; height: 42px; border-radius: 11px; background: var(--blue-lt); border: 1px solid rgba(30,86,196,.18); display: flex; align-items: center; justify-content: center; color: var(--blue); font-size: .95rem; flex-shrink: 0; }
-    .cp-text h4 { font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-    .cp-text p { font-size: .85rem; color: var(--text3); line-height: 1.5; }
+    /* Form card styled like sched-mock */
+    .contact-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden;
+    }
+    .cc-bar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .cc-dots { display: flex; gap: 5px; }
+    .cc-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .cc-url {
+      flex: 1; max-width: 320px; margin: 0 auto; background: white;
+      border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: .63rem; color: var(--text3);
+      display: flex; align-items: center; gap: 6px; justify-content: center;
+    }
+    .cc-live { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    /* FORM */
-    .form-card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 40px; box-shadow: var(--shadow-lg); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .field { margin-bottom: 20px; }
-    .field label { display: block; font-size: .8rem; font-weight: 700; color: var(--text); margin-bottom: 7px; letter-spacing: .02em; }
+    .contact-form { padding: 36px; }
+    .contact-form h2 { font-size: 1.4rem; font-weight: 900; color: var(--navy); letter-spacing: -.03em; margin-bottom: 6px; }
+    .contact-form .form-sub { font-size: .85rem; color: var(--text3); margin-bottom: 28px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); }
     .field input, .field select, .field textarea {
-      width: 100%; padding: 11px 14px; background: var(--bg);
-      border: 1px solid var(--border2); border-radius: 9px;
       font-family: 'Outfit', sans-serif; font-size: .9rem; color: var(--text);
-      transition: border-color .15s, box-shadow .15s; outline: none;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 9px;
+      padding: 11px 13px; transition: border-color .15s, box-shadow .15s;
     }
+    .field textarea { resize: vertical; min-height: 120px; font-family: 'Outfit', sans-serif; }
     .field input:focus, .field select:focus, .field textarea:focus {
-      border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,86,196,.1);
-      background: var(--white);
+      outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,86,196,.12); background: var(--white);
     }
-    .field textarea { resize: vertical; min-height: 130px; }
-    .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237e8aa6' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
-    .submit-btn {
-      width: 100%; padding: 14px; background: var(--navy); color: white;
-      border: none; border-radius: 10px; font-family: 'Outfit', sans-serif;
-      font-size: .95rem; font-weight: 700; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+
+    .form-submit {
+      margin-top: 8px; width: 100%;
+      background: var(--navy); color: white; border: none; cursor: pointer;
+      font-size: .92rem; font-weight: 700; font-family: 'Outfit', sans-serif;
+      padding: 14px 26px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       box-shadow: 0 4px 16px rgba(13,33,81,.28); transition: all .15s;
     }
-    .submit-btn:hover { background: var(--navy2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(13,33,81,.38); }
-    .submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-    .success-msg { display: none; text-align: center; padding: 20px; background: var(--green-bg); border: 1px solid #a7f3d0; border-radius: 10px; color: var(--green); font-weight: 600; margin-top: 16px; }
+    .form-submit:hover { background: var(--navy2); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(13,33,81,.35); }
+    .form-submit svg { width: 16px; height: 16px; }
+    .form-note { margin-top: 14px; font-size: .73rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; text-align: center; }
 
-    /* REVEAL */
-    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .55s ease, transform .55s ease; }
-    .reveal.in { opacity: 1; transform: none; }
-    .rd1 { transition-delay: .05s; } .rd2 { transition-delay: .12s; }
+    /* Side info cards */
+    .info-stack { display: flex; flex-direction: column; gap: 16px; }
+    .info-card {
+      background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; box-shadow: var(--shadow); transition: all .2s; position: relative; overflow: hidden;
+    }
+    .info-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--steel));
+      opacity: 0; transition: opacity .25s;
+    }
+    .info-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(30,86,196,.3); }
+    .info-card:hover::before { opacity: 1; }
+    .info-icon { width: 40px; height: 40px; background: var(--blue-lt); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--blue); margin-bottom: 14px; }
+    .info-icon svg { width: 18px; height: 18px; }
+    .info-card h3 { font-size: .95rem; font-weight: 800; color: var(--navy); margin-bottom: 6px; letter-spacing: -.02em; }
+    .info-card p { font-size: .82rem; color: var(--text2); line-height: 1.65; }
+    .info-card a.info-link { color: var(--blue); text-decoration: none; font-weight: 600; font-size: .82rem; }
+    .info-card a.info-link:hover { text-decoration: underline; }
 
-    /* FOOTER */
-    footer { background: var(--navy); color: rgba(255,255,255,.65); font-size: .84rem; }
-    .foot-top { max-width: 1160px; margin: 0 auto; padding: 64px 48px 48px; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; }
-    .foot-desc { margin-top: 16px; font-size: .83rem; line-height: 1.7; color: rgba(255,255,255,.45); max-width: 240px; }
-    .foot-col h5 { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.85); margin-bottom: 16px; }
-    .foot-col a { display: block; color: rgba(255,255,255,.5); text-decoration: none; margin-bottom: 10px; transition: color .15s; }
-    .foot-col a:hover { color: white; }
-    .foot-bottom { border-top: 1px solid rgba(255,255,255,.08); padding: 22px 48px; display: flex; justify-content: space-between; align-items: center; max-width: 1160px; margin: 0 auto; font-size: .78rem; color: rgba(255,255,255,.35); }
+    .info-badge { padding: 2px 8px; border-radius: 100px; font-size: .58rem; font-weight: 700; background: var(--green-bg); color: var(--green); border: 1px solid #a7f3d0; display: inline-flex; align-items: center; gap: 5px; margin-top: 12px; }
+    .info-badge .dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: blink 2s infinite; }
 
-    @media (max-width: 900px) { .contact-inner { grid-template-columns: 1fr; gap: 48px; } .form-row { grid-template-columns: 1fr; } }
-    @media (max-width: 768px) {
-      nav { padding: 0 20px; } .nav-links, .nav-r { display: none; }
-      .page-hero { padding: 110px 24px 60px; }
-      .contact-section { padding: 64px 24px; }
-      .form-card { padding: 28px 22px; }
-      .foot-top { grid-template-columns: 1fr 1fr; padding: 48px 24px 32px; gap: 32px; }
-      .foot-bottom { flex-direction: column; gap: 8px; padding: 20px 24px; text-align: center; }
+    /* ──────────────── FOOTER ──────────────── */
+    footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 56px 48px 32px; }
+    .foot-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+    .foot-desc { font-size: .8rem; color: var(--text3); line-height: 1.65; max-width: 240px; margin-top: 12px; }
+    .foot-col h5 { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 16px; }
+    .foot-col a { display: block; color: var(--text2); text-decoration: none; font-size: .82rem; margin-bottom: 10px; transition: color .15s; }
+    .foot-col a:hover { color: var(--navy); }
+    .foot-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; }
+    .foot-bottom p { font-size: .75rem; color: var(--text3); }
+    .foot-bottom p:first-child::before { content: '●'; color: var(--blue); margin-right: 8px; font-size: .6rem; }
+
+    /* ──────────────── REVEAL ──────────────── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .rd1 { transition-delay: .08s; } .rd2 { transition-delay: .16s; } .rd3 { transition-delay: .24s; } .rd4 { transition-delay: .32s; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    @media(max-width:900px) {
+      nav{padding:0 20px;} .nav-links{display:none;}
+      .page-hero{padding:110px 24px 40px;}
+      .contact-wrap{padding:20px 24px 80px;}
+      .contact-grid{grid-template-columns:1fr;}
+      .form-row{grid-template-columns:1fr;}
+      .foot-top{grid-template-columns:1fr 1fr;}
     }
   </style>
 </head>
@@ -132,18 +200,7 @@
 <!-- NAV -->
 <nav id="nav">
   <a href="index.html" class="logo-wrap">
-    <svg class="logo-hex" viewBox="0 0 48 48" fill="none">
-      <defs>
-        <linearGradient id="hg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
-        <linearGradient id="fg" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
-      </defs>
-      <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hg)" opacity=".18"/>
-      <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hg)" stroke-width="1.5"/>
-      <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#fg)" opacity=".85"/>
-      <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
-      <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
-      <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
-    </svg>
+  <img src="assets/logo.png" alt="Competent Management" class="logo-hex">
     <div class="logo-text-block">
       <span class="logo-top">Competent</span>
       <span class="logo-bot">Management</span>
@@ -153,90 +210,108 @@
     <li><a href="index.html">Home</a></li>
     <li><a href="features.html">Features</a></li>
     <li><a href="pricing.html">Pricing</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="contactus.html" class="active">Contact</a></li>
+    <li><a href="about.html" >About</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
   </ul>
   <div class="nav-r">
     <a href="login.html" class="nav-login">Log in</a>
-    <a href="signup.html" class="nav-signup">Create Account</a>
+    <a href="signup.html" class="nav-signup">Get started →</a>
   </div>
 </nav>
 
-<!-- HERO -->
-<div class="page-hero">
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg-grid"></div>
   <div class="page-hero-inner">
-    <div class="eyebrow-white"><i class="fas fa-envelope"></i> &nbsp;Get in touch</div>
-    <h1>We'd love to<br><em>help you out.</em></h1>
-    <p>Whether you're managing dinner rush coverage or cleaning up payroll hours, tell us what you're dealing with.</p>
+    <div class="eyebrow reveal">Get in touch</div>
+    <h1 class="reveal rd1">Let's talk about<br>your <em>team.</em></h1>
+    <p class="page-hero-sub reveal rd2">Questions, demo requests, or just want to say hi? Send a message and we'll get back to you — usually within a day.</p>
   </div>
-</div>
+</section>
 
-<!-- CONTACT SECTION -->
-<div class="contact-section">
-  <div class="contact-inner">
+<!-- CONTACT -->
+<div class="contact-wrap">
+  <div class="contact-grid">
 
-    <!-- LEFT INFO -->
-    <div class="contact-info reveal">
-      <h2>Let's talk about your<br><em>biggest challenge.</em></h2>
-      <p>Most managers who reach out are dealing with the same few things: unclear punch records, last-minute coverage gaps, or payroll they can't fully trust. We can help.</p>
-      <div class="contact-points">
-        <div class="contact-point">
-          <div class="cp-icon"><i class="fas fa-bolt"></i></div>
-          <div class="cp-text">
-            <h4>Quick response</h4>
-            <p>We respond to every message, usually within one business day.</p>
-          </div>
+    <!-- Form -->
+    <div class="contact-card reveal rd2">
+      <div class="cc-bar">
+        <div class="cc-dots">
+          <div class="cc-dot" style="background:#ff5f57"></div>
+          <div class="cc-dot" style="background:#ffbd2e"></div>
+          <div class="cc-dot" style="background:#28c840"></div>
         </div>
-        <div class="contact-point">
-          <div class="cp-icon"><i class="fas fa-play"></i></div>
-          <div class="cp-text">
-            <h4>See it live first</h4>
-            <p>Try our live scheduling demo — no account needed, real sample data.</p>
-          </div>
-        </div>
-        <div class="contact-point">
-          <div class="cp-icon"><i class="fas fa-shield-halved"></i></div>
-          <div class="cp-text">
-            <h4>No sales pressure</h4>
-            <p>We don't do cold calls or hard sells. Just a real conversation about whether we're a fit.</p>
-          </div>
-        </div>
+        <div class="cc-url"><div class="cc-live"></div>app.competentmanagement.com/contact</div>
       </div>
-    </div>
+      <form class="contact-form" action="#" method="POST">
+        <h2>Send us a message</h2>
+        <p class="form-sub">Fill out the form below and we'll reply by email.</p>
 
-    <!-- RIGHT FORM -->
-    <div class="form-card reveal rd1">
-      <form id="contactForm">
         <div class="form-row">
           <div class="field">
-            <label>Your Name</label>
-            <input type="text" id="name" placeholder="Jane Smith" required>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Jamie Rivera" required>
           </div>
           <div class="field">
-            <label>Email Address</label>
-            <input type="email" id="email" placeholder="you@company.com" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="jamie@yourbusiness.com" required>
           </div>
         </div>
-        <div class="field">
-          <label>Team Size</label>
-          <select id="companySize">
-            <option>1–10 team members</option>
-            <option>11–25 team members</option>
-            <option>26–50 team members</option>
-            <option>50+ team members</option>
-          </select>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="business">Business name</label>
+            <input type="text" id="business" name="business" placeholder="Sunrise Diner">
+          </div>
+          <div class="field">
+            <label for="topic">What's this about?</label>
+            <select id="topic" name="topic">
+              <option>General question</option>
+              <option>Request a demo</option>
+              <option>Pricing & plans</option>
+              <option>Technical support</option>
+              <option>Something else</option>
+            </select>
+          </div>
         </div>
-        <div class="field">
-          <label>What's your biggest scheduling or workforce challenge?</label>
-          <textarea id="message" placeholder="Tell us what's giving you the most trouble — coverage gaps, payroll accuracy, tracking punches, something else..." required></textarea>
+
+        <div class="form-row">
+          <div class="field full">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell us a bit about your team and what you're looking for..." required></textarea>
+          </div>
         </div>
-        <button type="submit" class="submit-btn" id="submitBtn">
-          <i class="fas fa-paper-plane"></i> Send Message
+
+        <button type="submit" class="form-submit">
+          Send message
+        <img src="assets/logo.png" alt="Competent Management" class="logo-hex">
         </button>
+        <p class="form-note">// We typically respond within 24 hours</p>
       </form>
-      <div class="success-msg" id="successMsg">
-        <i class="fas fa-check-circle" style="font-size:1.4rem; display:block; margin-bottom:8px"></i>
-        Message sent! We'll be in touch shortly.
+    </div>
+
+    <!-- Info cards -->
+    <div class="info-stack">
+      <div class="info-card reveal rd3">
+        <div class="info-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+        <h3>Email us</h3>
+        <p>For support, sales, or general questions — drop us a line anytime.</p>
+        <a class="info-link" href="mailto:hello@competentmanagement.com">hello@competentmanagement.com</a>
+        <div class="info-badge"><span class="dot"></span>Avg. response &lt; 24h</div>
+      </div>
+
+      <div class="info-card reveal rd4">
+        <div class="info-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+        <h3>Try it first</h3>
+        <p>No account needed — explore the scheduler, punch logs, and dashboard with real sample data.</p>
+        <a class="info-link" href="scheduling-demo.html">View live demo →</a>
+      </div>
+
+      <div class="info-card reveal rd4">
+        <div class="info-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <h3>Start free</h3>
+        <p>Spin up your account and invite your team in minutes. 14-day free trial, no credit card required.</p>
+        <a class="info-link" href="signup.html">Get started →</a>
       </div>
     </div>
 
@@ -248,20 +323,9 @@
   <div class="foot-top">
     <div>
       <a href="index.html" class="logo-wrap">
-        <svg class="logo-hex" viewBox="0 0 48 48" fill="none">
-          <defs>
-            <linearGradient id="hg2" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
-            <linearGradient id="fg2" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
-          </defs>
-          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hg2)" opacity=".18"/>
-          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hg2)" stroke-width="1.5"/>
-          <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#fg2)" opacity=".85"/>
-          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
-          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
-          <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
-        </svg>
+      <img src="assets/logo.png" alt="Competent Management" class="logo-hex">
         <div class="logo-text-block">
-          <span class="logo-top" style="color:white">Competent</span>
+          <span class="logo-top">Competent</span>
           <span class="logo-bot">Management</span>
         </div>
       </a>
@@ -277,7 +341,7 @@
     <div class="foot-col">
       <h5>Company</h5>
       <a href="about.html">About</a>
-      <a href="contactus.html">Contact</a>
+      <a href="contact.html">Contact</a>
     </div>
     <div class="foot-col">
       <h5>Account</h5>
@@ -291,50 +355,15 @@
   </div>
 </footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<script>
+  window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 30));
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAbiHersDtAntTb3oWqyN1zZDYW3bzwrDU",
-  authDomain: "competent-management.firebaseapp.com",
-  projectId: "competent-management",
-  storageBucket: "competent-management.firebasestorage.app",
-  messagingSenderId: "984767087244",
-  appId: "1:984767087244:web:47e86734d0e402878eb1a9"
-};
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 30));
-const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }); }, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-document.getElementById('yr').textContent = new Date().getFullYear();
-
-document.getElementById('contactForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-  try {
-    await addDoc(collection(db, "contactMessages"), {
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      companySize: document.getElementById('companySize').value,
-      message: document.getElementById('message').value,
-      status: "new",
-      createdAt: serverTimestamp()
-    });
-    document.getElementById('contactForm').style.display = 'none';
-    document.getElementById('successMsg').style.display = 'block';
-  } catch (err) {
-    console.error(err);
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
-    alert("Something went wrong. Please try again.");
-  }
-});
+  document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>

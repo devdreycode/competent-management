@@ -13,11 +13,10 @@ let companyId = null;
 let uid = null;
 let remindersUnsub = null;
 
-/* ─────────────────────────────────────────
-   AUTH READY
-───────────────────────────────────────── */
+// 📑 Line 19 in main.js
 window.addEventListener("authReady", (e) => {
-  const { uid: u, companyId: c, displayName, companyName } = e.detail;
+  // CHANGED: Added 'role' to the destructured properties
+  const { uid: u, companyId: c, displayName, companyName, role } = e.detail; 
   uid = u;
   companyId = c;
 
@@ -27,11 +26,16 @@ window.addEventListener("authReady", (e) => {
   const companyEl = document.getElementById("companyNameDisplay");
   const welcomeEl = document.getElementById("welcome-msg");
 
-  if (nameEl)    nameEl.textContent    = displayName || "Manager";
+  if (nameEl)    nameEl.textContent    = displayName || "";
   if (uidEl)     uidEl.textContent     = u ? u.slice(0, 8) + "…" : "—";
   if (avatarEl)  avatarEl.textContent  = (displayName || "M")[0].toUpperCase();
   if (companyEl) companyEl.textContent = companyName || "Company";
-  if (welcomeEl) welcomeEl.textContent = `Welcome, ${displayName || "Manager"}`;
+  
+  // CHANGED: Formatted to include user name and role strings
+  if (welcomeEl) {
+    const userRole = role || "User";
+    welcomeEl.textContent = `Welcome, ${displayName || "User"} (Role: ${userRole})`;
+  }
 
   loadReminders();
 });

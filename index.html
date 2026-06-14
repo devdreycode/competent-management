@@ -347,7 +347,232 @@
     .btn-white svg { width: 16px; height: 16px; }
     .btn-ghost-w { background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); text-decoration: none; font-size: .92rem; font-weight: 600; padding: 13px 26px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); transition: all .15s; }
     .btn-ghost-w:hover { background: rgba(255,255,255,.15); transform: translateY(-2px); }
+.kiosk-upcycle-section {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    padding: 80px 24px;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
 
+  .kiosk-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  /* Desktop layout adjustment */
+  @media (min-width: 992px) {
+    .kiosk-container {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+
+  /* Content Styling */
+  .kiosk-tag {
+    display: inline-block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--neon-blue);
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  .kiosk-title {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 16px 0;
+    letter-spacing: -1px;
+  }
+
+  .kiosk-title .highlight {
+    color: var(--neon-blue);
+    text-shadow: 0 0 20px var(--neon-glow);
+  }
+
+  .kiosk-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    margin-bottom: 24px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .kiosk-description {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 32px;
+    font-size: 1rem;
+  }
+
+  /* Benefits List */
+  .kiosk-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+  }
+
+  .kiosk-benefits li {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 16px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .kiosk-benefits li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--neon-blue);
+    font-weight: bold;
+    text-shadow: 0 0 8px var(--neon-blue);
+  }
+
+  .kiosk-benefits li strong {
+    color: var(--text-light);
+  }
+
+  /* Button Accent */
+  .kiosk-cta {
+    display: inline-block;
+    background: transparent;
+    color: var(--neon-blue);
+    border: 2px solid var(--neon-blue);
+    padding: 14px 32px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    border-radius: 4px;
+    box-shadow: 0 0 15px var(--neon-glow);
+    transition: all 0.3s ease;
+  }
+
+  .kiosk-cta:hover {
+    background: var(--neon-blue);
+    color: var(--bg-dark);
+    box-shadow: 0 0 25px var(--neon-blue);
+    transform: translateY(-2px);
+  }
+
+  /* Visual Kiosk Component (Glassmorphism) */
+  .kiosk-visual-wrapper {
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+
+  .kiosk-card-glass {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+  }
+
+  /* CSS Tablet Mockup */
+  .tablet-frame {
+    background: #1e293b;
+    border: 12px solid #0f172a;
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+  }
+
+  .tablet-screen {
+    background: #020617;
+    border-radius: 8px;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* In-screen interface visualization */
+  .mock-app {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    justify-content: space-between;
+    text-align: center;
+  }
+
+  .mock-header {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+  }
+
+  .mock-time {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin: 8px 0 0 0;
+  }
+  
+  .mock-time span {
+    font-size: 1rem;
+    color: var(--neon-blue);
+    margin-left: 4px;
+  }
+
+  .mock-status {
+    font-size: 9px;
+    color: #10b981;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .mock-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .mock-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    color: var(--text-light);
+  }
+
+  .mock-btn.target {
+    border-color: var(--neon-blue);
+    background: rgba(0, 210, 255, 0.1);
+    color: var(--neon-blue);
+  }
+
+  .badge-glow {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neon-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: pulse 2s infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { opacity: 0.6; text-shadow: 0 0 4px var(--neon-glow); }
+    to { opacity: 1; text-shadow: 0 0 12px var(--neon-blue); }
+  }
     /* ──────────────── FOOTER ──────────────── */
     footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 56px 48px 32px; }
     .foot-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
@@ -458,42 +683,18 @@
 <nav id="nav">
   <a href="index.html" class="logo-wrap">
  
-    <svg class="logo-hex" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="hexGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#4a9edd"/>
-          <stop offset="100%" stop-color="#1a3a8a"/>
-        </linearGradient>
-        <linearGradient id="faceGrad" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#6db8f0"/>
-          <stop offset="100%" stop-color="#2255bb"/>
-        </linearGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="1" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-      <!-- Hexagon body -->
-      <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hexGrad)" opacity=".18"/>
-      <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hexGrad)" stroke-width="1.5"/>
-      <!-- Inner face -->
-      <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#faceGrad)" opacity=".85"/>
-      <!-- Orbital arcs -->
-      <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
-      <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
-      <!-- Center dot -->
-      <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9" filter="url(#glow)"/>
-    </svg>
+   <img src="assets/logo.png" alt="Competent Management" class="logo-hex">
     <div class="logo-text-block">
       <span class="logo-top">Competent</span>
       <span class="logo-bot">Management</span>
     </div>
   </a>
   <ul class="nav-links">
+    <li><a href="index.html" class="active" >Home</a></li>
     <li><a href="features.html">Features</a></li>
     <li><a href="pricing.html">Pricing</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="contactus.html">Contact</a></li>
+    <li><a href="about.html" >About</a></li>
+    <li><a href="contact.html">Contact</a></li>
   </ul>
   <div class="nav-r">
     <a href="login.html" class="nav-login">Log in</a>
@@ -516,158 +717,9 @@
     <div>
       <div class="hero-badge"><div class="badge-pip">v2</div> Version 2.0 is live</div>
       <h1>Competent Management - Employee Scheduling & Time Tracking</h1>
-      <h2>You’re tracking time. But are you understanding it?</h2>
-      <p class="hero-sub">Everything about your team’s time — in one place.
-Schedules, punches, and payroll — connected and easy to understand.</p>
-      <div class="hero-btns">
-        <a href="signup.html" class="btn-primary">
-          Get started free
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-        </a>
-        <a href="scheduling-demo.html" class="btn-outline">▶ View live demo</a>
-      </div>
-      <p class="hero-note">// No signup required for demo &nbsp;·&nbsp; Real sample data</p>
-    </div>
 
-    <!-- Right: Scheduler Mockup -->
-    <div class="sched-wrap">
-      <div class="sched-mock">
-        <!-- Browser bar -->
-        <div class="sm-bar">
-          <div class="sm-dots">
-            <div class="sm-dot" style="background:#ff5f57"></div>
-            <div class="sm-dot" style="background:#ffbd2e"></div>
-            <div class="sm-dot" style="background:#28c840"></div>
-          </div>
-          <div class="sm-url"><div class="sm-live"></div>app.competentmanagement.com/schedule</div>
-        </div>
+  
 
-        <!-- Toolbar (styled exactly like schedule-editor) -->
-        <div class="sm-toolbar">
-          <span class="sm-lbl">Shift</span>
-          <select class="sm-sel"><option>All Shifts</option></select>
-          <span class="sm-lbl" style="margin-left:6px">Position</span>
-          <select class="sm-sel"><option>All Positions</option></select>
-          <span class="sm-lbl" style="margin-left:6px">Week of</span>
-          <input class="sm-input" type="text" value="Mar 10, 2026" readonly style="width:90px">
-          <div class="sm-spacer"></div>
-          <span class="sm-tbtn"><i class="fas fa-wand-magic-sparkles"></i> Auto</span>
-          <span class="sm-tbtn save"><i class="fas fa-floppy-disk"></i> Save</span>
-          <span class="sm-tbtn pub"><i class="fas fa-paper-plane"></i> Publish</span>
-          <span class="sm-badge">● Published</span>
-        </div>
-
-        <!-- Summary strip -->
-        <div class="sm-summary">
-          <div class="sm-si">
-            <div class="sm-si-lbl">Coverage Score</div>
-            <div class="sm-si-val green" id="mc1">0%</div>
-          </div>
-          <div class="sm-si">
-            <div class="sm-si-lbl">Total Hours</div>
-            <div class="sm-si-val" id="mc2">0h</div>
-          </div>
-          <div class="sm-si">
-            <div class="sm-si-lbl">Est. Payroll</div>
-            <div class="sm-si-val" id="mc3">$0</div>
-          </div>
-          <div class="sm-si">
-            <div class="sm-si-lbl">Rest Violations</div>
-            <div class="sm-si-val green">None ✓</div>
-          </div>
-        </div>
-
-        <!-- Schedule table -->
-        <div class="sm-tbl-wrap">
-          <table class="sm-tbl">
-            <thead>
-              <tr>
-                <th style="min-width:120px">Staff Member</th>
-                <th>Mon</th>
-                <th>Tue</th>
-                <th class="today">Wed ★</th>
-                <th>Thu</th>
-                <th>Fri</th>
-                <th>Sat</th>
-                <th>Sun</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Row 1 -->
-              <tr>
-                <td class="namecol"><div class="emp-info"><div class="emp-av" style="background:#1e56c4">JR</div><div><div class="emp-name">Jamie R.</div><div class="emp-role">Floor Lead</div></div></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h · Morning</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active today-cell"><div><div class="cv">7:00–15:00</div><div class="cm">8h · TODAY</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div><div class="cm">—</div></div><span class="pill-status pill-off">✕</span></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
-              </tr>
-              <!-- Row 2 -->
-              <tr>
-                <td class="namecol"><div class="emp-info"><div class="emp-av" style="background:#7c3aed">TM</div><div><div class="emp-name">Tom M.</div><div class="emp-role">Associate</div></div></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">15:00–23:00</div><div class="cm">8h · Eve</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active today-cell"><div><div class="cv">15:00–23:00</div><div class="cm">8h · Eve</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">15:00–23:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">15:00–23:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">15:00–23:00</div><div class="cm">8h</div></div></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
-              </tr>
-              <!-- Row 3 -->
-              <tr>
-                <td class="namecol"><div class="emp-info"><div class="emp-av" style="background:#0a8a5c">SA</div><div><div class="emp-name">Sara A.</div><div class="emp-role">Supervisor</div></div></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox today-cell oncall"><div><div class="cv oncall-text">On Call</div><div class="cm">Available</div></div><span class="pill-status pill-oc">📞</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">7:00–15:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
-              </tr>
-              <!-- Row 4 -->
-              <tr>
-                <td class="namecol"><div class="emp-info"><div class="emp-av" style="background:#b45309">DK</div><div><div class="emp-name">Dan K.</div><div class="emp-role">Associate</div></div></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">23:00–7:00</div><div class="cm">8h · Night</div></div></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">23:00–7:00</div><div class="cm">8h</div></div></div></td>
-                <td class="cell"><div class="cellBox today-cell active"><div><div class="cv">23:00–7:00</div><div class="cm">8h</div></div><span class="pill-status pill-active">●</span></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">23:00–7:00</div><div class="cm">8h</div></div></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
-                <td class="cell"><div class="cellBox off"><div><div class="cv off-text">OFF</div></div></div></td>
-                <td class="cell"><div class="cellBox active"><div><div class="cv">23:00–7:00</div><div class="cm">8h</div></div></div></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker">
-    <span>Visual Scheduling</span><span class="sep">—</span>
-    <span>Live Punch Logs</span><span class="sep">—</span>
-    <span>Payroll Estimates</span><span class="sep">—</span>
-    <span>Coverage Risk</span><span class="sep">—</span>
-    <span>Geo-Fencing</span><span class="sep">—</span>
-    <span>Audit Trail</span><span class="sep">—</span>
-    <span>Employee Profiles</span><span class="sep">—</span>
-    <span>Ticket System</span><span class="sep">—</span>
-    <span>Auto Generate</span><span class="sep">—</span>
-    <span>Visual Scheduling</span><span class="sep">—</span>
-    <span>Live Punch Logs</span><span class="sep">—</span>
-    <span>Payroll Estimates</span><span class="sep">—</span>
-    <span>Coverage Risk</span><span class="sep">—</span>
-    <span>Geo-Fencing</span><span class="sep">—</span>
-    <span>Audit Trail</span><span class="sep">—</span>
-    <span>Employee Profiles</span><span class="sep">—</span>
-    <span>Ticket System</span><span class="sep">—</span>
-    <span>Auto Generate</span><span class="sep">—</span>
-  </div>
-</div>
 
 <!-- PAIN -->
 <div class="pain-bg">
@@ -701,7 +753,52 @@ Schedules, punches, and payroll — connected and easy to understand.</p>
     </div>
   </div>
 </div>
+<section class="kiosk-upcycle-section">
+  <div class="kiosk-container">
+    
+    <!-- Left Column: Content -->
+    <div class="kiosk-content">
+      <span class="kiosk-tag">Smart Hardware</span>
+      <h2 class="kiosk-title">Don’t Waste It.<br><span class="highlight">Upcycle It.</span></h2>
+      <p class="kiosk-subtitle">
+        Turn your kid’s old tablet into a powerhouse kiosk clock for your business.
+      </p>
+      
+      <p class="kiosk-description">
+        Got an old iPad or Android device collecting dust in a drawer? Don’t let good hardware go to waste. With <strong>Competent Management</strong>, you can instantly transform any old device into a sleek, dedicated employee time clock. No expensive proprietary hardware. Just download, lock it down, and start tracking shifts.
+      </p>
 
+      <ul class="kiosk-benefits">
+        <li><strong>Zero Hardware Costs:</strong> Save hundreds by reusing devices you already own.</li>
+        <li><strong>Locked-Down Security:</strong> Configure kiosk mode to prevent rogue browsing.</li>
+        <li><strong>Eco-Friendly Efficiency:</strong> Give old tech a second life while streamlining operations.</li>
+      </ul>
+
+      <a href="#register" class="kiosk-cta">Turn Old Tech Into Profit</a>
+    </div>
+
+    <!-- Right Column: Visual Preview Card -->
+    <div class="kiosk-visual-wrapper">
+      <div class="kiosk-card-glass">
+        <div class="tablet-frame">
+          <div class="tablet-screen">
+            <div class="mock-app">
+              <div class="mock-header">COMPETENT MANAGEMENT</div>
+              <div class="mock-time">12:45<span>PM</span></div>
+              <div class="mock-status">READY FOR SHIFT PUNCH</div>
+              <div class="mock-grid">
+                <div class="mock-btn">Clock In</div>
+                <div class="mock-btn target">Clock Out</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="badge-glow">Kiosk Mode Active</div>
+      </div>
+    </div>
+
+  </div>
+</section>
 <!-- FEATURES -->
 <div class="feat-bg">
   <div class="s-wrap">
@@ -743,18 +840,7 @@ Schedules, punches, and payroll — connected and easy to understand.</p>
   <div class="foot-top">
     <div>
       <a href="index.html" class="logo-wrap">
-        <svg class="logo-hex" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="hexGrad2" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a9edd"/><stop offset="100%" stop-color="#1a3a8a"/></linearGradient>
-            <linearGradient id="faceGrad2" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6db8f0"/><stop offset="100%" stop-color="#2255bb"/></linearGradient>
-          </defs>
-          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="url(#hexGrad2)" opacity=".18"/>
-          <polygon points="24,3 43,13.5 43,34.5 24,45 5,34.5 5,13.5" fill="none" stroke="url(#hexGrad2)" stroke-width="1.5"/>
-          <polygon points="24,10 37,17.5 37,30.5 24,38 11,30.5 11,17.5" fill="url(#faceGrad2)" opacity=".85"/>
-          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".55" transform="rotate(-30 24 24)"/>
-          <ellipse cx="24" cy="24" rx="16" ry="9" stroke="white" stroke-width="1" fill="none" opacity=".35" transform="rotate(30 24 24)"/>
-          <circle cx="24" cy="24" r="3.5" fill="white" opacity=".9"/>
-        </svg>
+     <img src="assets/logo.png" alt="Competent Management" class="logo-hex">
         <div class="logo-text-block">
           <span class="logo-top">Competent</span>
           <span class="logo-bot">Management</span>

@@ -637,7 +637,7 @@ onAuthStateChanged(auth, async (user) => {
 
     const welcomeEl = document.getElementById("welcome-msg");
     if (welcomeEl) {
-      const display = userData.fullName || user.email?.split("@")[0] || "Manager";
+      const display = userData.fullName || user.email?.split("@")[0] || "User";
       welcomeEl.textContent = `Welcome, ${display}`;
     }
 

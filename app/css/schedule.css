@@ -443,4 +443,22 @@
     /* --- Trial banner offset --- */
 body {
   padding-top: 60px; /* adjust this number to match your banner's height */
+}#coverageAlerts {
+  background: rgba(220, 38, 38, 0.03);
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+body.dark-mode #coverageAlerts {
+  background: rgba(248, 113, 113, 0.02);
+  border-color: rgba(248, 113, 113, 0.1);
+}
+
+.alert-group {
+  margin-bottom: 8px;
+}
+.alert-group:last-child {
+  margin-bottom: 0;
 }

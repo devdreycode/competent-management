@@ -110,13 +110,14 @@ const companyRef = await addDoc(collection(db, "companies"), {
       }
     );
 
-   await setDoc(doc(db, "app_user", user.uid), {
+  await setDoc(doc(db, "app_user", user.uid), {
   fullName,
   email:       user.email,
   companyId:   companyRef.id,
   companyName,
   role:        "owner",
   tier:        "free",
+  trialEndsAt: trialEnd,        // ← add this
   createdAt:   serverTimestamp()
 });
 

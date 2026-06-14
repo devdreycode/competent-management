@@ -349,12 +349,12 @@ function render() {
   const remaining = Math.max(limit - used, 0);
 
   if (employeeSlotInfo) {
-    employeeSlotInfo.textContent = `${used} / ${limit} employees used · ${remaining} slots remaining`;
+    employeeSlotInfo.textContent = `${used} / ${limit} employees used · ${remaining} `;
     employeeSlotInfo.classList.remove("warning", "danger");
     if (remaining <= 2 && remaining > 0) employeeSlotInfo.classList.add("warning");
     if (remaining === 0) {
       employeeSlotInfo.classList.add("danger");
-      employeeSlotInfo.textContent = `${used} / ${limit} employees used · Limit reached`;
+      employeeSlotInfo.textContent = `${used} / employees used · `;
     }
   }
   renderPositionSummary();
@@ -387,7 +387,7 @@ closeCardBtn?.addEventListener("click", () => {
   viewingEmployee = null;
 });
 closeAddEmpBtn?.addEventListener("click", () => {
-  if (cardModal) cardModal.classList.add("hidden");
+  if (addEmpModal) addEmpModal.classList.add("hidden");
   editingEmployeeId = null;
 });
 /* =====================
@@ -418,6 +418,16 @@ editFromViewBtn?.addEventListener("click", () => {
 ===================== */
 // Added Optional Chaining (?)
 saveEditEmp?.addEventListener("click", async () => {
+  const newPin = document.getElementById("editPin")?.value.trim();
+const existingPins = employees
+  .filter(e => e.id !== editingEmployeeId)
+  .map(e => e.pin)
+  .filter(Boolean);
+
+if (newPin && existingPins.includes(newPin)) {
+  alert(`PIN ${newPin} is already in use. Please choose a different PIN.`);
+  return;
+}
   if (!editingEmployeeId) return;
   if (editFullName && !editFullName.value.trim()) { alert("Name is required."); return; }
 
@@ -506,7 +516,14 @@ editPosition?.addEventListener("change", () => {
 ===================== */
 empForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
+// Before saving, check for duplicate PIN
+const existingPins = employees.map(e => e.pin).filter(Boolean);
+const newPin = document.getElementById("empPin")?.value.trim();
 
+if (newPin && existingPins.includes(newPin)) {
+  alert(`PIN ${newPin} is already assigned to another employee. Please choose a different PIN.`);
+  return;
+}
   const fullName = empName?.value.trim();
   if (!fullName) { alert("Name is required."); return; }
 

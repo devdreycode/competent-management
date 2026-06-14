@@ -471,7 +471,9 @@ $("saveBtn")?.addEventListener("click", async () => {
 
 
 const weeklyHours = parseInt($("weeklyHours")?.value || "40", 10);
-const burnoutThreshold = parseInt($("burnoutThreshold")?.value || "40", 10); // ADD THIS
+  const burnoutThreshold = parseInt($("burnoutThreshold")?.value || "40", 10);
+  const onCallOvertimeRisk = $("onCallOvertimeRisk")?.checked ?? false; // 👈 Add this
+
   const autoScheduler = {
     weekStart:         parseInt($("weekStart")?.value ?? "1", 10),
     respectAvail:      $("respectAvail")?.checked  ?? true,
@@ -480,10 +482,9 @@ const burnoutThreshold = parseInt($("burnoutThreshold")?.value || "40", 10); // 
     autoFillPositions: $("autoFillPositions")?.checked ?? true,
     offDays,
     weeklyHours,
-    weeklyHours,
-  burnoutThreshold,
+    burnoutThreshold,
+    onCallOvertimeRisk, // 👈 Add this
   };
-
   try {
     await setDoc(doc(db, "companies", cid, "schedule_settings", "config"), {
       companyId: cid,
@@ -862,15 +863,17 @@ async function loadAutoSchedulerSettings() {
 
   // Load weekly hours
   
-  if ($("weeklyHours") && as.weeklyHours != null) {
-  $("weeklyHours").value = String(as.weeklyHours);
-}
-if ($("burnoutThreshold") && as.burnoutThreshold != null) { // ADD THIS
-  $("burnoutThreshold").value = String(as.burnoutThreshold);
-}
-}
+ if ($("weeklyHours") && as.weeklyHours != null) {
+    $("weeklyHours").value = String(as.weeklyHours);
+  }
+  if ($("burnoutThreshold") && as.burnoutThreshold != null) {
+    $("burnoutThreshold").value = String(as.burnoutThreshold);
+  }
+  if ($("onCallOvertimeRisk")) { // 👈 Add this block
+    $("onCallOvertimeRisk").checked = as.onCallOvertimeRisk ?? false;
+  }
 
-
+}
 /* =====================
    MULTI-SELECT COVERAGE GRID
 ===================== */

@@ -229,8 +229,8 @@ function renderTable(tbodyId, logs) {
     </tr>`;
   }).join("");
 }
- window.openNewTab = function() {
-  window.open("./kioskclock.html?companyId=" + window.companyId, "_blank");
+window.openNewTab = function() {
+  window.open("kioskclock.html?companyId=" + window.companyId, "_blank");
 };
 /* ─────────────────────────────────────────
    SEARCH — exposed so index.html's oninput

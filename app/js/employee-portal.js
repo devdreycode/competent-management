@@ -785,9 +785,11 @@ window._portalSubmitRequest = async function({ type, start, end, swap, notes }) 
   }
 };
 async function loadArchivedTickets(){
+  // 👇 ADD THIS LINE here to clear active ticket message streams before shifting to archived scopes
+  if (_messagesUnsub) { _messagesUnsub(); _messagesUnsub = null; }
 
   const q = query(
-  collection(db,"companies",companyId,"tickets"),
+    collection(db,"companies",companyId,"tickets"),
     where("employeeId","==",verifiedEmployee.id),
     where("status","==","archived")
   );

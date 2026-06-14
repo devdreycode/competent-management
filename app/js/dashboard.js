@@ -17,12 +17,6 @@ import {
 
 const $ = (id) => document.getElementById(id);
 
-const cachedName = localStorage.getItem("displayName");
-if (cachedName) {
-  const welcome = $("welcome-msg");
-  if (welcome) welcome.textContent = `Welcome, ${cachedName}`;
-}
-
 window.companyId = null;
 let tier = "free";
 if(localStorage.getItem("dark-mode") === "true"){
@@ -40,11 +34,14 @@ window.addEventListener("authReady", (e) => {
     localStorage.setItem("displayName", data.displayName);
   }
 
-  // 👋 Welcome message
-  const welcome = $("welcome-msg");
-  if (welcome) {
-    welcome.textContent = `Welcome, ${data.displayName || "User"}`;
-  }
+ // 📑 Line 32 in dashboard.js
+// 👋 Welcome message
+const welcome = $("welcome-msg");
+if (welcome) {
+  // CHANGED: Added role context alongside the display name
+  const role = data.role || "User";
+  welcome.textContent = `Welcome, ${data.displayName || "User"} (Role: ${role})`;
+}
 
 
   const upgradeBtn = document.getElementById("upgradeBtn");
@@ -75,9 +72,7 @@ window.addEventListener("authReady", (e) => {
 
 /* ================= GLOBAL ACTIONS ================= */
 
- window.openNewTab = function() {
-  window.open("./kioskclock.html?companyId=" + window.companyId, "_blank");
-};
+ 
 window.addReminder = async () => {
   const input = $("reminderInput");
   const text = input?.value.trim();
@@ -647,13 +642,14 @@ async function initPayrollEstimate() {
 }
 
 /* ================= TICKET OVERVIEW ================= */
-window.goToTickets = function () {
-  const companyId = localStorage.getItem("companyId");
+
+ window.openNewTab = function() {
+    const companyId = localStorage.getItem("companyId");
   if (!companyId) {
     alert("Missing company ID.");
     return;
   }
-  window.location.href = `/ticketmanagement.html?companyId=${companyId}`;
+  window.open("/app/pages/ticketmanagement.html?companyId=" + window.companyId, "_blank");
 };
 
 function initTicketOverview() {
@@ -693,7 +689,7 @@ function initTicketOverview() {
         li.innerHTML = `<strong>${data.reason}</strong> – ${data.employeeName}`;
         li.style.cursor = "pointer";
         li.onclick = () => {
-          window.location.href = `/ticketmanagement.html?companyId=${window.companyId}&ticketId=${doc.id}`;
+          window.location.href = `/app/pages/ticketmanagement.html?companyId=${window.companyId}&ticketId=${doc.id}`;
         };
         recentList.appendChild(li);
       }

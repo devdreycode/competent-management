@@ -926,14 +926,13 @@ function renderMessages(msgs) {
     return;
   }
   hist.innerHTML = msgs.map(m => {
-    // System messages render as centered pills
     if (m.isSystem || m.sender === 'system') {
       return `<div class="msg-system">${m.text}</div>`;
     }
-    const isMgr = m.sender === 'manager';
+    const isMgr = ['manager', 'owner', 'shift_leader'].includes(m.sender);
     return `
       <div class="msg-wrap ${isMgr ? 'manager' : 'employee'}">
-        <div class="msg-avatar ${isMgr ? 'avatar-mgr' : 'avatar-emp'}">${isMgr ? 'M' : (m.name?.[0] || 'E')}</div>
+        <div class="msg-avatar ${isMgr ? 'avatar-mgr' : 'avatar-emp'}">${isMgr ? (m.name?.[0] || 'M') : (m.name?.[0] || 'E')}</div>
         <div class="msg-bubble">
           ${m.text}
           <span class="msg-time">${m.timestamp || ''}</span>

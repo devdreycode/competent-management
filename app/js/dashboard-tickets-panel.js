@@ -116,7 +116,7 @@ function renderTicketPanel(snap) {
     return `
       <div class="tpanel-item"
            data-id="${d.id}"
-           onclick="window.location.href='/ticketmanagement.html?companyId=${companyId}&ticketId=${d.id}'"
+           onclick="window.location.href='/app/pages/ticketmanagement.html?companyId=${companyId}&ticketId=${d.id}'"
            style="cursor:pointer;">
         <div class="tpanel-top">
           <span class="tpanel-reason">${t.reason || "Ticket"}</span>

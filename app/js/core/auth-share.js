@@ -6,7 +6,7 @@
 // - Syncs company settings from Firestore to localStorage on login
 // - Handles logout
 
-import { auth, db } from "./firebase.js";
+import { auth, db } from "/app/js/core/firebase.js";
 import {
   onAuthStateChanged,
   signOut
@@ -55,7 +55,7 @@ function showTrialBanner(daysLeft) {
     height: 40px; display: flex; align-items: center; justify-content: center;
   `;
   banner.innerHTML = `
-    ⏳ <strong>${daysLeft} day${daysLeft !== 1 ? "s" : ""} left</strong> on your free trial.
+    ⏳ <strong>${daysLeft} day${daysLeft !== 1 ? "s" : ""} left </strong>  on your free trial.
     <a href="/pricing.html" style="color:#7eb4f8; margin-left:8px; font-weight:700;">Upgrade →</a>
   `;
   document.body.prepend(banner);
@@ -140,9 +140,8 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    const displayName = data.fullName || user.email?.split("@")[0] || "Manager";
+    const displayName = data.fullName || user.email?.split("@")[0] || "";
     const companyName = data.companyName || data.company_name || "";
-
     localStorage.setItem("uid", uid);
 
     window.appState = { uid, companyId, displayName, companyName, tier, role };
