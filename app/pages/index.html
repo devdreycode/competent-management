@@ -34,46 +34,65 @@
     <div class="header-spacer"></div>
     <div id="welcome-msg">Welcome, User</div>
  
-    <div class="notif-wrapper">
-      <div id="notifBell" onclick="toggleNotifPanel(event)" title="Notifications">
-        <i class="fas fa-bell" style="font-size:.9rem;"></i>
-        <span id="notifCount" style="display:none;">0</span>
-      </div>
-      <div class="notif-wrapper" style="position:relative;">
-  <div id="ticketPanelBell" onclick="toggleTicketPanel(event)" title="Tickets"
-       style="position:relative;display:flex;align-items:center;;
-width:36px;height:36px;border-radius:8px;cursor:pointer;background:transparent;">
-    <i class="fas fa-ticket" style="font-size:.9rem;"></i>
-    <span id="ticketPanelCount" style="display:none;position:absolute;top:-4px;right:-4px;
-          background:var(--red,#ef4444);color:#fff;font-size:.6rem;font-weight:700;
-          min-width:16px;height:16px;border-radius:99px;
-          align-items:center;justify-content:center;padding:0 3px;
-          border:2px solid var(--bg,#fff);line-height:1;">0</span>
-  </div>
-  <div id="ticketPanel" style="display:none;position:absolute;right:0;top:calc(100% + 8px);
-       width:320px;max-height:420px;overflow-y:auto;
-       background:var(--surface,#fff);border:1px solid var(--chrome-border,#e2e8f0);
-       border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:999;">
-    <div style="display:flex;align-items:center;justify-content:space-between;
-                padding:12px 14px 10px;border-bottom:1px solid var(--chrome-border,#e2e8f0);
-                position:sticky;top:0;background:var(--surface,#fff);z-index:1;">
-      <span style="font-size:.8rem;font-weight:700;">🎫 Recent Tickets</span>
-      <button onclick="window.location.href='ticketmanagement.html'"
-              style="font-size:.7rem;font-weight:600;color:var(--accent,#0891b2);background:none;border:none;cursor:pointer;">View All →</button>
+  <div style="display:flex;align-items:center;gap:4px;position:relative;">
+<div style="display:flex;align-items:center;gap:4px;position:relative;">
+
+  <!-- Notification Bell -->
+  <div class="notif-wrapper" style="position:relative;">
+    <div id="notifBell" onclick="toggleNotifPanel(event)" title="Notifications"
+         style="position:relative;display:flex;align-items:center;
+                width:36px;height:36px;border-radius:8px;cursor:pointer;background:transparent;">
+      <i class="fas fa-bell" style="font-size:.9rem;"></i>
+      <span id="notifCount" style="display:none;position:absolute;top:-4px;right:-4px;
+            background:var(--red,#ef4444);color:#fff;font-size:.6rem;font-weight:700;
+            min-width:16px;height:16px;border-radius:99px;
+            align-items:center;justify-content:center;padding:0 3px;
+            border:2px solid var(--bg,#fff);line-height:1;">0</span>
     </div>
-    <div id="ticketPanelList" style="padding:6px 0;"></div>
-    <div id="ticketPanelEmpty" style="display:block;text-align:center;padding:24px 14px;font-size:.8rem;color:#94a3b8;">No tickets yet 🎉</div>
+    <div id="notifPanel" style="display:none;position:absolute;right:0;top:calc(100% + 8px);
+         width:320px;max-height:420px;overflow-y:auto;
+         background:var(--surface,#fff);border:1px solid var(--chrome-border,#e2e8f0);
+         border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:999;">
+      <div class="notif-header">
+        <span class="notif-header-title">Notifications</span>
+        <button id="notifMarkAll" onclick="markAllRead(event)" disabled>All caught up</button>
+      </div>
+      <div id="notifList"></div>
+      <div id="notifEmpty" style="display:block;">You're all caught up! 🎉</div>
+    </div>
   </div>
+
+  <!-- Ticket Bell -->
+  <div class="notif-wrapper" style="position:relative;">
+    <div id="ticketPanelBell" onclick="toggleTicketPanel(event)" title="Tickets"
+         style="position:relative;display:flex;align-items:center;
+                width:36px;height:36px;border-radius:8px;cursor:pointer;background:transparent;">
+      <i class="fas fa-ticket" style="font-size:.9rem;"></i>
+      <span id="ticketPanelCount" style="display:none;position:absolute;top:-4px;right:-4px;
+            background:var(--red,#ef4444);color:#fff;font-size:.6rem;font-weight:700;
+            min-width:16px;height:16px;border-radius:99px;
+            align-items:center;justify-content:center;padding:0 3px;
+            border:2px solid var(--bg,#fff);line-height:1;">0</span>
+    </div>
+    <div id="ticketPanel" style="display:none;position:absolute;right:0;top:calc(100% + 8px);
+         width:320px;max-height:420px;overflow-y:auto;
+         background:var(--surface,#fff);border:1px solid var(--chrome-border,#e2e8f0);
+         border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:999;">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+                  padding:12px 14px 10px;border-bottom:1px solid var(--chrome-border,#e2e8f0);
+                  position:sticky;top:0;background:var(--surface,#fff);z-index:1;">
+        <span style="font-size:.8rem;font-weight:700;">🎫 Recent Tickets</span>
+        <button onclick="window.location.href='ticketmanagement.html'"
+                style="font-size:.7rem;font-weight:600;color:var(--accent,#0891b2);background:none;border:none;cursor:pointer;">View All →</button>
+      </div>
+      <div id="ticketPanelList" style="padding:6px 0;"></div>
+      <div id="ticketPanelEmpty" style="display:block;text-align:center;padding:24px 14px;font-size:.8rem;color:#94a3b8;">No tickets yet 🎉</div>
+    </div>
+  </div>
+
   <div style="width:1px;height:22px;background:var(--chrome-border);"></div>
 </div>
-      <div id="notifPanel" style="display:none;">
-        <div class="notif-header">
-          <span class="notif-header-title">Notifications</span>
-          <button id="notifMarkAll" onclick="markAllRead(event)" disabled>All caught up</button>
-        </div>
-        <div id="notifList"></div>
-        <div id="notifEmpty" style="display:block;">You're all caught up! 🎉</div>
-      </div>
+ 
     </div>
  
     <div style="display:flex;align-items:center;gap:8px;margin-left:4px;">
